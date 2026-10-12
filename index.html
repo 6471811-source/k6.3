@@ -483,6 +483,32 @@ const rooms = srcRooms.map((room, i) => {
 });
 
 const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
+/* Если открыто из журнала (есть ?jid=) — сохраняем rooms/meta в запись,
+   затем открываем i5 по той же записи. Иначе — как раньше, через data=. */
+if(JID && window.CubicaJournal){
+  const rec = window.CubicaJournal.get(JID);
+  if(rec){
+    rec.rooms = rooms;
+    rec.meta = payload.meta;
+    /* rows пока пустые (цены и qtyCalc подтянет i5) — но labels сохраним,
+       чтобы в журнале было видно, что за позиции */
+    rec.rows = rows.map(function(r){
+      return {label: r.label, qtyCalc: r.qty, qtyReserve: 0, unit: r.unit || 'шт.', price: 0};
+    });
+    rec.history = rec.history || [];
+    rec.history.push({
+      at: window.CubicaJournal.nowISO(),
+      by: window.CubicaJournal.manager(),
+      action: 'from calculator'
+    });
+    window.CubicaJournal.save(rec, {assignNumber:false});
+    const i5url = window.CubicaJournal.i5UrlForRecord(rec);
+    window.open(i5url, '_blank');
+    return;
+  }
+}
+
+/* Обычный путь: без журнала — открываем i5 с payload */
 const data=b64enc(JSON.stringify(payload));
 const url=KP_URL+(KP_URL.includes('?')?'&':'?')+'data='+data;
 window.open(url,'_blank');
