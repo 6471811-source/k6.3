@@ -432,9 +432,11 @@ let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice()
 
 /* Собираем рейки: объединяем все длины в одну строку с общим м.п. и раскроем pieces */
 const rows=[];
-var railPieces = {};
-var railLengthMp = 0;
-var railBaseLabel = '';
+/* Группируем рейки по ПОЛНОЙ метке без длины.
+   То есть "Рейка Cubica 50/50 Denver" и "Рейка Cubica 50/50 Wellington" —
+   РАЗНЫЕ группы (разный цвет), а "Рейка Cubica 50/50 Denver 2700 мм" и
+   "Рейка Cubica 50/50 Denver 3000 мм" — ОДНА группа. */
+var railGroups = {};   // { "Рейка Cubica 50/50 Denver": {pieces: {2700: 10, 3000: 5}, lengthMp: 42.0}, ... }
 var otherRows = [];
 
 for(const r of totals){
@@ -445,23 +447,25 @@ for(const r of totals){
   var m = label.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
   if(m){
     var size = parseInt(m[2], 10);
-    railPieces[size] = (railPieces[size] || 0) + qty;
-    railLengthMp += qty * size / 1000;
-    if(!railBaseLabel) railBaseLabel = 'Рейка Cubica ' + m[1];
+    var key = 'Рейка Cubica ' + m[1];   // ← С цветом, но БЕЗ длины
+    if(!railGroups[key]) railGroups[key] = { pieces: {}, lengthMp: 0 };
+    railGroups[key].pieces[size] = (railGroups[key].pieces[size] || 0) + qty;
+    railGroups[key].lengthMp += qty * size / 1000;
   } else {
     otherRows.push({label: label, qty: qty, unit: r.unit || 'шт.'});
   }
 }
 
-/* Рейки — одна строка с общей длиной в м.п. */
-if(railBaseLabel){
+/* Каждая группа — отдельная строка */
+Object.keys(railGroups).sort().forEach(function(key){
+  var g = railGroups[key];
   rows.push({
-    label: railBaseLabel,
-    qty: Math.round(railLengthMp * 100) / 100,
+    label: key,
+    qty: Math.round(g.lengthMp * 100) / 100,
     unit: 'м.п.',
-    pieces: railPieces
+    pieces: g.pieces
   });
-}
+});
 otherRows.forEach(function(r){ rows.push(r); });
 
 /* srcRooms для payload */
