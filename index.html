@@ -141,17 +141,11 @@ body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;backgrou
 @media(max-width:1024px){.ac{grid-template-columns:1fr;grid-template-areas:"w" "t" "i" "s" "c" "o" "l" "p"}.ac-pn{position:static;max-height:none}}
 @media(max-width:700px){.ac-draw-body{flex-direction:column}.ac-draw-wrap{width:100%}.ac-seg-list{flex:0 0 auto;width:100%;max-height:180px}}
 @media(max-width:640px){.ac{padding:16px}.ac-in input[type=number]{width:100%}}
-.ac-journal-list{max-height:60vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px}
-.ac-journal-item{display:flex;align-items:center;gap:14px;padding:10px 14px;background:#fff;border:1px solid #eee;border-radius:8px;cursor:pointer}
-.ac-journal-num{font-size:14px;font-weight:800;color:#c00000;flex-shrink:0;min-width:52px}
-.ac-journal-info{flex:1;min-width:0}
-.ac-journal-name{font-size:13px;font-weight:700;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ac-journal-meta{font-size:11.5px;color:#888;margin-top:2px}
-.ac-journal-actions{display:flex;gap:6px}
-.ac-journal-actions button{background:#fff;border:1px solid #ddd;border-radius:6px;width:32px;height:32px;font-size:14px;cursor:pointer;padding:0}
-</style></head><body><main><div class="ac">
+</style></head><body>
+  <main><div class="ac">
 <div class="ac-work" id="ac-work-label"><span class="dot"></span><span id="ac-work-text">Новое помещение</span><span class="hint" id="ac-work-hint">настройте параметры и нажмите «+ Новое помещение»</span></div>
-<div class="ac-title"><svg class="lg" viewBox="0 0 220 220"><defs><clipPath id="lgc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><g clip-path="url(#lgc)"><g stroke="#c00000" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg><span>Калькулятор кубической рейки <span class="br">CUBICA</span></span></div><div class="ac-in"><label>Длина, мм<input type="number" id="ac-length" value="5400" step="100" min="100"></label><label>Ширина, мм<input type="number" id="ac-width" value="4200" step="100" min="100"></label><button type="button" class="draw" id="ac-draw-open">✏️ Начертить</button><button type="button" class="upd" id="ac-update-room" style="display:none;">💾 Сохранить</button><button type="button" class="add" id="ac-add-to-project">+ Новое помещение</button><button type="button" class="kp" id="ac-kp-open">📤 Коммерческое предложение</button><button type="button" class="rst" id="ac-reset">Сбросить</button></div><div class="ac-sliders-row"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Ширина рейки</span><span class="ac-slider-val" id="ac-railw-val">50 мм</span></div><input type="range" id="ac-railw" min="30" max="150" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Высота рейки</span><span class="ac-slider-val" id="ac-railh-val">50 мм</span></div><input type="range" id="ac-railh" min="30" max="200" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Шаг между рейками</span><span class="ac-slider-val" id="ac-gap-val">40 мм</span></div><input type="range" id="ac-gap" min="20" max="300" step="10" value="40"></div></div><div class="ac-colors-row"><div class="ac-colors-block"><div class="ac-colors-title">Цвет RAL</div><div class="ac-swatches-ral" id="ac-color-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9003" style="background:#ecece7"></button><div class="ac-swatch-label">9003</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9006" style="background:#a5a8a9"></button><div class="ac-swatch-label">9006</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7004" style="background:#9ea0a3"></button><div class="ac-swatch-label">7004</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7024" style="background:#474b4e"></button><div class="ac-swatch-label">7024</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9005" style="background:#0a0a0a"></button><div class="ac-swatch-label">9005</div></div></div></div><div class="ac-colors-block grow"><div class="ac-colors-title">Дерево Cubica</div><div class="ac-swatches-wood" id="ac-wood-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch active" data-wood="denver"></button><div class="ac-swatch-label">Denver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="wellington"></button><div class="ac-swatch-label">Wellington</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="tokyo"></button><div class="ac-swatch-label">Tokyo</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="toronto"></button><div class="ac-swatch-label">Toronto</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="vancouver"></button><div class="ac-swatch-label">Vancouver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="rio"></button><div class="ac-swatch-label">Rio</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="stockholm"></button><div class="ac-swatch-label">Stockholm</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="sydney"></button><div class="ac-swatch-label">Sydney</div></div></div></div></div><div class="ac-options-row"><div class="ac-colors-title">Опции</div><label class="ac-chk-inline"><input type="checkbox" id="ac-caps"> Заглушки</label><label class="ac-chk-inline"><input type="checkbox" id="ac-angle"> Уголок</label><label class="ac-chk-inline"><input type="checkbox" id="ac-hangers"> Подвесы</label><label class="ac-chk-inline"><input type="checkbox" id="ac-stringer-paint"> Стрингер окр.</label><div class="ac-hanger-slider disabled" id="ac-hanger-slider-wrap"><div class="ac-slider-head"><span>Высота</span></div><input type="range" id="ac-hanger-h" min="0" max="3" step="0.01" value="0" disabled><span class="ac-slider-val" id="ac-hanger-h-val">0,00 м</span></div></div><div class="ac-lw"><div class="ac-adjust"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Поворот раскладки</span><span class="ac-slider-val" id="ac-rotation-val">0°</span></div><input type="range" id="ac-rotation" min="-45" max="45" step="1" value="0"></div></div><div class="ac-vr"><div class="ac-vt"><button type="button" class="active" data-view="2d">2D · Схема</button><button type="button" data-view="3d">3D · Объём</button></div></div><div class="ac-lay" id="ac-layout"></div><div class="ac-l3" id="ac-layout3d" style="display:none;"><canvas id="ac-canvas3d" width="640" height="440"></canvas></div><div class="ac-tb"><label class="ac-chk"><input type="checkbox" id="ac-show-ceiling"> Перекрытие</label><button type="button" class="ac-cb" id="ac-cam-reset">⟲ Камера</button><button type="button" class="ac-cb pr" id="ac-save-2d">📄 2D (PDF)</button><button type="button" class="ac-cb pr" id="ac-save-3d">📄 3D (PDF)</button></div><div class="ac-hint">3D: ЛКМ — вращение · колесо — зум · ПКМ — перенос</div></div><aside class="ac-pn" id="ac-panel"><div class="ac-ph"><h4 class="ac-pt">Спецификация</h4><div class="ac-st" id="ac-spec-toggle"><button type="button" data-specmode="current" class="active">Помещение</button><button type="button" data-specmode="total">Итог</button></div></div><div class="ac-res" id="ac-results"></div><div class="ac-pj"><div class="ac-pjt"><span>Проект CUBICA.BY</span><small><span id="ac-project-count">0</span> помещ.</small></div><ul class="ac-pjl" id="ac-project-list"></ul><div class="ac-pja"><button type="button" class="dg" id="ac-project-clear">Очистить проект</button></div></div></aside></div></main><footer class="ft">© 2026 CUBICA.BY · Кубическая рейка</footer><div class="ac-modal" id="ac-journal-modal"><div class="ac-modal-inner" style="max-width:900px"><h3 class="ac-modal-title">📒 Журнал проектов</h3><div class="ac-journal-list" id="ac-journal-list"></div><div class="ac-modal-bar"><div class="ac-modal-bar-group"><button type="button" id="ac-journal-export">⬇ Экспорт JSON</button><button type="button" id="ac-journal-import">⬆ Импорт JSON</button><input type="file" id="ac-journal-import-file" style="display:none" accept="application/json"></div><div class="ac-modal-bar-group"><button type="button" id="ac-journal-close">Закрыть</button></div></div></div></div><div class="ac-modal" id="ac-draw-modal"><div class="ac-modal-inner"><h3 class="ac-modal-title">✏️ Начертить помещение</h3><p class="ac-modal-hint">Клик — точка. Клик по первой точке — замкнуть контур.</p><div class="ac-draw-hud"><div class="ac-draw-mode" id="ac-draw-mode">Кликните, чтобы задать первую точку</div><div class="ac-draw-length-wrap"><label for="ac-draw-length-input">Длина:</label><input type="number" id="ac-draw-length-input" placeholder="авто" min="100" step="100"><span>мм</span></div></div><div class="ac-draw-body"><div class="ac-draw-wrap"><canvas id="ac-draw-canvas" class="ac-draw-canvas" width="900" height="520"></canvas><div class="ac-modal-warn" id="ac-modal-warn"></div></div><div class="ac-seg-list" id="ac-seg-list"></div></div><div class="ac-modal-bar"><div class="ac-modal-bar-group"><button type="button" id="ac-draw-undo">↶ Отменить</button><button type="button" id="ac-draw-close-contour">🔒 Замкнуть</button><button type="button" class="dg" id="ac-draw-clear">Очистить</button></div><div class="ac-modal-bar-group"><button type="button" id="ac-draw-cancel">Отмена</button><button type="button" class="pr" id="ac-draw-apply" disabled>Применить</button></div></div></div></div>
+<div class="ac-title"><svg class="lg" viewBox="0 0 220 220"><defs><clipPath id="lgc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><g clip-path="url(#lgc)"><g stroke="#c00000" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg><span>Калькулятор кубической рейки <span class="br">CUBICA</span></span></div><div class="ac-in"><label>Длина, мм<input type="number" id="ac-length" value="5400" step="100" min="100"></label><label>Ширина, мм<input type="number" id="ac-width" value="4200" step="100" min="100"></label><button type="button" class="draw" id="ac-draw-open">✏️ Начертить</button><button type="button" class="upd" id="ac-update-room" style="display:none;">💾 Сохранить</button><button type="button" class="add" id="ac-add-to-project">+ Новое помещение</button><button type="button" class="kp" id="ac-kp-open">📤 Коммерческое предложение</button><button type="button" class="rst" id="ac-reset">Сбросить</button></div><div class="ac-sliders-row"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Ширина рейки</span><span class="ac-slider-val" id="ac-railw-val">50 мм</span></div><input type="range" id="ac-railw" min="30" max="150" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Высота рейки</span><span class="ac-slider-val" id="ac-railh-val">50 мм</span></div><input type="range" id="ac-railh" min="30" max="200" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Шаг между рейками</span><span class="ac-slider-val" id="ac-gap-val">40 мм</span></div><input type="range" id="ac-gap" min="20" max="300" step="10" value="40"></div></div><div class="ac-colors-row"><div class="ac-colors-block"><div class="ac-colors-title">Цвет RAL</div><div class="ac-swatches-ral" id="ac-color-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9003" style="background:#ecece7"></button><div class="ac-swatch-label">9003</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9006" style="background:#a5a8a9"></button><div class="ac-swatch-label">9006</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7004" style="background:#9ea0a3"></button><div class="ac-swatch-label">7004</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7024" style="background:#474b4e"></button><div class="ac-swatch-label">7024</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9005" style="background:#0a0a0a"></button><div class="ac-swatch-label">9005</div></div></div></div><div class="ac-colors-block grow"><div class="ac-colors-title">Дерево Cubica</div><div class="ac-swatches-wood" id="ac-wood-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch active" data-wood="denver"></button><div class="ac-swatch-label">Denver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="wellington"></button><div class="ac-swatch-label">Wellington</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="tokyo"></button><div class="ac-swatch-label">Tokyo</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="toronto"></button><div class="ac-swatch-label">Toronto</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="vancouver"></button><div class="ac-swatch-label">Vancouver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="rio"></button><div class="ac-swatch-label">Rio</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="stockholm"></button><div class="ac-swatch-label">Stockholm</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="sydney"></button><div class="ac-swatch-label">Sydney</div></div></div></div></div><div class="ac-options-row"><div class="ac-colors-title">Опции</div><label class="ac-chk-inline"><input type="checkbox" id="ac-caps"> Заглушки</label><label class="ac-chk-inline"><input type="checkbox" id="ac-angle"> Уголок</label><label class="ac-chk-inline"><input type="checkbox" id="ac-hangers"> Подвесы</label><label class="ac-chk-inline"><input type="checkbox" id="ac-stringer-paint"> Стрингер окр.</label><div class="ac-hanger-slider disabled" id="ac-hanger-slider-wrap"><div class="ac-slider-head"><span>Высота</span></div><input type="range" id="ac-hanger-h" min="0" max="3" step="0.01" value="0" disabled><span class="ac-slider-val" id="ac-hanger-h-val">0,00 м</span></div></div><div class="ac-lw"><div class="ac-adjust"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Поворот раскладки</span><span class="ac-slider-val" id="ac-rotation-val">0°</span></div><input type="range" id="ac-rotation" min="-45" max="45" step="1" value="0"></div></div><div class="ac-vr"><div class="ac-vt"><button type="button" class="active" data-view="2d">2D · Схема</button><button type="button" data-view="3d">3D · Объём</button></div></div><div class="ac-lay" id="ac-layout"></div><div class="ac-l3" id="ac-layout3d" style="display:none;"><canvas id="ac-canvas3d" width="640" height="440"></canvas></div><div class="ac-tb"><label class="ac-chk"><input type="checkbox" id="ac-show-ceiling"> Перекрытие</label><button type="button" class="ac-cb" id="ac-cam-reset">⟲ Камера</button><button type="button" class="ac-cb pr" id="ac-save-2d">📄 2D (PDF)</button><button type="button" class="ac-cb pr" id="ac-save-3d">📄 3D (PDF)</button></div><div class="ac-hint">3D: ЛКМ — вращение · колесо — зум · ПКМ — перенос</div></div><aside class="ac-pn" id="ac-panel"><div class="ac-ph"><h4 class="ac-pt">Спецификация</h4><div class="ac-st" id="ac-spec-toggle"><button type="button" data-specmode="current" class="active">Помещение</button><button type="button" data-specmode="total">Итог</button></div></div><div class="ac-res" id="ac-results"></div><div class="ac-pj"><div class="ac-pjt"><span>Проект CUBICA.BY</span><small><span id="ac-project-count">0</span> помещ.</small></div><ul class="ac-pjl" id="ac-project-list"></ul><div class="ac-pja"><button type="button" class="dg" id="ac-project-clear">Очистить проект</button></div></div></aside></div></main><footer class="ft">© 2026 CUBICA.BY · Кубическая рейка</footer>
+<div class="ac-modal" id="ac-draw-modal"><div class="ac-modal-inner"><h3 class="ac-modal-title">✏️ Начертить помещение</h3><p class="ac-modal-hint">Клик — точка. Клик по первой точке — замкнуть контур.</p><div class="ac-draw-hud"><div class="ac-draw-mode" id="ac-draw-mode">Кликните, чтобы задать первую точку</div><div class="ac-draw-length-wrap"><label for="ac-draw-length-input">Длина:</label><input type="number" id="ac-draw-length-input" placeholder="авто" min="100" step="100"><span>мм</span></div></div><div class="ac-draw-body"><div class="ac-draw-wrap"><canvas id="ac-draw-canvas" class="ac-draw-canvas" width="900" height="520"></canvas><div class="ac-modal-warn" id="ac-modal-warn"></div></div><div class="ac-seg-list" id="ac-seg-list"></div></div><div class="ac-modal-bar"><div class="ac-modal-bar-group"><button type="button" id="ac-draw-undo">↶ Отменить</button><button type="button" id="ac-draw-close-contour">🔒 Замкнуть</button><button type="button" class="dg" id="ac-draw-clear">Очистить</button></div><div class="ac-modal-bar-group"><button type="button" id="ac-draw-cancel">Отмена</button><button type="button" class="pr" id="ac-draw-apply" disabled>Применить</button></div></div></div></div>
 <div class="ac-toast" id="ac-toast"></div>
 
 <script type="module">
@@ -159,16 +153,65 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 (function(){
 const $=id=>document.getElementById(id);
-const lengthInput=$('ac-length'),widthInput=$('ac-width');const railWInput=$('ac-railw'),railHInput=$('ac-railh'),gapInput=$('ac-gap');const railWVal=$('ac-railw-val'),railHVal=$('ac-railh-val'),gapVal=$('ac-gap-val');const rotationInput=$('ac-rotation');const rotationVal=$('ac-rotation-val');const capsChk=$('ac-caps'),angleChk=$('ac-angle');const hangersChk=$('ac-hangers'),hangerHInput=$('ac-hanger-h'),hangerHVal=$('ac-hanger-h-val'),hangerSliderWrap=$('ac-hanger-slider-wrap');const stringerPaintChk=$('ac-stringer-paint');const resetBtn=$('ac-reset'),addBtn=$('ac-add-to-project'),updateBtn=$('ac-update-room');const drawOpenBtn=$('ac-draw-open');const resultsDiv=$('ac-results'),layout2dDiv=$('ac-layout'),layout3dDiv=$('ac-layout3d');const toggleBtns=document.querySelectorAll('.ac-vt button');const camResetBtn=$('ac-cam-reset'),save2dBtn=$('ac-save-2d'),save3dBtn=$('ac-save-3d');const showCeilingChk=$('ac-show-ceiling');const specToggleEl=$('ac-spec-toggle');const projectListEl=$('ac-project-list'),projectCountEl=$('ac-project-count'),projectClearBtn=$('ac-project-clear');
-const RAIL_WALL_T=1.5,RAIL_FLANGE=5.0;const CARRIER_STOCK=3000,CARRIER_STEP_MAX=1000,CARRIER_W=30,CARRIER_H=20;const CARRIER_XSHIFT=50;const STRINGER_WALL_EDGE=100;const RAIL_END_OVERHANG_MAX=300;const HANGER_WALL_EDGE=100,HANGER_STEP_MAX=1000;const HANGER_ROD=300,MAX_RAILS=200;const RAIL_RULE_MIN_LEN=300,RAIL_ABSOLUTE_MIN_LEN=50;const CUBICA_RED='#c00000',CUBICA_RED_RGB=[192,0,0];const MAX_RAIL_LEN=4000;
+const lengthInput=$('ac-length'),widthInput=$('ac-width');
+const railWInput=$('ac-railw'),railHInput=$('ac-railh'),gapInput=$('ac-gap');
+const railWVal=$('ac-railw-val'),railHVal=$('ac-railh-val'),gapVal=$('ac-gap-val');
+const rotationInput=$('ac-rotation');
+const rotationVal=$('ac-rotation-val');
+const capsChk=$('ac-caps'),angleChk=$('ac-angle');
+const hangersChk=$('ac-hangers'),hangerHInput=$('ac-hanger-h'),hangerHVal=$('ac-hanger-h-val'),hangerSliderWrap=$('ac-hanger-slider-wrap');
+const stringerPaintChk=$('ac-stringer-paint');
+const resetBtn=$('ac-reset'),addBtn=$('ac-add-to-project'),updateBtn=$('ac-update-room');
+const drawOpenBtn=$('ac-draw-open');
+const resultsDiv=$('ac-results'),layout2dDiv=$('ac-layout'),layout3dDiv=$('ac-layout3d');
+const toggleBtns=document.querySelectorAll('.ac-vt button');
+const camResetBtn=$('ac-cam-reset'),save2dBtn=$('ac-save-2d'),save3dBtn=$('ac-save-3d');
+const showCeilingChk=$('ac-show-ceiling');
+const specToggleEl=$('ac-spec-toggle');
+const projectListEl=$('ac-project-list'),projectCountEl=$('ac-project-count'),projectClearBtn=$('ac-project-clear');
+
+const RAIL_WALL_T=1.5,RAIL_FLANGE=5.0;
+const CARRIER_STOCK=3000,CARRIER_STEP_MAX=1000,CARRIER_W=30,CARRIER_H=20;
+const CARRIER_XSHIFT=50;
+const STRINGER_WALL_EDGE=100;
+const RAIL_END_OVERHANG_MAX=300;
+const HANGER_WALL_EDGE=100,HANGER_STEP_MAX=1000;
+const HANGER_ROD=300,MAX_RAILS=200;
+const RAIL_RULE_MIN_LEN=300,RAIL_ABSOLUTE_MIN_LEN=50;
+const CUBICA_RED='#c00000',CUBICA_RED_RGB=[192,0,0];
+const MAX_RAIL_LEN=4000;
 const KP_URL='https://6471811-source.github.io/Cubica-i5/';
-  const urlParams = new URLSearchParams(location.search);
+
+/* Параметры URL: ?jid= от журнала, ?data= от старого калькулятора */
+const urlParams = new URLSearchParams(location.search);
 const JID = urlParams.get('jid');
 let currentRecordId = null;
-const COLORS={ral9003:{hex:0xecece7},ral9006:{hex:0xa5a8a9},ral7004:{hex:0x9ea0a3},ral7024:{hex:0x474b4e},ral9005:{hex:0x0a0a0a}};const COLOR_NAMES={ral9003:'RAL 9003',ral9006:'RAL 9006',ral7004:'RAL 7004',ral7024:'RAL 7024',ral9005:'RAL 9005'};const WOOD_NAMES={denver:'Denver',wellington:'Wellington',tokyo:'Tokyo',toronto:'Toronto',vancouver:'Vancouver',rio:'Rio',stockholm:'Stockholm',sydney:'Sydney'};
-const WOOD_PROC={denver:{base:'#c9a166',dark:'#8a6b3a',opts:{grainDensity:170,warpAmp:3}},wellington:{base:'#9a8470',dark:'#5c4a38',opts:{grainDensity:170,warpAmp:3}},tokyo:{base:'#6a4530',dark:'#3a2418',opts:{grainDensity:170,warpAmp:3}},toronto:{base:'#5c4636',dark:'#241812',opts:{grainDensity:240,warpAmp:1.5,grainContrast:1.3,lightnessBands:40}},vancouver:{base:'#6a4a34',dark:'#2a1810',opts:{grainDensity:210,warpAmp:4.5,grainContrast:1.5,lightnessBands:55}},rio:{base:'#d4a05a',dark:'#8a5a20',opts:{grainDensity:140,warpAmp:2,grainContrast:0.8,lightnessBands:70}},stockholm:{base:'#9a7a56',dark:'#4a3020',opts:{grainDensity:180,warpAmp:2.5,grainContrast:1.1,lightnessBands:65}},sydney:{base:'#dbb070',dark:'#9a6830',opts:{grainDensity:120,warpAmp:3.5,grainContrast:1.4,lightnessBands:80}}};
-let params={railW:50,railH:50,gap:40,color:'denver',caps:false,angle:false,hangers:false,hangerHeight:0,stringerPaint:false};let woodTextures={},woodSwatches={};let currentLayout=null,currentView='2d',threeInitialized=false;let roomPolygon=null;let threeRenderer,threeScene,threeCamera,threeControls;let threeRoomGroup,threeGridPivot,threeTilesGroup,threeHangersGroup,threeCeilingMesh;let project=[],activeRoomIndex=null,specMode='current';let mergedCutsSet={};let mergedResult=null;
+
+const COLORS={ral9003:{hex:0xecece7},ral9006:{hex:0xa5a8a9},ral7004:{hex:0x9ea0a3},ral7024:{hex:0x474b4e},ral9005:{hex:0x0a0a0a}};
+const COLOR_NAMES={ral9003:'RAL 9003',ral9006:'RAL 9006',ral7004:'RAL 7004',ral7024:'RAL 7024',ral9005:'RAL 9005'};
+const WOOD_NAMES={denver:'Denver',wellington:'Wellington',tokyo:'Tokyo',toronto:'Toronto',vancouver:'Vancouver',rio:'Rio',stockholm:'Stockholm',sydney:'Sydney'};
+const WOOD_PROC={
+  denver:{base:'#c9a166',dark:'#8a6b3a',opts:{grainDensity:170,warpAmp:3}},
+  wellington:{base:'#9a8470',dark:'#5c4a38',opts:{grainDensity:170,warpAmp:3}},
+  tokyo:{base:'#6a4530',dark:'#3a2418',opts:{grainDensity:170,warpAmp:3}},
+  toronto:{base:'#5c4636',dark:'#241812',opts:{grainDensity:240,warpAmp:1.5,grainContrast:1.3,lightnessBands:40}},
+  vancouver:{base:'#6a4a34',dark:'#2a1810',opts:{grainDensity:210,warpAmp:4.5,grainContrast:1.5,lightnessBands:55}},
+  rio:{base:'#d4a05a',dark:'#8a5a20',opts:{grainDensity:140,warpAmp:2,grainContrast:0.8,lightnessBands:70}},
+  stockholm:{base:'#9a7a56',dark:'#4a3020',opts:{grainDensity:180,warpAmp:2.5,grainContrast:1.1,lightnessBands:65}},
+  sydney:{base:'#dbb070',dark:'#9a6830',opts:{grainDensity:120,warpAmp:3.5,grainContrast:1.4,lightnessBands:80}}
+};
+
+let params={railW:50,railH:50,gap:40,color:'denver',caps:false,angle:false,hangers:false,hangerHeight:0,stringerPaint:false};
+let woodTextures={},woodSwatches={};
+let currentLayout=null,currentView='2d',threeInitialized=false;
+let roomPolygon=null;
+let threeRenderer,threeScene,threeCamera,threeControls;
+let threeRoomGroup,threeGridPivot,threeTilesGroup,threeHangersGroup,threeCeilingMesh;
+let project=[],activeRoomIndex=null,specMode='current';
+let mergedCutsSet={};
+let mergedResult=null;
 let calcRaf=null;
+
 function scheduleCalculate(){if(calcRaf)return;calcRaf=requestAnimationFrame(()=>{calcRaf=null;calculate();});}
 function b64enc(s){return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function b64dec(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)));}
@@ -184,102 +227,103 @@ function mergeCollinearSegments(segs){if(!segs||segs.length<=1)return segs||[];l
 function computeWallAlignedPositions(total,edgeDist,maxStep){if(total<=0)return[];if(total<=2*edgeDist)return[total/3,2*total/3];const span=total-2*edgeDist;const nGaps=Math.max(1,Math.ceil(span/maxStep));const step=span/nGaps;const positions=[];for(let i=0;i<=nGaps;i++)positions.push(edgeDist+i*step);return positions;}
 function computeRailSegments(L){L=Math.ceil(L/50)*50;if(L<=0)return{pieces:[],joints:0};if(L<=4000)return{pieces:[L],joints:0};if(L%4000===0){const n=L/4000;return{pieces:new Array(n).fill(4000),joints:n-1};}if(L%3000===0){const n=L/3000;return{pieces:new Array(n).fill(3000),joints:n-1};}let best=null;for(let a=Math.floor(L/4000);a>=0;a--){const rem=L-a*4000;if(rem<=0)continue;if(rem%3000===0){const b=rem/3000;const t=a+b;if(best===null||t<best.total)best={a,b,total:t};}}if(best!==null){if(best.total===2&&best.a!==best.b){const half=Math.ceil(L/2/50)*50;return{pieces:[half,half],joints:1};}const pieces=[];for(let i=0;i<best.a;i++)pieces.push(4000);for(let i=0;i<best.b;i++)pieces.push(3000);return{pieces,joints:pieces.length-1};}const n4=Math.floor(L/4000),r4=L-n4*4000,n3=Math.floor(L/3000),r3=L-n3*3000;const ratio4=r4/4000,ratio3=r3/3000;let pieces;if(ratio4>=ratio3){pieces=new Array(n4).fill(4000);if(r4>0)pieces.push(r4);}else{pieces=new Array(n3).fill(3000);if(r3>0)pieces.push(r3);}if(pieces.length===2&&pieces[0]!==pieces[1]){const half=Math.ceil(L/2/50)*50;return{pieces:[half,half],joints:1};}return{pieces,joints:pieces.length-1};}
 function computeStringerSegments(W,pitch){W=Math.ceil(W/50)*50;if(W<=0)return{pieces:[],starts:[],overlap:0};if(W<=CARRIER_STOCK)return{pieces:[W],starts:[0],overlap:0};let overlap=Math.ceil((2*pitch)/10)*10;if(overlap<50)overlap=50;const maxOv=CARRIER_STOCK*0.8;if(overlap>maxOv)overlap=maxOv;const step=CARRIER_STOCK-overlap;if(step<200)return{pieces:[W],starts:[0],overlap:0};const pieces=[],starts=[];let start=0;while(true){const remain=W-start;if(remain<=CARRIER_STOCK+0.5){let lastLen=Math.max(50,Math.ceil(remain/50)*50);pieces.push(lastLen);starts.push(start);break;}pieces.push(CARRIER_STOCK);starts.push(start);start+=step;}if(pieces.length>=2){const lastLen=pieces[pieces.length-1];if(lastLen<pitch){const deficit=pitch-lastLen;pieces[pieces.length-2]-=deficit;pieces[pieces.length-1]=pitch;}}return{pieces,starts,overlap};}
+
 function makeWoodCanvas(base,dark,opts){opts=opts||{};const W=256,H=256;const c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');const gd=opts.grainDensity||170,gc=opts.grainContrast||1,wa=opts.warpAmp||3,lb=opts.lightnessBands||70;const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,base);g.addColorStop(1,dark);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);for(let i=0;i<gd;i++){const x=Math.random()*W;ctx.strokeStyle='rgba(0,0,0,'+((0.04+Math.random()*0.09)*gc)+')';ctx.lineWidth=0.4+Math.random()*1.3;ctx.beginPath();let y=0,xx=x;ctx.moveTo(xx,y);while(y<H){y+=6+Math.random()*10;xx+=(Math.random()-0.5)*wa;ctx.lineTo(xx,y);}ctx.stroke();}for(let j=0;j<lb;j++){const x2=Math.random()*W;ctx.strokeStyle='rgba(255,255,255,'+((0.02+Math.random()*0.05)*gc)+')';ctx.lineWidth=0.3+Math.random()*1.1;ctx.beginPath();let y2=0,xx2=x2;ctx.moveTo(xx2,y2);while(y2<H){y2+=8+Math.random()*12;xx2+=(Math.random()-0.5)*(wa*0.66);ctx.lineTo(xx2,y2);}ctx.stroke();}return c;}
 function makeWoodTexture(base,dark,opts){const c=makeWoodCanvas(base,dark,opts);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.MirroredRepeatWrapping;t.anisotropy=4;return t;}
 function buildWoodCache(){for(const name in WOOD_PROC){const p=WOOD_PROC[name];if(!woodSwatches[name])woodSwatches[name]=makeWoodCanvas(p.base,p.dark,p.opts).toDataURL('image/png');}}
 function getColorData(key){if(WOOD_PROC[key])return{hex:parseInt(WOOD_PROC[key].base.replace('#',''),16),swatch:woodSwatches[key]||null};if(COLORS[key])return{hex:COLORS[key].hex,swatch:null};return{hex:0xecece7,swatch:null};}
 function getColorLabel(key){if(WOOD_NAMES[key])return WOOD_NAMES[key];if(COLOR_NAMES[key])return COLOR_NAMES[key];return'Denver';}
+
 function tryMergeCuts(cutsWithQty,allowedRefs){const pieces=[];for(const{size,qty}of cutsWithQty)for(let i=0;i<qty;i++)pieces.push(size);if(!pieces.length)return null;const maxPiece=Math.max(...pieces);if(maxPiece>MAX_RAIL_LEN)return{ok:false,reason:'piece_too_long',maxPiece};const totalLen=pieces.reduce((s,x)=>s+x,0);let best=null;for(const ref of allowedRefs){const N=ref.size;if(N<=0||N>MAX_RAIL_LEN)continue;if(N<maxPiece)continue;const sorted=pieces.slice().sort((a,b)=>b-a);const bins=[];for(const p of sorted){let placed=false;for(const bin of bins){if(bin.used+p<=N){bin.items.push(p);bin.used+=p;placed=true;break;}}if(!placed)bins.push({items:[p],used:p});}const extraQty=bins.length;const totalStockLen=extraQty*N;const waste=totalStockLen-totalLen;const wastePct=totalStockLen>0?(waste/totalStockLen)*100:0;const candidate={ok:true,target:N,existingQty:ref.existingQty,extraQty:extraQty,totalQty:ref.existingQty+extraQty,waste:waste,wastePct:wastePct,refSize:N,source:ref.source,cuttingScheme:bins.map(b=>({items:b.items.slice(),used:b.used,waste:N-b.used})),priority:(ref.source==='cut')?0:(N===3000?1:2)};if(!best||candidate.waste<best.waste-0.01||(Math.abs(candidate.waste-best.waste)<0.01&&candidate.extraQty<best.extraQty)||(Math.abs(candidate.waste-best.waste)<0.01&&candidate.extraQty===best.extraQty&&candidate.priority<best.priority))best=candidate;}if(!best)return{ok:false,reason:'no_suitable_ref'};return best;}
 function collectAllowedRefs(cutsMap,markedSet,n4000,n3000){const refs=[];const cutSizes=Object.keys(cutsMap).map(Number).sort((a,b)=>b-a);for(const sz of cutSizes)if(!markedSet[String(sz)])refs.push({size:sz,existingQty:cutsMap[sz]||0,source:'cut'});refs.push({size:3000,existingQty:n3000,source:'std'});refs.push({size:4000,existingQty:n4000,source:'std'});return refs;}
 
 function showToast(msg,color){
-  const t=$('ac-toast');if(!t)return;
-  t.textContent=msg;t.style.background=color||'#2e7d32';
-  t.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t=setTimeout(()=>t.classList.remove('show'),2500);
+  const t=$('ac-toast');if(!t)return;
+  t.textContent=msg;t.style.background=color||'#2e7d32';
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t=setTimeout(()=>t.classList.remove('show'),2500);
 }
 
 function updateWorkLabel(){
-  const wrap=$('ac-work-label'),txt=$('ac-work-text'),hint=$('ac-work-hint');
-  if(!wrap||!txt)return;
-  if(activeRoomIndex!==null&&project[activeRoomIndex]){
-    wrap.classList.add('project');
-    txt.textContent='Работаю: '+project[activeRoomIndex].name+' (из проекта)';
-    if(hint)hint.textContent='изменения сохраняются автоматически';
-  }else if(currentLayout){
-    wrap.classList.remove('project');
-    txt.textContent='Работаю: Новое помещение (не сохранено)';
-    if(hint)hint.textContent='нажмите «+ Новое помещение» чтобы сохранить';
-  }else{
-    wrap.classList.remove('project');
-    txt.textContent='Новое помещение';
-    if(hint)hint.textContent='настройте параметры и нажмите «+ Новое помещение»';
-  }
+  const wrap=$('ac-work-label'),txt=$('ac-work-text'),hint=$('ac-work-hint');
+  if(!wrap||!txt)return;
+  if(activeRoomIndex!==null&&project[activeRoomIndex]){
+    wrap.classList.add('project');
+    txt.textContent='Работаю: '+project[activeRoomIndex].name+' (из проекта)';
+    if(hint)hint.textContent='изменения сохраняются автоматически';
+  }else if(currentLayout){
+    wrap.classList.remove('project');
+    txt.textContent='Работаю: Новое помещение (не сохранено)';
+    if(hint)hint.textContent='нажмите «+ Новое помещение» чтобы сохранить';
+  }else{
+    wrap.classList.remove('project');
+    txt.textContent='Новое помещение';
+    if(hint)hint.textContent='настройте параметры и нажмите «+ Новое помещение»';
+  }
 }
 
 function updateButtonsVisibility(){
-  if(updateBtn)updateBtn.style.display=currentLayout?'':'none';
+  if(updateBtn)updateBtn.style.display=currentLayout?'':'none';
 }
 
 function resetForNewRoom(){
-  lengthInput.value=1000;
-  widthInput.value=1000;
-  railWInput.value=50;
-  railHInput.value=50;
-  gapInput.value=40;
-  rotationInput.value=0;
-  updateSliderLabels();updateAdjustLabels();
-  setActiveColor('denver');
-  capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;
-  hangerHInput.value=0;syncHangerUI();
-  stringerPaintChk.checked=false;
-  roomPolygon=null;
-  mergedCutsSet={};mergedResult=null;
-  activeRoomIndex=null;
-  calculate();
-  renderProjectList();
-  updateButtonsVisibility();
-  updateWorkLabel();
+  lengthInput.value=1000;
+  widthInput.value=1000;
+  railWInput.value=50;
+  railHInput.value=50;
+  gapInput.value=40;
+  rotationInput.value=0;
+  updateSliderLabels();updateAdjustLabels();
+  setActiveColor('denver');
+  capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;
+  hangerHInput.value=0;syncHangerUI();
+  stringerPaintChk.checked=false;
+  roomPolygon=null;
+  mergedCutsSet={};mergedResult=null;
+  activeRoomIndex=null;
+  calculate();
+  renderProjectList();
+  updateButtonsVisibility();
+  updateWorkLabel();
 }
 
 function saveRoomSilent(){
-  if(!currentLayout)return null;
-  const snap=snapshotRoom();
-  if(activeRoomIndex===null){
-    snap.name='Помещение '+(project.length+1);
-    project.push(snap);
-    activeRoomIndex=project.length-1;
-    return {status:'added',name:snap.name};
-  }else{
-    snap.name=project[activeRoomIndex].name;
-    project[activeRoomIndex]=snap;
-    return {status:'saved',name:snap.name};
-  }
+  if(!currentLayout)return null;
+  const snap=snapshotRoom();
+  if(activeRoomIndex===null){
+    snap.name='Помещение '+(project.length+1);
+    project.push(snap);
+    activeRoomIndex=project.length-1;
+    return {status:'added',name:snap.name};
+  }else{
+    snap.name=project[activeRoomIndex].name;
+    project[activeRoomIndex]=snap;
+    return {status:'saved',name:snap.name};
+  }
 }
 
 function newRoomAction(){
-  if(!currentLayout){alert('Сначала расчёт.');return;}
-  const result=saveRoomSilent();
-  if(!result){alert('Не удалось сохранить.');return;}
-  const savedName=result.name;
-  resetForNewRoom();
-  showToast('✓ '+savedName+' добавлено в проект');
+  if(!currentLayout){alert('Сначала расчёт.');return;}
+  const result=saveRoomSilent();
+  if(!result){alert('Не удалось сохранить.');return;}
+  const savedName=result.name;
+  resetForNewRoom();
+  showToast('✓ '+savedName+' добавлено в проект');
 }
 
 function saveRoomExplicit(){
-  if(!currentLayout){alert('Сначала расчёт.');return;}
-  const result=saveRoomSilent();
-  if(!result){alert('Не удалось сохранить.');return;}
-  renderProjectList();renderSpec();
-  updateButtonsVisibility();updateWorkLabel();
-  if(result.status==='added')showToast('✓ '+result.name+' добавлено в проект');
-  else showToast('✓ '+result.name+' сохранено');
+  if(!currentLayout){alert('Сначала расчёт.');return;}
+  const result=saveRoomSilent();
+  if(!result){alert('Не удалось сохранить.');return;}
+  renderProjectList();renderSpec();
+  updateButtonsVisibility();updateWorkLabel();
+  if(result.status==='added')showToast('✓ '+result.name+' добавлено в проект');
+  else showToast('✓ '+result.name+' сохранено');
 }
 
-/* Подвесы: если галочка снята — вообще ничего не выводим */
 function hangerSpecRows(totalHangers,enabled,heightM){if(!enabled)return[];const h=heightM;const rows=[];const push=(label,qty)=>rows.push({label,value:qty+' шт.',num:qty,kind:'count',color:'#3a4048',unit:'шт.'});if(h<0.50){push('Европодвес 500 мм',totalHangers);}else if(h<0.70){push('Тяга-крюк 250 мм d 4,0',totalHangers);push('Тяга-петля 350 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.00){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 500 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.30){push('Тяга-крюк 350 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.50){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<2.00){push('Тяга-крюк 1000 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<2.50){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers*2);push('Пружина европодвеса d 4,0',totalHangers*2);}else{push('Тяга-крюк 1000 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers*2);push('Пружина европодвеса d 4,0',totalHangers*2);}return rows;}
-
+  
 function calculate(){try{
 let L_in=parseFloat(lengthInput.value);let W_in=parseFloat(widthInput.value);
 if(isNaN(L_in)||isNaN(W_in)||L_in<=0||W_in<=0){resultsDiv.innerHTML='<p style="color:#d32f2f">Введите корректные размеры.</p>';layout2dDiv.innerHTML='';return;}
@@ -341,7 +385,7 @@ if(params.hangers)warnings.push('🔧 Подвесы: высота опуска�
 currentLayout={L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
 renderSpec();drawLayout2D();if(threeInitialized)update3D();
 /* автосохранение активного помещения в проект */
-if(activeRoomIndex!==null&&project[activeRoomIndex]){const __snap=snapshotRoom();__snap.name=project[activeRoomIndex].name;project[activeRoomIndex]=__snap;renderProjectList();}
+if(activeRoomIndex!==null&&project[activeRoomIndex]&&currentLayout){const __snap=snapshotRoom();__snap.name=project[activeRoomIndex].name;project[activeRoomIndex]=__snap;renderProjectList();}
 updateWorkLabel();
 updateButtonsVisibility();
 }catch(err){console.error('calculate() error:',err);resultsDiv.innerHTML='<p style="color:#d32f2f;font-size:12px">Ошибка: '+err.message+'</p>';}}
@@ -377,65 +421,16 @@ function removeFromProject(index){project.splice(index,1);project.forEach((p,i)=
 function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
 function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
 function renderProjectList(){projectCountEl.textContent=project.length;if(!project.length){projectListEl.innerHTML='<div class="ac-pje">Пока пусто.</div>';return;}projectListEl.innerHTML=project.map((p,i)=>{const active=(i===activeRoomIndex)?' active':'';let mark='';if(p.polygon)mark+=' ✏️';return '<li class="ac-pji'+active+'" data-idx="'+i+'"><span class="ac-pjn">'+p.name+mark+'</span><span class="ac-pjd">'+p.L_in+' × '+p.W_in+' мм</span><button type="button" class="ac-pjx" data-idx="'+i+'">✕</button></li>';}).join('');projectListEl.querySelectorAll('.ac-pji').forEach(li=>{li.addEventListener('click',e=>{if(e.target.closest('.ac-pjx'))return;activateRoom(parseInt(li.dataset.idx,10));});});projectListEl.querySelectorAll('.ac-pjx').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();removeFromProject(parseInt(e.currentTarget.dataset.idx,10));});});}
-
-/* Журнал */
-const JOURNAL_KEY='cubica_rail_journal_v1';const journalOpenBtn=$('ac-journal-open'),journalCountEl=$('ac-journal-count');const saveToJournalBtn = null;const journalModal=$('ac-journal-modal'),journalListEl=$('ac-journal-list');const journalCloseBtn=$('ac-journal-close');const journalExportBtn=$('ac-journal-export'),journalImportBtn=$('ac-journal-import'),journalImportFile=$('ac-journal-import-file');
-function loadJournal(){try{return JSON.parse(localStorage.getItem(JOURNAL_KEY))||[];}catch(e){return[];}}
-function saveJournal(j){try{localStorage.setItem(JOURNAL_KEY,JSON.stringify(j));}catch(e){}}
-function updateJournalCount(){if(journalCountEl)journalCountEl.textContent=loadJournal().length;}
-function deepCopyProject(){return project.map(r=>({...r,specRows:r.specRows.map(sr=>({...sr})),polygon:r.polygon?r.polygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...r.mergedCutsSet},mergedResult:r.mergedResult?{...r.mergedResult}:null}));}
-function saveCurrentToJournal(){if(!project.length){alert('Проект пуст.');return;}const journal=loadJournal();const maxNum=journal.reduce((m,j)=>Math.max(m,j.number||0),0);const numStr=prompt('Номер проекта:',String(maxNum+1));if(numStr===null)return;const num=parseInt(numStr,10);if(!Number.isFinite(num)||num<1){alert('Номер должен быть положительным.');return;}const existing=journal.find(j=>j.number===num);const defName=existing?existing.name:('Проект №'+num);let name=prompt('Название:',defName);if(name===null)return;name=(name||'').trim()||('Проект №'+num);if(existing){if(!confirm('Проект №'+num+' существует. Перезаписать?'))return;}const record={id:existing?existing.id:('j_'+Date.now()+'_'+Math.floor(Math.random()*10000)),number:num,name,date:new Date().toISOString(),project:deepCopyProject()};const idx=journal.findIndex(j=>j.number===num);if(idx>=0)journal[idx]=record;else journal.push(record);saveJournal(journal);updateJournalCount();alert('✓ Сохранено: №'+num);}
-function loadFromJournal(jid){const journal=loadJournal();const rec=journal.find(j=>j.id===jid);if(!rec){alert('Не найдено.');return;}if(project.length){if(!confirm('Текущий проект будет заменён.'))return;}project=rec.project.map(r=>({...r,specRows:r.specRows.map(sr=>({...sr})),polygon:r.polygon?r.polygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:r.mergedCutsSet?{...r.mergedCutsSet}:{},mergedResult:r.mergedResult?{...r.mergedResult}:null}));if(project.length){activeRoomIndex=0;activateRoom(0);}else{activeRoomIndex=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}closeJournalModal();}
-function deleteJournal(jid){const journal=loadJournal();const rec=journal.find(j=>j.id===jid);if(!rec)return;if(!confirm('Удалить №'+rec.number+'?'))return;const idx=journal.findIndex(j=>j.id===jid);journal.splice(idx,1);saveJournal(journal);renderJournalList();updateJournalCount();}
-function renderJournalList(){const journal=loadJournal();updateJournalCount();if(!journal.length){journalListEl.innerHTML='<div class="ac-pje">Журнал пуст.</div>';return;}const sorted=journal.slice().sort((a,b)=>(b.number||0)-(a.number||0));journalListEl.innerHTML=sorted.map(j=>{let totalArea=0;for(const r of j.project){const a=r.specRows.find(s=>s.kind==='area');if(a&&typeof a.num==='number')totalArea+=a.num;}const d=new Date(j.date);const ds=d.toLocaleDateString('ru-RU')+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});return '<div class="ac-journal-item" data-id="'+j.id+'"><div class="ac-journal-num">№'+j.number+'</div><div class="ac-journal-info"><div class="ac-journal-name">'+escapeHtml(j.name)+'</div><div class="ac-journal-meta">'+j.project.length+' помещ. · '+totalArea.toFixed(2)+' м² · '+ds+'</div></div><div class="ac-journal-actions"><button type="button" class="j-load" data-id="'+j.id+'">📂</button><button type="button" class="j-del" data-id="'+j.id+'">✕</button></div></div>';}).join('');journalListEl.querySelectorAll('.ac-journal-item').forEach(it=>{it.addEventListener('click',e=>{if(e.target.closest('button'))return;loadFromJournal(it.dataset.id);});});journalListEl.querySelectorAll('.j-load').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();loadFromJournal(b.dataset.id);}));journalListEl.querySelectorAll('.j-del').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();deleteJournal(b.dataset.id);}));}
-function openJournalModal(){journalModal.classList.add('open');renderJournalList();}
-function closeJournalModal(){journalModal.classList.remove('open');}
-if(journalOpenBtn) journalOpenBtn.addEventListener('click',openJournalModal);
-if(journalCloseBtn) journalCloseBtn.addEventListener('click',closeJournalModal);journalModal.addEventListener('click',e=>{if(e.target===journalModal)closeJournalModal();});
-journalExportBtn.addEventListener('click',()=>{const journal=loadJournal();if(!journal.length){alert('Журнал пуст.');return;}const blob=new Blob([JSON.stringify({version:1,exported:new Date().toISOString(),journal},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='cubica_rail_journal_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);});
-journalImportBtn.addEventListener('click',()=>journalImportFile.click());
-journalImportFile.addEventListener('change',()=>{const f=journalImportFile.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);const incoming=Array.isArray(data)?data:(data&&data.journal);if(!Array.isArray(incoming)){alert('Неверный формат.');return;}const journal=loadJournal();let added=0,updated=0;for(const rec of incoming){if(!rec||typeof rec.number!=='number'||!Array.isArray(rec.project))continue;const idx=journal.findIndex(j=>j.number===rec.number);if(idx>=0){journal[idx]=rec;updated++;}else{journal.push(rec);added++;}}saveJournal(journal);renderJournalList();updateJournalCount();alert('Добавлено '+added+', обновлено '+updated+'.');}catch(e){alert('Ошибка: '+e.message);}journalImportFile.value='';};reader.readAsText(f);});
-
-/* PDF */
-const LOGO_SVG='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="440" height="440"><defs><clipPath id="cc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><rect width="220" height="220" fill="#ffffff"/><g clip-path="url(#cc)"><g stroke="'+CUBICA_RED+'" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg>';
-function svgStringToPngDataURL(svgString,w,h,keepTransparent){return new Promise((resolve,reject)=>{const blob=new Blob([svgString],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');if(!keepTransparent){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}ctx.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);resolve(c.toDataURL('image/png'));};img.onerror=e=>{URL.revokeObjectURL(url);reject(e);};img.src=url;});}
-function addPdfLogo(doc,logoPng){if(logoPng)try{doc.addImage(logoPng,'PNG',15,8,14,14);}catch(e){}}
-function addPdfHeader(doc,title){doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(20,20,20);doc.text('CUBICA',15,20);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120,120,120);doc.text('cubic rail ceilings',15,25);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(80,80,80);if(title)doc.text(title,195,20,{align:'right'});doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(15,30,195,30);}
-function addPdfWatermark(doc){try{doc.setGState(new doc.GState({opacity:0.07}));doc.setFont('helvetica','bold');doc.setFontSize(70);doc.setTextColor(CUBICA_RED_RGB[0],CUBICA_RED_RGB[1],CUBICA_RED_RGB[2]);doc.text('CUBICA.BY',105,148,{align:'center',angle:45});doc.setGState(new doc.GState({opacity:1}));}catch(e){}}
-function drawSpecTable(doc,specRows,M,PW,startY){let ty=startY;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Спецификация',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(40,40,40);for(const row of specRows){if(row.kind==='area'){doc.setFont('helvetica','italic');doc.setTextColor(80,80,80);doc.text(row.label+': '+row.value,M,ty);ty+=5;doc.setFont('helvetica','normal');doc.setTextColor(40,40,40);continue;}if(ty>250){doc.addPage();ty=30;}const label=doc.splitTextToSize('• '+row.label,PW-2*M-25)[0];doc.text(label,M,ty);doc.text(row.value,PW-M,ty,{align:'right'});ty+=4.8;}return ty;}
-function drawCuttingSection(doc,cuts,M,PW,startY){if(!cuts.length)return startY;let ty=startY;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Схема нарезки реек',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(40,40,40);for(const c of cuts){if(ty>260){doc.addPage();ty=30;}const line=c.items.join(' + ')+(c.waste>0?' (отход '+c.waste+' мм)':' ');const wrapped=doc.splitTextToSize('#'+(c.n)+': '+line,PW-2*M);for(const w of wrapped){doc.text(w,M,ty);ty+=3.6;}ty+=0.8;}return ty;}
-function collectProjectCuts(){const allSchemes=[];for(const room of project){if(room.mergeInfo&&room.mergeInfo.cuttingScheme&&room.mergeInfo.refSize){for(const s of room.mergeInfo.cuttingScheme)allSchemes.push({refSize:room.mergeInfo.refSize,items:s.items.slice(),used:s.used,waste:s.waste});}}const byRef={};for(const s of allSchemes){if(!byRef[s.refSize])byRef[s.refSize]=[];byRef[s.refSize].push(s);}const out=[];for(const refSize of Object.keys(byRef)){const arr=byRef[refSize];let n=0;for(const s of arr){n++;out.push({n,refSize:parseInt(refSize,10),items:s.items,waste:s.waste});}}return out;}
-async function generateRoomPdf(view){if(!currentLayout){alert('Сначала расчёт.');return;}if(!window.jspdf||!window.jspdf.jsPDF){alert('jsPDF не загружен.');return;}if(view==='3d'&&!ensure3D())return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const PW=210,PH=297,M=15;let logoPng=null;try{logoPng=await svgStringToPngDataURL(LOGO_SVG,220,220,false);}catch(e){}addPdfLogo(doc,logoPng);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA',M+18,20);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('cubic rail ceilings',M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let imgData=null;try{if(view==='2d'){const svg=document.querySelector('#ac-layout svg');if(svg){const clone=svg.cloneNode(true);clone.setAttribute('width','1280');clone.setAttribute('height','880');imgData=await svgStringToPngDataURL(new XMLSerializer().serializeToString(clone),1280,880,false);}}else{threeRenderer.render(threeScene,threeCamera);imgData=threeRenderer.domElement.toDataURL('image/png');}}catch(e){console.error(e);}const modelTopY=42,modelW=PW-2*M,modelH=modelW*0.55;if(imgData){doc.setDrawColor(220,220,220);doc.setLineWidth(0.3);doc.rect(M,modelTopY,modelW,modelH);doc.addImage(imgData,'PNG',M+1,modelTopY+1,modelW-2,modelH-2);}let ty=modelTopY+modelH+8;ty=drawSpecTable(doc,currentLayout.specRows,M,PW,ty);ty+=4;const cuts=[];if(currentLayout.mergeInfo&&currentLayout.mergeInfo.cuttingScheme){let n=0;for(const s of currentLayout.mergeInfo.cuttingScheme){n++;cuts.push({n,refSize:currentLayout.mergeInfo.refSize,items:s.items,waste:s.waste});}}drawCuttingSection(doc,cuts,M,PW,ty);doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('L '+currentLayout.L_in+' × W '+currentLayout.W_in+' мм — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_'+view.toUpperCase()+'_'+currentLayout.L_in+'x'+currentLayout.W_in+'.pdf');}
-async function generateProjectPdf(view){if(!project.length){alert('Проект пуст.');return;}if(!window.jspdf||!window.jspdf.jsPDF){alert('jsPDF не загружен.');return;}if(view==='3d'&&!ensure3D())return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const PW=210,PH=297,M=15;let logoPng=null;try{logoPng=await svgStringToPngDataURL(LOGO_SVG,220,220,false);}catch(e){}addPdfLogo(doc,logoPng);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA — Проект',M+18,20);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('Всего помещений: '+project.length,M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let ty=42;ty=drawSpecTable(doc,computeTotals(),M,PW,ty);ty+=4;ty=drawCuttingSection(doc,collectProjectCuts(),M,PW,ty);ty+=4;if(ty>240){doc.addPage();ty=30;}doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Помещения проекта',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(40,40,40);project.forEach((r,i)=>{if(ty>260){doc.addPage();ty=30;}doc.text((i+1)+'. '+r.name+' — '+r.L_in+' × '+r.W_in+' мм, рейка '+r.railW+'/'+r.railH+' '+getColorLabel(r.color||'denver'),M,ty);ty+=5;});doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Итог по проекту — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_PROJECT_'+view.toUpperCase()+'.pdf');}
-async function generatePdf(view){if(specMode==='total')await generateProjectPdf(view);else await generateRoomPdf(view);}
-
-function updateSliderLabels(){railWVal.textContent=railWInput.value+' мм';railHVal.textContent=railHInput.value+' мм';gapVal.textContent=gapInput.value+' мм';}
-function updateAdjustLabels(){const rot=parseFloat(rotationInput.value)||0;rotationVal.textContent=rot===0?'0°':(rot>0?rot+'° ↻':Math.abs(rot)+'° ↺');}
-function syncHangerUI(){const on=!!hangersChk.checked;hangerHInput.disabled=!on;hangerSliderWrap.classList.toggle('disabled',!on);const v=parseFloat(hangerHInput.value)||0;hangerHVal.textContent=v.toFixed(2).replace('.',',')+' м';}
-function setActiveColor(key){document.querySelectorAll('#ac-color-grid .ac-swatch, #ac-wood-grid .ac-swatch').forEach(b=>b.classList.remove('active'));if(WOOD_PROC[key]){const b=document.querySelector('#ac-wood-grid .ac-swatch[data-wood="'+key+'"]');if(b)b.classList.add('active');}else{const b=document.querySelector('#ac-color-grid .ac-swatch[data-color="'+key+'"]');if(b)b.classList.add('active');}params.color=key;}
-railWInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});railHInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});gapInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});rotationInput.addEventListener('input',()=>{updateAdjustLabels();scheduleCalculate();});
-lengthInput.addEventListener('input',()=>{roomPolygon=null;mergedCutsSet={};mergedResult=null;calculate();});widthInput.addEventListener('input',()=>{roomPolygon=null;mergedCutsSet={};mergedResult=null;calculate();});
-capsChk.addEventListener('change',()=>calculate());angleChk.addEventListener('change',()=>calculate());
-hangersChk.addEventListener('change',()=>{syncHangerUI();calculate();});
-hangerHInput.addEventListener('input',()=>{syncHangerUI();scheduleCalculate();});
-stringerPaintChk.addEventListener('change',()=>calculate());
-resetBtn.addEventListener('click',()=>{railWInput.value=50;railHInput.value=50;gapInput.value=40;rotationInput.value=0;updateSliderLabels();updateAdjustLabels();setActiveColor('denver');capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;hangerHInput.value=0;stringerPaintChk.checked=false;syncHangerUI();mergedCutsSet={};mergedResult=null;calculate();});
-document.querySelectorAll('#ac-color-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.color);calculate();});});
-document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.wood);calculate();});});
-addBtn.addEventListener('click',newRoomAction);
-updateBtn.addEventListener('click',saveRoomExplicit);
-projectClearBtn.addEventListener('click',clearProject);
-specToggleEl.querySelectorAll('button').forEach(btn=>{btn.addEventListener('click',()=>{specMode=btn.dataset.specmode;specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b===btn));renderSpec();});});
-toggleBtns.forEach(btn=>{btn.addEventListener('click',()=>{const v=btn.dataset.view;if(v===currentView)return;currentView=v;toggleBtns.forEach(b=>b.classList.toggle('active',b===btn));if(v==='2d'){layout2dDiv.style.display='';layout3dDiv.style.display='none';}else{layout2dDiv.style.display='none';layout3dDiv.style.display='';requestAnimationFrame(()=>{if(!ensure3D()){currentView='2d';toggleBtns.forEach(b=>b.classList.toggle('active',b.dataset.view==='2d'));layout2dDiv.style.display='';layout3dDiv.style.display='none';return;}if(currentLayout)update3D();});}});});
-camResetBtn.addEventListener('click',()=>{if(!ensure3D())return;if(currentView!=='3d'){const b=document.querySelector('button[data-view="3d"]');if(b)b.click();return;}resetCamera();});
-save2dBtn.addEventListener('click',()=>generatePdf('2d'));save3dBtn.addEventListener('click',()=>{if(!ensure3D())return;if(currentLayout)update3D();generatePdf('3d');});
-showCeilingChk.addEventListener('change',()=>{if(threeCeilingMesh)threeCeilingMesh.visible=showCeilingChk.checked;});
-
-/* ============ КП → i5 (мультирумный payload) ============ */
+  
+/* ============================================================
+   КП → i5 — сборка реек одной строкой в м.п. с раскроем
+   ============================================================ */
 function openKpPage(){
 if(!currentLayout){alert('Сначала расчёт.');return;}
 
 let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice();
+
+/* Собираем рейки: объединяем все длины в одну строку с общим м.п. и раскроем pieces */
 const rows=[];
 var railPieces = {};
 var railLengthMp = 0;
@@ -443,83 +438,85 @@ var railBaseLabel = '';
 var otherRows = [];
 
 for(const r of totals){
-if(!r||r.kind==='area')continue;
-const qty=Number(r.num)||0;
-if(qty<=0)continue;
-var label = String(r.label||'');
-var m = label.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
-if(m){
-  var size = parseInt(m[2], 10);
-  railPieces[size] = (railPieces[size] || 0) + qty;
-  railLengthMp += qty * size / 1000;
-  if(!railBaseLabel) railBaseLabel = 'Рейка Cubica ' + m[1];
-} else {
-  otherRows.push({label: label, qty: qty, unit: r.unit || 'шт.'});
-}
+  if(!r||r.kind==='area')continue;
+  const qty=Number(r.num)||0;
+  if(qty<=0)continue;
+  var label = String(r.label||'');
+  var m = label.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
+  if(m){
+    var size = parseInt(m[2], 10);
+    railPieces[size] = (railPieces[size] || 0) + qty;
+    railLengthMp += qty * size / 1000;
+    if(!railBaseLabel) railBaseLabel = 'Рейка Cubica ' + m[1];
+  } else {
+    otherRows.push({label: label, qty: qty, unit: r.unit || 'шт.'});
+  }
 }
 
+/* Рейки — одна строка с общей длиной в м.п. */
 if(railBaseLabel){
-rows.push({
-  label: railBaseLabel,
-  qty: Math.round(railLengthMp * 100) / 100,
-  unit: 'м.п.',
-  pieces: railPieces
-});
+  rows.push({
+    label: railBaseLabel,
+    qty: Math.round(railLengthMp * 100) / 100,
+    unit: 'м.п.',
+    pieces: railPieces
+  });
 }
 otherRows.forEach(function(r){ rows.push(r); });
 
+/* srcRooms для payload */
 const srcRooms = project.length>0 ? project : [{
-  name:'Помещение 1',
-  L_in: currentLayout.L_in,
-  W_in: currentLayout.W_in,
-  railW: currentLayout.railW,
-  railH: currentLayout.railH,
-  gap: currentLayout.gap,
-  color: currentLayout.color,
-  colorLabel: currentLayout.colorLabel,
-  caps: currentLayout.caps,
-  angle: currentLayout.angle,
-  rotationDeg: currentLayout.rotationDeg,
-  polygon: currentLayout.polygon,
-  specRows: currentLayout.specRows,
-  areaM2: currentLayout.areaM2
+  name:'Помещение 1',
+  L_in: currentLayout.L_in,
+  W_in: currentLayout.W_in,
+  railW: currentLayout.railW,
+  railH: currentLayout.railH,
+  gap: currentLayout.gap,
+  color: currentLayout.color,
+  colorLabel: currentLayout.colorLabel,
+  caps: currentLayout.caps,
+  angle: currentLayout.angle,
+  rotationDeg: currentLayout.rotationDeg,
+  polygon: currentLayout.polygon,
+  specRows: currentLayout.specRows,
+  areaM2: currentLayout.areaM2
 }];
 const rooms = srcRooms.map((room, i) => {
-  const roomRows = (room.specRows||[])
-    .filter(r => r && r.kind!=='area')
-    .map(r => ({label:String(r.label||''), qty:Number(r.num)||0, unit:r.unit||'шт.'}))
-    .filter(r => r.qty > 0);
-  return {
-    name: room.name || ('Помещение '+(i+1)),
-    L_in: room.L_in,
-    W_in: room.W_in,
-    railW: room.railW,
-    railH: room.railH,
-    gap: room.gap,
-    color: room.color,
-    colorLabel: room.colorLabel || getColorLabel(room.color||'denver'),
-    caps: !!room.caps,
-    angle: !!room.angle,
-    rotation: room.rotationDeg || 0,
-    polygon: room.polygon || null,
-    areaM2: room.areaM2 || 0,
-    rows: roomRows
-  };
+  const roomRows = (room.specRows||[])
+    .filter(r => r && r.kind!=='area')
+    .map(r => ({label:String(r.label||''), qty:Number(r.num)||0, unit:r.unit||'шт.'}))
+    .filter(r => r.qty > 0);
+  return {
+    name: room.name || ('Помещение '+(i+1)),
+    L_in: room.L_in,
+    W_in: room.W_in,
+    railW: room.railW,
+    railH: room.railH,
+    gap: room.gap,
+    color: room.color,
+    colorLabel: room.colorLabel || getColorLabel(room.color||'denver'),
+    caps: !!room.caps,
+    angle: !!room.angle,
+    rotation: room.rotationDeg || 0,
+    polygon: room.polygon || null,
+    areaM2: room.areaM2 || 0,
+    rows: roomRows
+  };
 });
 
 const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
-/* Если открыто из журнала (есть ?jid=) — сохраняем rooms/meta в запись,
+
+/* Если открыто из журнала (есть ?jid=) — сохраняем rooms/meta/rows в запись,
    затем открываем i5 по той же записи. Иначе — как раньше, через data=. */
 if(JID && window.CubicaJournal){
   const rec = window.CubicaJournal.get(JID);
   if(rec){
     rec.rooms = rooms;
     rec.meta = payload.meta;
-    
-    /* Умное слияние позиций: обновляем количество существующих,
-       добавляем новые, сохраняем ручные из i5. */
+    /* Умное слияние: обновляем qtyCalc у существующих позиций по label,
+       новые добавляем, ручные (из i5) сохраняем. */
     var newRows = rows.map(function(r){
-      return {label: r.label, qty: r.qty, unit: r.unit || 'шт.'};
+      return {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
     });
     var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
     var mergedRows = [];
@@ -529,34 +526,33 @@ if(JID && window.CubicaJournal){
       usedLabels[label] = true;
       var match = newRows.find(function(nr){ return nr.label === label; });
       if(match){
-        mergedRows.push({
+        var row = {
           label: oldR.label,
           qtyCalc: match.qty,
           qtyReserve: oldR.qtyReserve || 0,
-          unit: match.unit || oldR.unit,
+          unit: oldR.unit || match.unit,
           price: oldR.price || 0
-        });
+        };
+        if(match.pieces) row.pieces = match.pieces;
+        mergedRows.push(row);
       } else {
         mergedRows.push(oldR);
       }
     });
     newRows.forEach(function(nr){
       if(!usedLabels[nr.label]){
-        mergedRows.push({
+        var row = {
           label: nr.label,
           qtyCalc: nr.qty,
           qtyReserve: 0,
           unit: nr.unit,
           price: 0
-        });
+        };
+        if(nr.pieces) row.pieces = nr.pieces;
+        mergedRows.push(row);
       }
     });
     rec.rows = mergedRows;
-    /* Прикрепляем раскрой к строкам реек */
-mergedRows.forEach(function(r){
-  var pieces = rows.find(function(nr){ return nr.label === r.label; });
-  if(pieces && pieces.pieces) r.pieces = pieces.pieces;
-});
     rec.history = rec.history || [];
     rec.history.push({
       at: window.CubicaJournal.nowISO(),
@@ -575,14 +571,24 @@ mergedRows.forEach(function(r){
 const data=b64enc(JSON.stringify(payload));
 const url=KP_URL+(KP_URL.includes('?')?'&':'?')+'data='+data;
 window.open(url,'_blank');
-/* Закрываем калькулятор после открытия i5 */
 setTimeout(function(){ window.close(); }, 200);
 }
 $('ac-kp-open').addEventListener('click',openKpPage);
 
-/* Draw */
-const drawModal=$('ac-draw-modal'),drawCanvas=$('ac-draw-canvas'),drawCtx=drawCanvas.getContext('2d');const drawUndoBtn=$('ac-draw-undo'),drawCloseContourBtn=$('ac-draw-close-contour'),drawClearBtn=$('ac-draw-clear');const drawCancelBtn=$('ac-draw-cancel'),drawApplyBtn=$('ac-draw-apply');const drawLengthInput=$('ac-draw-length-input'),drawModeEl=$('ac-draw-mode');const segListEl=$('ac-seg-list'),modalWarnEl=$('ac-modal-warn');
-let drawStart=null,drawSegments=[],drawClosed=false,autoAddedCount=0,cursorMm=null;let vOX=0,vOY=0,vS=0.08,targetOX=0,targetOY=0,targetS=0.08,animRAF=null;let edgeStretch=null,stretchRAF=null;const EDGE_ZONE=60,MAX_SEG_LEN=15000;const WALL_TOL=1;
+/* ============================================================
+   Черчение помещения
+   ============================================================ */
+const drawModal=$('ac-draw-modal'),drawCanvas=$('ac-draw-canvas'),drawCtx=drawCanvas.getContext('2d');
+const drawUndoBtn=$('ac-draw-undo'),drawCloseContourBtn=$('ac-draw-close-contour'),drawClearBtn=$('ac-draw-clear');
+const drawCancelBtn=$('ac-draw-cancel'),drawApplyBtn=$('ac-draw-apply');
+const drawLengthInput=$('ac-draw-length-input'),drawModeEl=$('ac-draw-mode');
+const segListEl=$('ac-seg-list'),modalWarnEl=$('ac-modal-warn');
+let drawStart=null,drawSegments=[],drawClosed=false,autoAddedCount=0,cursorMm=null;
+let vOX=0,vOY=0,vS=0.08,targetOX=0,targetOY=0,targetS=0.08,animRAF=null;
+let edgeStretch=null,stretchRAF=null;
+const EDGE_ZONE=60,MAX_SEG_LEN=15000;
+const WALL_TOL=1;
+
 function walkPoints(){const r=[];if(!drawStart)return r;let x=drawStart[0],y=drawStart[1];r.push([x,y]);for(const s of drawSegments){if(s.axis==='x')x+=s.sign*s.len;else y+=s.sign*s.len;r.push([x,y]);}return r;}
 function snap(v){return Math.round(v/100)*100;}
 function pushSegment(axis,sign,len){const last=drawSegments[drawSegments.length-1];if(last&&last.axis===axis&&last.sign===sign){last.len=snap(last.len+len);return;}drawSegments.push({axis,sign,len});}
@@ -620,11 +626,58 @@ drawApplyBtn.addEventListener('click',()=>{if(!drawClosed||drawSegments.length<3
 drawOpenBtn.addEventListener('click',()=>{stopEdgeStretch();if(roomPolygon){const norm=roomPolygon.map(p=>[p[0],p[1]]);if(norm.length>=3){drawStart=[norm[0][0],norm[0][1]];drawSegments=[];for(let i=0;i<norm.length;i++){const a=norm[i],b=norm[(i+1)%norm.length];const dx=b[0]-a[0],dy=b[1]-a[1];if(Math.abs(dx)>Math.abs(dy))drawSegments.push({axis:'x',sign:dx>=0?1:-1,len:Math.round(Math.abs(dx))});else drawSegments.push({axis:'y',sign:dy>=0?1:-1,len:Math.round(Math.abs(dy))});}drawClosed=true;autoAddedCount=0;}}else{drawStart=null;drawSegments=[];drawClosed=false;autoAddedCount=0;}cursorMm=null;drawLengthInput.value='';redrawDraw(true);renderSegmentList();updateModalWarn();updateDrawHud();drawApplyBtn.disabled=!drawClosed;drawModal.classList.add('open');});
 function renderSegmentList(){if(drawSegments.length===0){segListEl.innerHTML='<div class="ac-seg-empty">Пока нет ни одной стены.</div>';return;}segListEl.innerHTML=drawSegments.map((s,i)=>{let arrow='',lbl='';if(s.axis==='x'){arrow=s.sign>0?'→':'←';lbl='Стена '+(i+1)+' (гориз.)';}else{arrow=s.sign>0?'↓':'↑';lbl='Стена '+(i+1)+' (верт.)';}return '<div class="ac-seg-row"><span class="arrow">'+arrow+'</span><span class="lbl">'+lbl+'</span><input type="number" value="'+s.len+'" step="100" min="100" data-idx="'+i+'"><span>мм</span></div>';}).join('');segListEl.querySelectorAll('input').forEach(inp=>{inp.addEventListener('input',()=>{const idx=parseInt(inp.dataset.idx,10);const v=Math.max(100,parseFloat(inp.value)||100);drawSegments[idx].len=v;if(drawClosed){const p=walkPoints();const first=p[0],last=p[p.length-1];if(Math.abs(last[0]-first[0])>1||Math.abs(last[1]-first[1])>1){drawClosed=false;autoAddedCount=0;drawApplyBtn.disabled=true;}}redrawDraw();updateModalWarn();updateDrawHud();});});}
 
+/* ============================================================
+   Обработчики интерфейса
+   ============================================================ */
+function updateSliderLabels(){railWVal.textContent=railWInput.value+' мм';railHVal.textContent=railHInput.value+' мм';gapVal.textContent=gapInput.value+' мм';}
+function updateAdjustLabels(){const rot=parseFloat(rotationInput.value)||0;rotationVal.textContent=rot===0?'0°':(rot>0?rot+'° ↻':Math.abs(rot)+'° ↺');}
+function syncHangerUI(){const on=!!hangersChk.checked;hangerHInput.disabled=!on;hangerSliderWrap.classList.toggle('disabled',!on);const v=parseFloat(hangerHInput.value)||0;hangerHVal.textContent=v.toFixed(2).replace('.',',')+' м';}
+function setActiveColor(key){document.querySelectorAll('#ac-color-grid .ac-swatch, #ac-wood-grid .ac-swatch').forEach(b=>b.classList.remove('active'));if(WOOD_PROC[key]){const b=document.querySelector('#ac-wood-grid .ac-swatch[data-wood="'+key+'"]');if(b)b.classList.add('active');}else{const b=document.querySelector('#ac-color-grid .ac-swatch[data-color="'+key+'"]');if(b)b.classList.add('active');}params.color=key;}
+railWInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});
+railHInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});
+gapInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});
+rotationInput.addEventListener('input',()=>{updateAdjustLabels();scheduleCalculate();});
+lengthInput.addEventListener('input',()=>{roomPolygon=null;mergedCutsSet={};mergedResult=null;calculate();});
+widthInput.addEventListener('input',()=>{roomPolygon=null;mergedCutsSet={};mergedResult=null;calculate();});
+capsChk.addEventListener('change',()=>calculate());
+angleChk.addEventListener('change',()=>calculate());
+hangersChk.addEventListener('change',()=>{syncHangerUI();calculate();});
+hangerHInput.addEventListener('input',()=>{syncHangerUI();scheduleCalculate();});
+stringerPaintChk.addEventListener('change',()=>calculate());
+resetBtn.addEventListener('click',()=>{railWInput.value=50;railHInput.value=50;gapInput.value=40;rotationInput.value=0;updateSliderLabels();updateAdjustLabels();setActiveColor('denver');capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;hangerHInput.value=0;stringerPaintChk.checked=false;syncHangerUI();mergedCutsSet={};mergedResult=null;calculate();});
+document.querySelectorAll('#ac-color-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.color);calculate();});});
+document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.wood);calculate();});});
+addBtn.addEventListener('click',newRoomAction);
+updateBtn.addEventListener('click',saveRoomExplicit);
+projectClearBtn.addEventListener('click',clearProject);
+specToggleEl.querySelectorAll('button').forEach(btn=>{btn.addEventListener('click',()=>{specMode=btn.dataset.specmode;specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b===btn));renderSpec();});});
+toggleBtns.forEach(btn=>{btn.addEventListener('click',()=>{const v=btn.dataset.view;if(v===currentView)return;currentView=v;toggleBtns.forEach(b=>b.classList.toggle('active',b===btn));if(v==='2d'){layout2dDiv.style.display='';layout3dDiv.style.display='none';}else{layout2dDiv.style.display='none';layout3dDiv.style.display='';requestAnimationFrame(()=>{if(!ensure3D()){currentView='2d';toggleBtns.forEach(b=>b.classList.toggle('active',b.dataset.view==='2d'));layout2dDiv.style.display='';layout3dDiv.style.display='none';return;}if(currentLayout)update3D();});}});});
+camResetBtn.addEventListener('click',()=>{if(!ensure3D())return;if(currentView!=='3d'){const b=document.querySelector('button[data-view="3d"]');if(b)b.click();return;}resetCamera();});
+save2dBtn.addEventListener('click',()=>generatePdf('2d'));
+save3dBtn.addEventListener('click',()=>{if(!ensure3D())return;if(currentLayout)update3D();generatePdf('3d');});
+showCeilingChk.addEventListener('change',()=>{if(threeCeilingMesh)threeCeilingMesh.visible=showCeilingChk.checked;});
+
+/* PDF (оставил как было — старые функции сохранены) */
+const LOGO_SVG='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="440" height="440"><defs><clipPath id="cc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><rect width="220" height="220" fill="#ffffff"/><g clip-path="url(#cc)"><g stroke="'+CUBICA_RED+'" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg>';
+function svgStringToPngDataURL(svgString,w,h,keepTransparent){return new Promise((resolve,reject)=>{const blob=new Blob([svgString],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');if(!keepTransparent){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}ctx.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);resolve(c.toDataURL('image/png'));};img.onerror=e=>{URL.revokeObjectURL(url);reject(e);};img.src=url;});}
+function addPdfLogo(doc,logoPng){if(logoPng)try{doc.addImage(logoPng,'PNG',15,8,14,14);}catch(e){}}
+function addPdfWatermark(doc){try{doc.setGState(new doc.GState({opacity:0.07}));doc.setFont('helvetica','bold');doc.setFontSize(70);doc.setTextColor(CUBICA_RED_RGB[0],CUBICA_RED_RGB[1],CUBICA_RED_RGB[2]);doc.text('CUBICA.BY',105,148,{align:'center',angle:45});doc.setGState(new doc.GState({opacity:1}));}catch(e){}}
+function drawSpecTable(doc,specRows,M,PW,startY){let ty=startY;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Спецификация',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(40,40,40);for(const row of specRows){if(row.kind==='area'){doc.setFont('helvetica','italic');doc.setTextColor(80,80,80);doc.text(row.label+': '+row.value,M,ty);ty+=5;doc.setFont('helvetica','normal');doc.setTextColor(40,40,40);continue;}if(ty>250){doc.addPage();ty=30;}const label=doc.splitTextToSize('• '+row.label,PW-2*M-25)[0];doc.text(label,M,ty);doc.text(row.value,PW-M,ty,{align:'right'});ty+=4.8;}return ty;}
+function drawCuttingSection(doc,cuts,M,PW,startY){if(!cuts.length)return startY;let ty=startY;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Схема нарезки реек',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(40,40,40);for(const c of cuts){if(ty>260){doc.addPage();ty=30;}const line=c.items.join(' + ')+(c.waste>0?' (отход '+c.waste+' мм)':' ');const wrapped=doc.splitTextToSize('#'+(c.n)+': '+line,PW-2*M);for(const w of wrapped){doc.text(w,M,ty);ty+=3.6;}ty+=0.8;}return ty;}
+function collectProjectCuts(){const allSchemes=[];for(const room of project){if(room.mergeInfo&&room.mergeInfo.cuttingScheme&&room.mergeInfo.refSize){for(const s of room.mergeInfo.cuttingScheme)allSchemes.push({refSize:room.mergeInfo.refSize,items:s.items.slice(),used:s.used,waste:s.waste});}}const byRef={};for(const s of allSchemes){if(!byRef[s.refSize])byRef[s.refSize]=[];byRef[s.refSize].push(s);}const out=[];for(const refSize of Object.keys(byRef)){const arr=byRef[refSize];let n=0;for(const s of arr){n++;out.push({n,refSize:parseInt(refSize,10),items:s.items,waste:s.waste});}}return out;}
+async function generateRoomPdf(view){if(!currentLayout){alert('Сначала расчёт.');return;}if(!window.jspdf||!window.jspdf.jsPDF){alert('jsPDF не загружен.');return;}if(view==='3d'&&!ensure3D())return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const PW=210,PH=297,M=15;let logoPng=null;try{logoPng=await svgStringToPngDataURL(LOGO_SVG,220,220,false);}catch(e){}addPdfLogo(doc,logoPng);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA',M+18,20);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('cubic rail ceilings',M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let imgData=null;try{if(view==='2d'){const svg=document.querySelector('#ac-layout svg');if(svg){const clone=svg.cloneNode(true);clone.setAttribute('width','1280');clone.setAttribute('height','880');imgData=await svgStringToPngDataURL(new XMLSerializer().serializeToString(clone),1280,880,false);}}else{threeRenderer.render(threeScene,threeCamera);imgData=threeRenderer.domElement.toDataURL('image/png');}}catch(e){console.error(e);}const modelTopY=42,modelW=PW-2*M,modelH=modelW*0.55;if(imgData){doc.setDrawColor(220,220,220);doc.setLineWidth(0.3);doc.rect(M,modelTopY,modelW,modelH);doc.addImage(imgData,'PNG',M+1,modelTopY+1,modelW-2,modelH-2);}let ty=modelTopY+modelH+8;ty=drawSpecTable(doc,currentLayout.specRows,M,PW,ty);ty+=4;const cuts=[];if(currentLayout.mergeInfo&&currentLayout.mergeInfo.cuttingScheme){let n=0;for(const s of currentLayout.mergeInfo.cuttingScheme){n++;cuts.push({n,refSize:currentLayout.mergeInfo.refSize,items:s.items,waste:s.waste});}}drawCuttingSection(doc,cuts,M,PW,ty);doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('L '+currentLayout.L_in+' × W '+currentLayout.W_in+' мм — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_'+view.toUpperCase()+'_'+currentLayout.L_in+'x'+currentLayout.W_in+'.pdf');}
+async function generateProjectPdf(view){if(!project.length){alert('Проект пуст.');return;}if(!window.jspdf||!window.jspdf.jsPDF){alert('jsPDF не загружен.');return;}if(view==='3d'&&!ensure3D())return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const PW=210,PH=297,M=15;let logoPng=null;try{logoPng=await svgStringToPngDataURL(LOGO_SVG,220,220,false);}catch(e){}addPdfLogo(doc,logoPng);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA — Проект',M+18,20);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('Всего помещений: '+project.length,M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let ty=42;ty=drawSpecTable(doc,computeTotals(),M,PW,ty);ty+=4;ty=drawCuttingSection(doc,collectProjectCuts(),M,PW,ty);ty+=4;if(ty>240){doc.addPage();ty=30;}doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Помещения проекта',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(40,40,40);project.forEach((r,i)=>{if(ty>260){doc.addPage();ty=30;}doc.text((i+1)+'. '+r.name+' — '+r.L_in+' × '+r.W_in+' мм, рейка '+r.railW+'/'+r.railH+' '+getColorLabel(r.color||'denver'),M,ty);ty+=5;});doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Итог по проекту — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_PROJECT_'+view.toUpperCase()+'.pdf');}
+async function generatePdf(view){if(specMode==='total')await generateProjectPdf(view);else await generateRoomPdf(view);}
+
+/* ============================================================
+   Инициализация
+   ============================================================ */
 buildWoodCache();
 document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{const w=btn.dataset.wood;if(woodSwatches[w])btn.style.backgroundImage='url('+woodSwatches[w]+')';});
 updateSliderLabels();updateAdjustLabels();syncHangerUI();
-renderProjectList();updateButtonsVisibility();updateWorkLabel();updateJournalCount();
-  /* Загрузка из журнала по ?jid= */
+renderProjectList();updateButtonsVisibility();updateWorkLabel();
+
+/* Загрузка из журнала по ?jid= */
 if(JID && window.CubicaJournal){
   const rec = window.CubicaJournal.get(JID);
   if(rec && Array.isArray(rec.rooms) && rec.rooms.length){
@@ -651,25 +704,22 @@ if(JID && window.CubicaJournal){
         mergedResult: null
       };
     });
-if(project.length){
-  /* Пересчитываем каждое помещение, чтобы specRows заполнились */
-  project.forEach(function(_, i){
-    setTimeout(function(){ activateRoom(i); }, 200 + i * 300);
-  });
-  /* Через секунду возвращаемся на первое */
-  setTimeout(function(){ activateRoom(0); }, 200 + project.length * 300 + 200);
-}
+    if(project.length){
+      /* Пересчитываем каждое помещение по очереди, чтобы specRows заполнились */
+      project.forEach(function(_, i){
+        setTimeout(function(){ activateRoom(i); }, 200 + i * 300);
+      });
+      /* Через секунду возвращаемся на первое */
+      setTimeout(function(){ activateRoom(0); }, 200 + project.length * 300 + 200);
+    }
     console.log('[k6.3] Загружено из журнала:', rec.number, project.length, 'помещ.');
   } else {
     console.warn('[k6.3] Запись не найдена или пуста:', JID);
   }
 }
+
 calculate();
-window.__dbg = {
-  project: project,
-  computeTotals: computeTotals,
-  snapshotRoom: snapshotRoom,
-  currentLayout: currentLayout
-};
 })();
-</script></body></html>
+</script>
+</body>
+</html>
