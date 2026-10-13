@@ -437,12 +437,36 @@ if(!currentLayout){alert('Сначала расчёт.');return;}
 
 let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice();
 const rows=[];
+var railPieces = {};
+var railLengthMp = 0;
+var railBaseLabel = '';
+var otherRows = [];
+
 for(const r of totals){
 if(!r||r.kind==='area')continue;
 const qty=Number(r.num)||0;
 if(qty<=0)continue;
-rows.push({label:String(r.label||''),qty:qty,unit:r.unit||'шт.'});
+var label = String(r.label||'');
+var m = label.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
+if(m){
+  var size = parseInt(m[2], 10);
+  railPieces[size] = (railPieces[size] || 0) + qty;
+  railLengthMp += qty * size / 1000;
+  if(!railBaseLabel) railBaseLabel = 'Рейка Cubica ' + m[1];
+} else {
+  otherRows.push({label: label, qty: qty, unit: r.unit || 'шт.'});
 }
+}
+
+if(railBaseLabel){
+rows.push({
+  label: railBaseLabel,
+  qty: Math.round(railLengthMp * 100) / 100,
+  unit: 'м.п.',
+  pieces: railPieces
+});
+}
+otherRows.forEach(function(r){ rows.push(r); });
 
 const srcRooms = project.length>0 ? project : [{
   name:'Помещение 1',
@@ -528,7 +552,11 @@ if(JID && window.CubicaJournal){
       }
     });
     rec.rows = mergedRows;
-    
+    /* Прикрепляем раскрой к строкам реек */
+mergedRows.forEach(function(r){
+  var pieces = rows.find(function(nr){ return nr.label === r.label; });
+  if(pieces && pieces.pieces) r.pieces = pieces.pieces;
+});
     rec.history = rec.history || [];
     rec.history.push({
       at: window.CubicaJournal.nowISO(),
