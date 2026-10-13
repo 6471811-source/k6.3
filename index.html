@@ -623,9 +623,14 @@ if(JID && window.CubicaJournal){
         mergedResult: null
       };
     });
-    if(project.length){
-      setTimeout(function(){ activateRoom(0); }, 100);
-    }
+if(project.length){
+  /* Пересчитываем каждое помещение, чтобы specRows заполнились */
+  project.forEach(function(_, i){
+    setTimeout(function(){ activateRoom(i); }, 200 + i * 300);
+  });
+  /* Через секунду возвращаемся на первое */
+  setTimeout(function(){ activateRoom(0); }, 200 + project.length * 300 + 200);
+}
     console.log('[k6.3] Загружено из журнала:', rec.number, project.length, 'помещ.');
   } else {
     console.warn('[k6.3] Запись не найдена или пуста:', JID);
