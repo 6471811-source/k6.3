@@ -491,14 +491,44 @@ if(JID && window.CubicaJournal){
   if(rec){
     rec.rooms = rooms;
     rec.meta = payload.meta;
-    /* rows пока пустые (цены и qtyCalc подтянет i5) — но labels сохраним,
-       чтобы в журнале было видно, что за позиции */
-   /* Не перезаписываем rows, если они уже есть — там могут быть ручные позиции из i5 */
-if(!Array.isArray(rec.rows) || !rec.rows.length){
-  rec.rows = rows.map(function(r){
-    return {label: r.label, qtyCalc: r.qty, qtyReserve: 0, unit: r.unit || 'шт.', price: 0};
-  });
-}
+    
+    /* Умное слияние позиций: обновляем количество существующих,
+       добавляем новые, сохраняем ручные из i5. */
+    var newRows = rows.map(function(r){
+      return {label: r.label, qty: r.qty, unit: r.unit || 'шт.'};
+    });
+    var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
+    var mergedRows = [];
+    var usedLabels = {};
+    oldRows.forEach(function(oldR){
+      var label = String(oldR.label || '');
+      usedLabels[label] = true;
+      var match = newRows.find(function(nr){ return nr.label === label; });
+      if(match){
+        mergedRows.push({
+          label: oldR.label,
+          qtyCalc: match.qty,
+          qtyReserve: oldR.qtyReserve || 0,
+          unit: match.unit || oldR.unit,
+          price: oldR.price || 0
+        });
+      } else {
+        mergedRows.push(oldR);
+      }
+    });
+    newRows.forEach(function(nr){
+      if(!usedLabels[nr.label]){
+        mergedRows.push({
+          label: nr.label,
+          qtyCalc: nr.qty,
+          qtyReserve: 0,
+          unit: nr.unit,
+          price: 0
+        });
+      }
+    });
+    rec.rows = mergedRows;
+    
     rec.history = rec.history || [];
     rec.history.push({
       at: window.CubicaJournal.nowISO(),
