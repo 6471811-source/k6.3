@@ -372,7 +372,7 @@ if(mergeInfo&&mergeInfo.refSize===3000&&n3000===0)railRows.push({size:3000,label
 railRows.sort((a,b)=>b.size-a.size);
 const specRows=[{label:'Площадь',value:areaM2.toFixed(2)+' м²',num:areaM2,kind:'area'}];for(const row of railRows)specRows.push(row);
 if(nJoints>0)specRows.push({label:'Соединитель КР '+railW+'/'+railH+' '+colorLabel,value:nJoints+' шт.',num:nJoints,kind:'count',color:'#ffd54f',unit:'шт.'});
-const stringerLabel='Стрингер '+railW+'/'+pitch+' 3000 мм'+(params.stringerPaint?' окрашенный':'');specRows.push({label:stringerLabel,value:nStringerStocks+' шт.',num:nStringerStocks,kind:'count',color:'#8a97a6',unit:'шт.'});
+const stringerLabel='Стрингер '+railW+'/'+gap+' 3000 мм'+(params.stringerPaint?' окрашенный':'');specRows.push({label:stringerLabel,value:nStringerStocks+' шт.',num:nStringerStocks,kind:'count',color:'#8a97a6',unit:'шт.'});
 const hangerRowsArr=hangerSpecRows(totalHangers,params.hangers,params.hangerHeight);for(const r of hangerRowsArr)specRows.push(r);
 if(params.hangers)specRows.push({label:'Анкерный болт 8х45',value:totalHangers+' шт.',num:totalHangers,kind:'count',color:'#c9a961',unit:'шт.'});
 if(params.angle){specRows.push({label:'Уголок '+colorLabel+' 19х19 3000 мм',value:wallAnglePieces+' шт.',num:wallAnglePieces,kind:'count',unit:'шт.'});specRows.push({label:'Дюбель-гвоздь 6х40',value:angleFasteners+' шт.',num:angleFasteners,kind:'count',unit:'шт.'});}
