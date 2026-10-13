@@ -493,9 +493,12 @@ if(JID && window.CubicaJournal){
     rec.meta = payload.meta;
     /* rows пока пустые (цены и qtyCalc подтянет i5) — но labels сохраним,
        чтобы в журнале было видно, что за позиции */
-    rec.rows = rows.map(function(r){
-      return {label: r.label, qtyCalc: r.qty, qtyReserve: 0, unit: r.unit || 'шт.', price: 0};
-    });
+   /* Не перезаписываем rows, если они уже есть — там могут быть ручные позиции из i5 */
+if(!Array.isArray(rec.rows) || !rec.rows.length){
+  rec.rows = rows.map(function(r){
+    return {label: r.label, qtyCalc: r.qty, qtyReserve: 0, unit: r.unit || 'шт.', price: 0};
+  });
+}
     rec.history = rec.history || [];
     rec.history.push({
       at: window.CubicaJournal.nowISO(),
@@ -505,6 +508,7 @@ if(JID && window.CubicaJournal){
     window.CubicaJournal.save(rec, {assignNumber:false});
     const i5url = window.CubicaJournal.i5UrlForRecord(rec);
     window.open(i5url, '_blank');
+    setTimeout(function(){ window.close(); }, 200);
     return;
   }
 }
@@ -513,6 +517,8 @@ if(JID && window.CubicaJournal){
 const data=b64enc(JSON.stringify(payload));
 const url=KP_URL+(KP_URL.includes('?')?'&':'?')+'data='+data;
 window.open(url,'_blank');
+/* Закрываем калькулятор после открытия i5 */
+setTimeout(function(){ window.close(); }, 200);
 }
 $('ac-kp-open').addEventListener('click',openKpPage);
 
