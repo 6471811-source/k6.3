@@ -416,12 +416,10 @@ function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cuts
 
 function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
-function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rotationDeg,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null};}
-function removeFromProject(index){project.splice(index,1);project.forEach((p,i)=>{p.name='Помещение '+(i+1);});if(activeRoomIndex===index)activeRoomIndex=null;else if(activeRoomIndex!==null&&activeRoomIndex>index)activeRoomIndex--;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
+function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rotationDeg,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
 function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
 function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
-function renderProjectList(){projectCountEl.textContent=project.length;if(!project.length){projectListEl.innerHTML='<div class="ac-pje">Пока пусто.</div>';return;}projectListEl.innerHTML=project.map((p,i)=>{const active=(i===activeRoomIndex)?' active':'';let mark='';if(p.polygon)mark+=' ✏️';return '<li class="ac-pji'+active+'" data-idx="'+i+'"><span class="ac-pjn">'+p.name+mark+'</span><span class="ac-pjd">'+p.L_in+' × '+p.W_in+' мм</span><button type="button" class="ac-pjx" data-idx="'+i+'">✕</button></li>';}).join('');projectListEl.querySelectorAll('.ac-pji').forEach(li=>{li.addEventListener('click',e=>{if(e.target.closest('.ac-pjx'))return;activateRoom(parseInt(li.dataset.idx,10));});});projectListEl.querySelectorAll('.ac-pjx').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();removeFromProject(parseInt(e.currentTarget.dataset.idx,10));});});}
-  
+function renderProjectList(){projectCountEl.textContent=project.length;if(!project.length){projectListEl.innerHTML='<div class="ac-pje">Пока пусто.</div>';return;}projectListEl.innerHTML=project.map((p,i)=>{const active=(i===activeRoomIndex)?' active':'';let mark='';if(p.polygon)mark+=' ✏️';return '<li class="ac-pji'+active+'" data-idx="'+i+'"><span class="ac-pjn">'+p.name+mark+'</span><span class="ac-pjd">'+p.L_in+' × '+p.W_in+' мм</span><button type="button" class="ac-pjx" data-idx="'+i+'">✕</button></li>';}).join('');projectListEl.querySelectorAll('.ac-pji').forEach(li=>{li.addEventListener('click',e=>{if(e.target.closest('.ac-pjx'))return;activateRoom(parseInt(li.dataset.idx,10));});});projectListEl.querySelectorAll('.ac-pjx').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();removeFromProject(parseInt(e.currentTarget.dataset.idx,10));});});}  
 /* ============================================================
    КП → i5 — сборка реек одной строкой в м.п. с раскроем
 
@@ -516,7 +514,36 @@ const rooms = srcRooms.map((room, i) => {
     rotation: room.rotationDeg || 0,
     polygon: room.polygon || null,
     areaM2: room.areaM2 || 0,
-    rows: roomRows
+    rows: roomRows,
+    /* ★ ПРАВКА 2а: сохраняем объединение — чтобы при возврате из журнала
+       в калькулятор восстанавливалось то же состояние */
+    mergedCutsSet: room.mergedCutsSet ? {...room.mergedCutsSet} : {},
+    mergedResult: room.mergedResult ? {
+      ok: !!room.mergedResult.ok,
+      target: room.mergedResult.target,
+      existingQty: room.mergedResult.existingQty,
+      extraQty: room.mergedResult.extraQty,
+      totalQty: room.mergedResult.totalQty,
+      waste: room.mergedResult.waste,
+      wastePct: room.mergedResult.wastePct,
+      refSize: room.mergedResult.refSize,
+      source: room.mergedResult.source,
+      cuttingScheme: Array.isArray(room.mergedResult.cuttingScheme)
+        ? room.mergedResult.cuttingScheme.map(s => ({items: s.items.slice(), used: s.used, waste: s.waste}))
+        : []
+    } : null,
+    /* ★ ПРАВКА 2б: схема нарезки для КП — рендерится после оплаты */
+    cuttingScheme: (room.mergeInfo && room.mergeInfo.cuttingScheme)
+      ? {
+          refSize: room.mergeInfo.refSize,
+          extraQty: room.mergeInfo.extraQty,
+          waste: room.mergeInfo.waste,
+          wastePct: room.mergeInfo.wastePct,
+          scheme: room.mergeInfo.cuttingScheme.map(function(s){
+            return { items: s.items.slice(), used: s.used, waste: s.waste };
+          })
+        }
+      : null
   };
 });
 
@@ -723,8 +750,9 @@ if(JID && window.CubicaJournal){
         rotationDeg: Number(r.rotation) || 0,
         polygon: r.polygon || null,
         specRows: [],
-        mergedCutsSet: {},
-        mergedResult: null
+        /* ★ ПРАВКА 3: восстанавливаем объединение из записи журнала */
+        mergedCutsSet: r.mergedCutsSet ? {...r.mergedCutsSet} : {},
+        mergedResult: r.mergedResult ? {...r.mergedResult} : null
       };
     });
     if(project.length){
