@@ -424,6 +424,13 @@ function renderProjectList(){projectCountEl.textContent=project.length;if(!proje
   
 /* ============================================================
    КП → i5 — сборка реек одной строкой в м.п. с раскроем
+
+   ★ ПРАВКИ:
+   1. Лейбл рейки очищается от хвоста "(объединено)" перед разбором
+      регуляркой — иначе объединённая рейка не матчится и уходит
+      в otherRows без pieces.
+   2. Прокидываем labelFull в newRows и при merge — чтобы i5/КП
+      могли показать полный лейбл.
    ============================================================ */
 function openKpPage(){
 if(!currentLayout){alert('Сначала расчёт.');return;}
@@ -432,8 +439,9 @@ let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice()
 
 /* Собираем рейки: объединяем все длины в одну строку с общим м.п. и раскроем pieces */
 const rows=[];
+
 /* Группируем рейки по ПОЛНОЙ метке без длины.
-   То есть "Рейка Cubica 50/50 Denver" и "Рейка Cubica 50/50 Wellington" —
+   "Рейка Cubica 50/50 Denver" и "Рейка Cubica 50/50 Wellington" —
    РАЗНЫЕ группы (разный цвет), а "Рейка Cubica 50/50 Denver 2700 мм" и
    "Рейка Cubica 50/50 Denver 3000 мм" — ОДНА группа. */
 var railGroups = {};   // { "Рейка Cubica 50/50 Denver": {pieces: {2700: 10, 3000: 5}, lengthMp: 42.0}, ... }
@@ -444,7 +452,11 @@ for(const r of totals){
   const qty=Number(r.num)||0;
   if(qty<=0)continue;
   var label = String(r.label||'');
-  var m = label.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
+
+  /* ★ ПРАВКА 1: очищаем лейбл от "(объединено)" перед разбором */
+  var cleanLabel = label.replace(/\s*\(объединено\)\s*$/i, '').trim();
+
+  var m = cleanLabel.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
   if(m){
     var size = parseInt(m[2], 10);
     var key = 'Рейка Cubica ' + m[1];   // ← С цветом, но БЕЗ длины
@@ -520,7 +532,10 @@ if(JID && window.CubicaJournal){
     /* Умное слияние: обновляем qtyCalc у существующих позиций по label,
        новые добавляем, ручные (из i5) сохраняем. */
     var newRows = rows.map(function(r){
-      return {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
+      /* ★ ПРАВКА 2: прокидываем labelFull */
+      var row = {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
+      if(r.labelFull) row.labelFull = r.labelFull;
+      return row;
     });
     var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
     var mergedRows = [];
@@ -538,6 +553,8 @@ if(JID && window.CubicaJournal){
           price: oldR.price || 0
         };
         if(match.pieces) row.pieces = match.pieces;
+        /* ★ ПРАВКА 2: прокидываем labelFull при слиянии */
+        if(match.labelFull) row.labelFull = match.labelFull;
         mergedRows.push(row);
       } else {
         mergedRows.push(oldR);
@@ -553,6 +570,8 @@ if(JID && window.CubicaJournal){
           price: 0
         };
         if(nr.pieces) row.pieces = nr.pieces;
+        /* ★ ПРАВКА 2: прокидываем labelFull для новых */
+        if(nr.labelFull) row.labelFull = nr.labelFull;
         mergedRows.push(row);
       }
     });
