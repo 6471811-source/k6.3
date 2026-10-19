@@ -15,7 +15,7 @@ body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;backgrou
 .ac-in label{font-size:12px;color:#555;font-weight:600;display:flex;flex-direction:column;gap:5px}
 .ac-in input[type=number]{width:110px;padding:9px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
 .ac-in button{padding:10px 14px;background:#666;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;font-family:inherit}
-.ac-in button.add{background:#2e7d32}.ac-in button.draw{background:#6a1b9a}.ac-in button.upd{background:#1565c0}.ac-in button.rst{background:#777}.ac-in button.journal{background:#1565c0}.ac-in button.save-j{background:#00838f}.ac-in button.kp{background:#c00000}
+.ac-in button.add{background:#2e7d32}.ac-in button.draw{background:#6a1b9a}.ac-in button.upd{background:#1565c0}.ac-in button.rst{background:#777}.ac-in button.journal{background:#1565c0}.ac-in button.save-j{background:#00838f}.ac-in button.kp{background:#c00000}.ac-in button.rotate{background:#1565c0}
 .ac-sliders-row{grid-area:s;display:flex;flex-wrap:wrap;gap:12px;padding:14px 16px;background:#fafafa;border:1px solid #eee;border-radius:8px}
 .ac-slider-sec{display:flex;flex-direction:column;gap:6px;padding:10px 14px;background:#fff;border:1px solid #eee;border-radius:8px;flex:1 1 200px;min-width:180px;user-select:none;-webkit-user-select:none}
 .ac-slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11px;font-weight:700;color:#9aa1ac;letter-spacing:.8px;text-transform:uppercase}
@@ -144,7 +144,8 @@ body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;backgrou
 </style></head><body>
   <main><div class="ac">
 <div class="ac-work" id="ac-work-label"><span class="dot"></span><span id="ac-work-text">Новое помещение</span><span class="hint" id="ac-work-hint">настройте параметры и нажмите «+ Новое помещение»</span></div>
-<div class="ac-title"><svg class="lg" viewBox="0 0 220 220"><defs><clipPath id="lgc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><g clip-path="url(#lgc)"><g stroke="#c00000" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg><span>Калькулятор кубической рейки <span class="br">CUBICA</span></span></div><div class="ac-in"><label>Длина, мм<input type="number" id="ac-length" value="5400" step="100" min="100"></label><label>Ширина, мм<input type="number" id="ac-width" value="4200" step="100" min="100"></label><button type="button" class="draw" id="ac-draw-open">✏️ Начертить</button><button type="button" class="upd" id="ac-update-room" style="display:none;">💾 Сохранить</button><button type="button" class="add" id="ac-add-to-project">+ Новое помещение</button><button type="button" class="kp" id="ac-kp-open">📤 Коммерческое предложение</button><button type="button" class="rst" id="ac-reset">Сбросить</button></div><div class="ac-sliders-row"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Ширина рейки</span><span class="ac-slider-val" id="ac-railw-val">50 мм</span></div><input type="range" id="ac-railw" min="30" max="150" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Высота рейки</span><span class="ac-slider-val" id="ac-railh-val">50 мм</span></div><input type="range" id="ac-railh" min="30" max="200" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Шаг между рейками</span><span class="ac-slider-val" id="ac-gap-val">40 мм</span></div><input type="range" id="ac-gap" min="20" max="300" step="10" value="40"></div></div><div class="ac-colors-row"><div class="ac-colors-block"><div class="ac-colors-title">Цвет RAL</div><div class="ac-swatches-ral" id="ac-color-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9003" style="background:#ecece7"></button><div class="ac-swatch-label">9003</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9006" style="background:#a5a8a9"></button><div class="ac-swatch-label">9006</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7004" style="background:#9ea0a3"></button><div class="ac-swatch-label">7004</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7024" style="background:#474b4e"></button><div class="ac-swatch-label">7024</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9005" style="background:#0a0a0a"></button><div class="ac-swatch-label">9005</div></div></div></div><div class="ac-colors-block grow"><div class="ac-colors-title">Дерево Cubica</div><div class="ac-swatches-wood" id="ac-wood-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch active" data-wood="denver"></button><div class="ac-swatch-label">Denver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="wellington"></button><div class="ac-swatch-label">Wellington</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="tokyo"></button><div class="ac-swatch-label">Tokyo</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="toronto"></button><div class="ac-swatch-label">Toronto</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="vancouver"></button><div class="ac-swatch-label">Vancouver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="rio"></button><div class="ac-swatch-label">Rio</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="stockholm"></button><div class="ac-swatch-label">Stockholm</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="sydney"></button><div class="ac-swatch-label">Sydney</div></div></div></div></div><div class="ac-options-row"><div class="ac-colors-title">Опции</div><label class="ac-chk-inline"><input type="checkbox" id="ac-caps"> Заглушки</label><label class="ac-chk-inline"><input type="checkbox" id="ac-angle"> Уголок</label><label class="ac-chk-inline"><input type="checkbox" id="ac-hangers"> Подвесы</label><label class="ac-chk-inline"><input type="checkbox" id="ac-stringer-paint"> Стрингер окр.</label><div class="ac-hanger-slider disabled" id="ac-hanger-slider-wrap"><div class="ac-slider-head"><span>Высота</span></div><input type="range" id="ac-hanger-h" min="0" max="3" step="0.01" value="0" disabled><span class="ac-slider-val" id="ac-hanger-h-val">0,00 м</span></div></div><div class="ac-lw"><div class="ac-adjust"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Поворот раскладки</span><span class="ac-slider-val" id="ac-rotation-val">0°</span></div><input type="range" id="ac-rotation" min="-45" max="45" step="1" value="0"></div></div><div class="ac-vr"><div class="ac-vt"><button type="button" class="active" data-view="2d">2D · Схема</button><button type="button" data-view="3d">3D · Объём</button></div></div><div class="ac-lay" id="ac-layout"></div><div class="ac-l3" id="ac-layout3d" style="display:none;"><canvas id="ac-canvas3d" width="640" height="440"></canvas></div><div class="ac-tb"><label class="ac-chk"><input type="checkbox" id="ac-show-ceiling"> Перекрытие</label><button type="button" class="ac-cb" id="ac-cam-reset">⟲ Камера</button><button type="button" class="ac-cb pr" id="ac-save-2d">📄 2D (PDF)</button><button type="button" class="ac-cb pr" id="ac-save-3d">📄 3D (PDF)</button></div><div class="ac-hint">3D: ЛКМ — вращение · колесо — зум · ПКМ — перенос</div></div><aside class="ac-pn" id="ac-panel"><div class="ac-ph"><h4 class="ac-pt">Спецификация</h4><div class="ac-st" id="ac-spec-toggle"><button type="button" data-specmode="current" class="active">Помещение</button><button type="button" data-specmode="total">Итог</button></div></div><div class="ac-res" id="ac-results"></div><div class="ac-pj"><div class="ac-pjt"><span>Проект CUBICA.BY</span><small><span id="ac-project-count">0</span> помещ.</small></div><ul class="ac-pjl" id="ac-project-list"></ul><div class="ac-pja"><button type="button" class="dg" id="ac-project-clear">Очистить проект</button></div></div></aside></div></main><footer class="ft">© 2026 CUBICA.BY · Кубическая рейка</footer>
+<div class="ac-title"><svg class="lg" viewBox="0 0 220 220"><defs><clipPath id="lgc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><g clip-path="url(#lgc)"><g stroke="#c00000" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg><span>Калькулятор кубической рейки <span class="br">CUBICA</span></span></div><div class="ac-in"><label>Длина, мм<input type="number" id="ac-length" value="5400" step="100" min="100"></label><label>Ширина, мм<input type="number" id="ac-width" value="4200" step="100" min="100"></label><button type="button" class="draw" id="ac-draw-open">✏️ Начертить</button><button type="button" class="upd" id="ac-update-room" style="display:none;">💾 Сохранить</button><button type="button" class="add" id="ac-add-to-project">+ Новое помещение</button><button type="button" class="kp" id="ac-kp-open">📤 Коммерческое предложение</button><button type="button" class="rotate" id="ac-rotate90" title="Повернуть раскладку реек на 90°">↻ 90°</button><button type="button" class="rst" id="ac-reset">Сбросить</button></div>
+<div class="ac-sliders-row"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Ширина рейки</span><span class="ac-slider-val" id="ac-railw-val">50 мм</span></div><input type="range" id="ac-railw" min="30" max="150" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Высота рейки</span><span class="ac-slider-val" id="ac-railh-val">50 мм</span></div><input type="range" id="ac-railh" min="30" max="200" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Шаг между рейками</span><span class="ac-slider-val" id="ac-gap-val">40 мм</span></div><input type="range" id="ac-gap" min="20" max="300" step="10" value="40"></div></div><div class="ac-colors-row"><div class="ac-colors-block"><div class="ac-colors-title">Цвет RAL</div><div class="ac-swatches-ral" id="ac-color-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9003" style="background:#ecece7"></button><div class="ac-swatch-label">9003</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9006" style="background:#a5a8a9"></button><div class="ac-swatch-label">9006</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7004" style="background:#9ea0a3"></button><div class="ac-swatch-label">7004</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7024" style="background:#474b4e"></button><div class="ac-swatch-label">7024</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9005" style="background:#0a0a0a"></button><div class="ac-swatch-label">9005</div></div></div></div><div class="ac-colors-block grow"><div class="ac-colors-title">Дерево Cubica</div><div class="ac-swatches-wood" id="ac-wood-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch active" data-wood="denver"></button><div class="ac-swatch-label">Denver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="wellington"></button><div class="ac-swatch-label">Wellington</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="tokyo"></button><div class="ac-swatch-label">Tokyo</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="toronto"></button><div class="ac-swatch-label">Toronto</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="vancouver"></button><div class="ac-swatch-label">Vancouver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="rio"></button><div class="ac-swatch-label">Rio</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="stockholm"></button><div class="ac-swatch-label">Stockholm</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="sydney"></button><div class="ac-swatch-label">Sydney</div></div></div></div></div><div class="ac-options-row"><div class="ac-colors-title">Опции</div><label class="ac-chk-inline"><input type="checkbox" id="ac-caps"> Заглушки</label><label class="ac-chk-inline"><input type="checkbox" id="ac-angle"> Уголок</label><label class="ac-chk-inline"><input type="checkbox" id="ac-hangers"> Подвесы</label><label class="ac-chk-inline"><input type="checkbox" id="ac-stringer-paint"> Стрингер окр.</label><div class="ac-hanger-slider disabled" id="ac-hanger-slider-wrap"><div class="ac-slider-head"><span>Высота</span></div><input type="range" id="ac-hanger-h" min="0" max="3" step="0.01" value="0" disabled><span class="ac-slider-val" id="ac-hanger-h-val">0,00 м</span></div></div><div class="ac-lw"><div class="ac-adjust"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Поворот раскладки</span><span class="ac-slider-val" id="ac-rotation-val">0°</span></div><input type="range" id="ac-rotation" min="-45" max="45" step="1" value="0"></div></div><div class="ac-vr"><div class="ac-vt"><button type="button" class="active" data-view="2d">2D · Схема</button><button type="button" data-view="3d">3D · Объём</button></div></div><div class="ac-lay" id="ac-layout"></div><div class="ac-l3" id="ac-layout3d" style="display:none;"><canvas id="ac-canvas3d" width="640" height="440"></canvas></div><div class="ac-tb"><label class="ac-chk"><input type="checkbox" id="ac-show-ceiling"> Перекрытие</label><button type="button" class="ac-cb" id="ac-cam-reset">⟲ Камера</button><button type="button" class="ac-cb pr" id="ac-save-2d">📄 2D (PDF)</button><button type="button" class="ac-cb pr" id="ac-save-3d">📄 3D (PDF)</button></div><div class="ac-hint">3D: ЛКМ — вращение · колесо — зум · ПКМ — перенос</div></div><aside class="ac-pn" id="ac-panel"><div class="ac-ph"><h4 class="ac-pt">Спецификация</h4><div class="ac-st" id="ac-spec-toggle"><button type="button" data-specmode="current" class="active">Помещение</button><button type="button" data-specmode="total">Итог</button></div></div><div class="ac-res" id="ac-results"></div><div class="ac-pj"><div class="ac-pjt"><span>Проект CUBICA.BY</span><small><span id="ac-project-count">0</span> помещ.</small></div><ul class="ac-pjl" id="ac-project-list"></ul><div class="ac-pja"><button type="button" class="dg" id="ac-project-clear">Очистить проект</button></div></div></aside></div></main><footer class="ft">© 2026 CUBICA.BY · Кубическая рейка</footer>
 <div class="ac-modal" id="ac-draw-modal"><div class="ac-modal-inner"><h3 class="ac-modal-title">✏️ Начертить помещение</h3><p class="ac-modal-hint">Клик — точка. Клик по первой точке — замкнуть контур.</p><div class="ac-draw-hud"><div class="ac-draw-mode" id="ac-draw-mode">Кликните, чтобы задать первую точку</div><div class="ac-draw-length-wrap"><label for="ac-draw-length-input">Длина:</label><input type="number" id="ac-draw-length-input" placeholder="авто" min="100" step="100"><span>мм</span></div></div><div class="ac-draw-body"><div class="ac-draw-wrap"><canvas id="ac-draw-canvas" class="ac-draw-canvas" width="900" height="520"></canvas><div class="ac-modal-warn" id="ac-modal-warn"></div></div><div class="ac-seg-list" id="ac-seg-list"></div></div><div class="ac-modal-bar"><div class="ac-modal-bar-group"><button type="button" id="ac-draw-undo">↶ Отменить</button><button type="button" id="ac-draw-close-contour">🔒 Замкнуть</button><button type="button" class="dg" id="ac-draw-clear">Очистить</button></div><div class="ac-modal-bar-group"><button type="button" id="ac-draw-cancel">Отмена</button><button type="button" class="pr" id="ac-draw-apply" disabled>Применить</button></div></div></div></div>
 <div class="ac-toast" id="ac-toast"></div>
 
@@ -182,7 +183,6 @@ const CUBICA_RED='#c00000',CUBICA_RED_RGB=[192,0,0];
 const MAX_RAIL_LEN=4000;
 const KP_URL='https://6471811-source.github.io/Cubica-i5/';
 
-/* Параметры URL: ?jid= от журнала, ?data= от старого калькулятора */
 const urlParams = new URLSearchParams(location.search);
 const JID = urlParams.get('jid');
 let currentRecordId = null;
@@ -201,7 +201,7 @@ const WOOD_PROC={
   sydney:{base:'#dbb070',dark:'#9a6830',opts:{grainDensity:120,warpAmp:3.5,grainContrast:1.4,lightnessBands:80}}
 };
 
-let params={railW:50,railH:50,gap:40,color:'denver',caps:false,angle:false,hangers:false,hangerHeight:0,stringerPaint:false};
+let params={railW:50,railH:50,gap:40,color:'denver',caps:false,angle:false,hangers:false,hangerHeight:0,stringerPaint:false,rotate90:false};
 let woodTextures={},woodSwatches={};
 let currentLayout=null,currentView='2d',threeInitialized=false;
 let roomPolygon=null;
@@ -279,6 +279,9 @@ function resetForNewRoom(){
   capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;
   hangerHInput.value=0;syncHangerUI();
   stringerPaintChk.checked=false;
+  params.rotate90=false;
+  const rotBtn=$('ac-rotate90');
+  if(rotBtn){rotBtn.style.background='#1565c0';rotBtn.textContent='↻ 90°';}
   roomPolygon=null;
   mergedCutsSet={};mergedResult=null;
   activeRoomIndex=null;
@@ -327,7 +330,12 @@ function hangerSpecRows(totalHangers,enabled,heightM){if(!enabled)return[];const
 function calculate(){try{
 let L_in=parseFloat(lengthInput.value);let W_in=parseFloat(widthInput.value);
 if(isNaN(L_in)||isNaN(W_in)||L_in<=0||W_in<=0){resultsDiv.innerHTML='<p style="color:#d32f2f">Введите корректные размеры.</p>';layout2dDiv.innerHTML='';return;}
-let didSwap=false;if(!roomPolygon&&W_in>L_in){const t=L_in;L_in=W_in;W_in=t;didSwap=true;}
+let didSwap=false;
+if(params.rotate90){
+  const t=L_in;L_in=W_in;W_in=t;
+} else if(!roomPolygon&&W_in>L_in){
+  const t=L_in;L_in=W_in;W_in=t;didSwap=true;
+}
 params.railW=Math.max(30,Math.min(150,parseInt(railWInput.value)||50));params.railH=Math.max(30,Math.min(200,parseInt(railHInput.value)||50));params.gap=Math.max(20,Math.min(300,parseInt(gapInput.value)||40));params.caps=!!capsChk.checked;params.angle=!!angleChk.checked;params.hangers=!!hangersChk.checked;params.hangerHeight=parseFloat(hangerHInput.value)||0;params.stringerPaint=!!stringerPaintChk.checked;
 const rotationDeg=parseFloat(rotationInput.value)||0;const rotRad=rotationDeg*Math.PI/180;const cosR=Math.cos(rotRad),sinR=Math.sin(rotRad);const absC=Math.abs(cosR),absS=Math.abs(sinR);
 const railW=params.railW,railH=params.railH,gap=params.gap;const pitch=railW+gap;const L=L_in,W=W_in;const roomCx=L/2,roomCy=W/2;
@@ -382,9 +390,9 @@ if(nRailsLines<2)warnings.push('⚠ Одна рейка — проверьте �
 const overlapTxt=Math.ceil((2*pitch)/10)*10;warnings.push('📐 Рейки: '+nRailsLines+' шт. Шаг: '+pitch+' мм. Рейки вдоль '+L+' мм.');warnings.push('📐 Стрингеров: '+nStringers+' шт. Нахлёст: '+overlapTxt+' мм.');
 if(rotationDeg!==0)warnings.push('📐 Поворот: '+rotationDeg+'°.');if(mergeError==='piece_too_long')warnings.push('⚠ Объединение невозможно: есть отмеченная рейка длиннее '+MAX_RAIL_LEN+' мм.');
 if(params.hangers)warnings.push('🔧 Подвесы: высота опускания '+params.hangerHeight.toFixed(2).replace('.',',')+' м.');
-currentLayout={L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
+if(params.rotate90)warnings.push('↻ Раскладка повёрнута на 90°.');
+currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
 renderSpec();drawLayout2D();if(threeInitialized)update3D();
-/* автосохранение активного помещения в проект */
 if(activeRoomIndex!==null&&project[activeRoomIndex]&&currentLayout){const __snap=snapshotRoom();__snap.name=project[activeRoomIndex].name;project[activeRoomIndex]=__snap;renderProjectList();}
 updateWorkLabel();
 updateButtonsVisibility();
@@ -416,48 +424,26 @@ function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cuts
 
 function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
-function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rotationDeg,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
+function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rotationDeg,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
 function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
-function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
+function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;const rotBtn=$('ac-rotate90');if(rotBtn){rotBtn.style.background=params.rotate90?'#2e7d32':'#1565c0';rotBtn.textContent=params.rotate90?'↻ 90° ✓':'↻ 90°';}updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
 function renderProjectList(){projectCountEl.textContent=project.length;if(!project.length){projectListEl.innerHTML='<div class="ac-pje">Пока пусто.</div>';return;}projectListEl.innerHTML=project.map((p,i)=>{const active=(i===activeRoomIndex)?' active':'';let mark='';if(p.polygon)mark+=' ✏️';return '<li class="ac-pji'+active+'" data-idx="'+i+'"><span class="ac-pjn">'+p.name+mark+'</span><span class="ac-pjd">'+p.L_in+' × '+p.W_in+' мм</span><button type="button" class="ac-pjx" data-idx="'+i+'">✕</button></li>';}).join('');projectListEl.querySelectorAll('.ac-pji').forEach(li=>{li.addEventListener('click',e=>{if(e.target.closest('.ac-pjx'))return;activateRoom(parseInt(li.dataset.idx,10));});});projectListEl.querySelectorAll('.ac-pjx').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();removeFromProject(parseInt(e.currentTarget.dataset.idx,10));});});}  
-/* ============================================================
-   КП → i5 — сборка реек одной строкой в м.п. с раскроем
-
-   ★ ПРАВКИ:
-   1. Лейбл рейки очищается от хвоста "(объединено)" перед разбором
-      регуляркой — иначе объединённая рейка не матчится и уходит
-      в otherRows без pieces.
-   2. Прокидываем labelFull в newRows и при merge — чтобы i5/КП
-      могли показать полный лейбл.
-   ============================================================ */
 function openKpPage(){
 if(!currentLayout){alert('Сначала расчёт.');return;}
-
 let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice();
-
-/* Собираем рейки: объединяем все длины в одну строку с общим м.п. и раскроем pieces */
 const rows=[];
-
-/* Группируем рейки по ПОЛНОЙ метке без длины.
-   "Рейка Cubica 50/50 Denver" и "Рейка Cubica 50/50 Wellington" —
-   РАЗНЫЕ группы (разный цвет), а "Рейка Cubica 50/50 Denver 2700 мм" и
-   "Рейка Cubica 50/50 Denver 3000 мм" — ОДНА группа. */
-var railGroups = {};   // { "Рейка Cubica 50/50 Denver": {pieces: {2700: 10, 3000: 5}, lengthMp: 42.0}, ... }
+var railGroups = {};
 var otherRows = [];
-
 for(const r of totals){
   if(!r||r.kind==='area')continue;
   const qty=Number(r.num)||0;
   if(qty<=0)continue;
   var label = String(r.label||'');
-
-  /* ★ ПРАВКА 1: очищаем лейбл от "(объединено)" перед разбором */
   var cleanLabel = label.replace(/\s*\(объединено\)\s*$/i, '').trim();
-
   var m = cleanLabel.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
   if(m){
     var size = parseInt(m[2], 10);
-    var key = 'Рейка Cubica ' + m[1];   // ← С цветом, но БЕЗ длины
+    var key = 'Рейка Cubica ' + m[1];
     if(!railGroups[key]) railGroups[key] = { pieces: {}, lengthMp: 0 };
     railGroups[key].pieces[size] = (railGroups[key].pieces[size] || 0) + qty;
     railGroups[key].lengthMp += qty * size / 1000;
@@ -465,36 +451,12 @@ for(const r of totals){
     otherRows.push({label: label, qty: qty, unit: r.unit || 'шт.'});
   }
 }
-
-/* Каждая группа — отдельная строка */
 Object.keys(railGroups).sort().forEach(function(key){
   var g = railGroups[key];
-  rows.push({
-    label: key,
-    qty: Math.round(g.lengthMp * 100) / 100,
-    unit: 'м.п.',
-    pieces: g.pieces
-  });
+  rows.push({label: key,qty: Math.round(g.lengthMp * 100) / 100,unit: 'м.п.',pieces: g.pieces});
 });
 otherRows.forEach(function(r){ rows.push(r); });
-
-/* srcRooms для payload */
-const srcRooms = project.length>0 ? project : [{
-  name:'Помещение 1',
-  L_in: currentLayout.L_in,
-  W_in: currentLayout.W_in,
-  railW: currentLayout.railW,
-  railH: currentLayout.railH,
-  gap: currentLayout.gap,
-  color: currentLayout.color,
-  colorLabel: currentLayout.colorLabel,
-  caps: currentLayout.caps,
-  angle: currentLayout.angle,
-  rotationDeg: currentLayout.rotationDeg,
-  polygon: currentLayout.polygon,
-  specRows: currentLayout.specRows,
-  areaM2: currentLayout.areaM2
-}];
+const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in: currentLayout.L_in,W_in: currentLayout.W_in,railW: currentLayout.railW,railH: currentLayout.railH,gap: currentLayout.gap,color: currentLayout.color,colorLabel: currentLayout.colorLabel,caps: currentLayout.caps,angle: currentLayout.angle,rotationDeg: currentLayout.rotationDeg,rotate90: currentLayout.rotate90,polygon: currentLayout.polygon,specRows: currentLayout.specRows,areaM2: currentLayout.areaM2}];
 const rooms = srcRooms.map((room, i) => {
   const roomRows = (room.specRows||[])
     .filter(r => r && r.kind!=='area')
@@ -512,11 +474,10 @@ const rooms = srcRooms.map((room, i) => {
     caps: !!room.caps,
     angle: !!room.angle,
     rotation: room.rotationDeg || 0,
+    rotate90: !!room.rotate90,
     polygon: room.polygon || null,
     areaM2: room.areaM2 || 0,
     rows: roomRows,
-    /* ★ ПРАВКА 2а: сохраняем объединение — чтобы при возврате из журнала
-       в калькулятор восстанавливалось то же состояние */
     mergedCutsSet: room.mergedCutsSet ? {...room.mergedCutsSet} : {},
     mergedResult: room.mergedResult ? {
       ok: !!room.mergedResult.ok,
@@ -532,7 +493,6 @@ const rooms = srcRooms.map((room, i) => {
         ? room.mergedResult.cuttingScheme.map(s => ({items: s.items.slice(), used: s.used, waste: s.waste}))
         : []
     } : null,
-    /* ★ ПРАВКА 2б: схема нарезки для КП — рендерится после оплаты */
     cuttingScheme: (room.mergeInfo && room.mergeInfo.cuttingScheme)
       ? {
           refSize: room.mergeInfo.refSize,
@@ -546,20 +506,13 @@ const rooms = srcRooms.map((room, i) => {
       : null
   };
 });
-
-const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
-
-/* Если открыто из журнала (есть ?jid=) — сохраняем rooms/meta/rows в запись,
-   затем открываем i5 по той же записи. Иначе — как раньше, через data=. */
+const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,rotate90:!!currentLayout.rotate90,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
 if(JID && window.CubicaJournal){
   const rec = window.CubicaJournal.get(JID);
   if(rec){
     rec.rooms = rooms;
     rec.meta = payload.meta;
-    /* Умное слияние: обновляем qtyCalc у существующих позиций по label,
-       новые добавляем, ручные (из i5) сохраняем. */
     var newRows = rows.map(function(r){
-      /* ★ ПРАВКА 2: прокидываем labelFull */
       var row = {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
       if(r.labelFull) row.labelFull = r.labelFull;
       return row;
@@ -572,15 +525,8 @@ if(JID && window.CubicaJournal){
       usedLabels[label] = true;
       var match = newRows.find(function(nr){ return nr.label === label; });
       if(match){
-        var row = {
-          label: oldR.label,
-          qtyCalc: match.qty,
-          qtyReserve: oldR.qtyReserve || 0,
-          unit: oldR.unit || match.unit,
-          price: oldR.price || 0
-        };
+        var row = {label: oldR.label,qtyCalc: match.qty,qtyReserve: oldR.qtyReserve || 0,unit: oldR.unit || match.unit,price: oldR.price || 0};
         if(match.pieces) row.pieces = match.pieces;
-        /* ★ ПРАВКА 2: прокидываем labelFull при слиянии */
         if(match.labelFull) row.labelFull = match.labelFull;
         mergedRows.push(row);
       } else {
@@ -589,26 +535,15 @@ if(JID && window.CubicaJournal){
     });
     newRows.forEach(function(nr){
       if(!usedLabels[nr.label]){
-        var row = {
-          label: nr.label,
-          qtyCalc: nr.qty,
-          qtyReserve: 0,
-          unit: nr.unit,
-          price: 0
-        };
+        var row = {label: nr.label,qtyCalc: nr.qty,qtyReserve: 0,unit: nr.unit,price: 0};
         if(nr.pieces) row.pieces = nr.pieces;
-        /* ★ ПРАВКА 2: прокидываем labelFull для новых */
         if(nr.labelFull) row.labelFull = nr.labelFull;
         mergedRows.push(row);
       }
     });
     rec.rows = mergedRows;
     rec.history = rec.history || [];
-    rec.history.push({
-      at: window.CubicaJournal.nowISO(),
-      by: window.CubicaJournal.manager(),
-      action: 'from calculator'
-    });
+    rec.history.push({at: window.CubicaJournal.nowISO(),by: window.CubicaJournal.manager(),action: 'from calculator'});
     window.CubicaJournal.save(rec, {assignNumber:false});
     const i5url = window.CubicaJournal.i5UrlForRecord(rec);
     window.open(i5url, '_blank');
@@ -616,8 +551,6 @@ if(JID && window.CubicaJournal){
     return;
   }
 }
-
-/* Обычный путь: без журнала — открываем i5 с payload */
 const data=b64enc(JSON.stringify(payload));
 const url=KP_URL+(KP_URL.includes('?')?'&':'?')+'data='+data;
 window.open(url,'_blank');
@@ -625,9 +558,6 @@ setTimeout(function(){ window.close(); }, 200);
 }
 $('ac-kp-open').addEventListener('click',openKpPage);
 
-/* ============================================================
-   Черчение помещения
-   ============================================================ */
 const drawModal=$('ac-draw-modal'),drawCanvas=$('ac-draw-canvas'),drawCtx=drawCanvas.getContext('2d');
 const drawUndoBtn=$('ac-draw-undo'),drawCloseContourBtn=$('ac-draw-close-contour'),drawClearBtn=$('ac-draw-clear');
 const drawCancelBtn=$('ac-draw-cancel'),drawApplyBtn=$('ac-draw-apply');
@@ -676,9 +606,6 @@ drawApplyBtn.addEventListener('click',()=>{if(!drawClosed||drawSegments.length<3
 drawOpenBtn.addEventListener('click',()=>{stopEdgeStretch();if(roomPolygon){const norm=roomPolygon.map(p=>[p[0],p[1]]);if(norm.length>=3){drawStart=[norm[0][0],norm[0][1]];drawSegments=[];for(let i=0;i<norm.length;i++){const a=norm[i],b=norm[(i+1)%norm.length];const dx=b[0]-a[0],dy=b[1]-a[1];if(Math.abs(dx)>Math.abs(dy))drawSegments.push({axis:'x',sign:dx>=0?1:-1,len:Math.round(Math.abs(dx))});else drawSegments.push({axis:'y',sign:dy>=0?1:-1,len:Math.round(Math.abs(dy))});}drawClosed=true;autoAddedCount=0;}}else{drawStart=null;drawSegments=[];drawClosed=false;autoAddedCount=0;}cursorMm=null;drawLengthInput.value='';redrawDraw(true);renderSegmentList();updateModalWarn();updateDrawHud();drawApplyBtn.disabled=!drawClosed;drawModal.classList.add('open');});
 function renderSegmentList(){if(drawSegments.length===0){segListEl.innerHTML='<div class="ac-seg-empty">Пока нет ни одной стены.</div>';return;}segListEl.innerHTML=drawSegments.map((s,i)=>{let arrow='',lbl='';if(s.axis==='x'){arrow=s.sign>0?'→':'←';lbl='Стена '+(i+1)+' (гориз.)';}else{arrow=s.sign>0?'↓':'↑';lbl='Стена '+(i+1)+' (верт.)';}return '<div class="ac-seg-row"><span class="arrow">'+arrow+'</span><span class="lbl">'+lbl+'</span><input type="number" value="'+s.len+'" step="100" min="100" data-idx="'+i+'"><span>мм</span></div>';}).join('');segListEl.querySelectorAll('input').forEach(inp=>{inp.addEventListener('input',()=>{const idx=parseInt(inp.dataset.idx,10);const v=Math.max(100,parseFloat(inp.value)||100);drawSegments[idx].len=v;if(drawClosed){const p=walkPoints();const first=p[0],last=p[p.length-1];if(Math.abs(last[0]-first[0])>1||Math.abs(last[1]-first[1])>1){drawClosed=false;autoAddedCount=0;drawApplyBtn.disabled=true;}}redrawDraw();updateModalWarn();updateDrawHud();});});}
 
-/* ============================================================
-   Обработчики интерфейса
-   ============================================================ */
 function updateSliderLabels(){railWVal.textContent=railWInput.value+' мм';railHVal.textContent=railHInput.value+' мм';gapVal.textContent=gapInput.value+' мм';}
 function updateAdjustLabels(){const rot=parseFloat(rotationInput.value)||0;rotationVal.textContent=rot===0?'0°':(rot>0?rot+'° ↻':Math.abs(rot)+'° ↺');}
 function syncHangerUI(){const on=!!hangersChk.checked;hangerHInput.disabled=!on;hangerSliderWrap.classList.toggle('disabled',!on);const v=parseFloat(hangerHInput.value)||0;hangerHVal.textContent=v.toFixed(2).replace('.',',')+' м';}
@@ -694,7 +621,7 @@ angleChk.addEventListener('change',()=>calculate());
 hangersChk.addEventListener('change',()=>{syncHangerUI();calculate();});
 hangerHInput.addEventListener('input',()=>{syncHangerUI();scheduleCalculate();});
 stringerPaintChk.addEventListener('change',()=>calculate());
-resetBtn.addEventListener('click',()=>{railWInput.value=50;railHInput.value=50;gapInput.value=40;rotationInput.value=0;updateSliderLabels();updateAdjustLabels();setActiveColor('denver');capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;hangerHInput.value=0;stringerPaintChk.checked=false;syncHangerUI();mergedCutsSet={};mergedResult=null;calculate();});
+resetBtn.addEventListener('click',()=>{railWInput.value=50;railHInput.value=50;gapInput.value=40;rotationInput.value=0;updateSliderLabels();updateAdjustLabels();setActiveColor('denver');capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;hangerHInput.value=0;stringerPaintChk.checked=false;syncHangerUI();params.rotate90=false;const rotBtn=$('ac-rotate90');if(rotBtn){rotBtn.style.background='#1565c0';rotBtn.textContent='↻ 90°';}mergedCutsSet={};mergedResult=null;calculate();});
 document.querySelectorAll('#ac-color-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.color);calculate();});});
 document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.wood);calculate();});});
 addBtn.addEventListener('click',newRoomAction);
@@ -706,8 +633,14 @@ camResetBtn.addEventListener('click',()=>{if(!ensure3D())return;if(currentView!=
 save2dBtn.addEventListener('click',()=>generatePdf('2d'));
 save3dBtn.addEventListener('click',()=>{if(!ensure3D())return;if(currentLayout)update3D();generatePdf('3d');});
 showCeilingChk.addEventListener('change',()=>{if(threeCeilingMesh)threeCeilingMesh.visible=showCeilingChk.checked;});
+$('ac-rotate90').addEventListener('click',()=>{
+  params.rotate90 = !params.rotate90;
+  const btn = $('ac-rotate90');
+  btn.style.background = params.rotate90 ? '#2e7d32' : '#1565c0';
+  btn.textContent = params.rotate90 ? '↻ 90° ✓' : '↻ 90°';
+  calculate();
+});
 
-/* PDF (оставил как было — старые функции сохранены) */
 const LOGO_SVG='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="440" height="440"><defs><clipPath id="cc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><rect width="220" height="220" fill="#ffffff"/><g clip-path="url(#cc)"><g stroke="'+CUBICA_RED+'" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg>';
 function svgStringToPngDataURL(svgString,w,h,keepTransparent){return new Promise((resolve,reject)=>{const blob=new Blob([svgString],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');if(!keepTransparent){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}ctx.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);resolve(c.toDataURL('image/png'));};img.onerror=e=>{URL.revokeObjectURL(url);reject(e);};img.src=url;});}
 function addPdfLogo(doc,logoPng){if(logoPng)try{doc.addImage(logoPng,'PNG',15,8,14,14);}catch(e){}}
@@ -719,15 +652,11 @@ async function generateRoomPdf(view){if(!currentLayout){alert('Сначала р
 async function generateProjectPdf(view){if(!project.length){alert('Проект пуст.');return;}if(!window.jspdf||!window.jspdf.jsPDF){alert('jsPDF не загружен.');return;}if(view==='3d'&&!ensure3D())return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const PW=210,PH=297,M=15;let logoPng=null;try{logoPng=await svgStringToPngDataURL(LOGO_SVG,220,220,false);}catch(e){}addPdfLogo(doc,logoPng);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA — Проект',M+18,20);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('Всего помещений: '+project.length,M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let ty=42;ty=drawSpecTable(doc,computeTotals(),M,PW,ty);ty+=4;ty=drawCuttingSection(doc,collectProjectCuts(),M,PW,ty);ty+=4;if(ty>240){doc.addPage();ty=30;}doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Помещения проекта',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(40,40,40);project.forEach((r,i)=>{if(ty>260){doc.addPage();ty=30;}doc.text((i+1)+'. '+r.name+' — '+r.L_in+' × '+r.W_in+' мм, рейка '+r.railW+'/'+r.railH+' '+getColorLabel(r.color||'denver'),M,ty);ty+=5;});doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Итог по проекту — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_PROJECT_'+view.toUpperCase()+'.pdf');}
 async function generatePdf(view){if(specMode==='total')await generateProjectPdf(view);else await generateRoomPdf(view);}
 
-/* ============================================================
-   Инициализация
-   ============================================================ */
 buildWoodCache();
 document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{const w=btn.dataset.wood;if(woodSwatches[w])btn.style.backgroundImage='url('+woodSwatches[w]+')';});
 updateSliderLabels();updateAdjustLabels();syncHangerUI();
 renderProjectList();updateButtonsVisibility();updateWorkLabel();
 
-/* Загрузка из журнала по ?jid= */
 if(JID && window.CubicaJournal){
   const rec = window.CubicaJournal.get(JID);
   if(rec && Array.isArray(rec.rooms) && rec.rooms.length){
@@ -748,19 +677,17 @@ if(JID && window.CubicaJournal){
         hangerHeight: Number(r.hangerHeight) || 0,
         stringerPaint: !!r.stringerPaint,
         rotationDeg: Number(r.rotation) || 0,
+        rotate90: !!r.rotate90,
         polygon: r.polygon || null,
         specRows: [],
-        /* ★ ПРАВКА 3: восстанавливаем объединение из записи журнала */
         mergedCutsSet: r.mergedCutsSet ? {...r.mergedCutsSet} : {},
         mergedResult: r.mergedResult ? {...r.mergedResult} : null
       };
     });
     if(project.length){
-      /* Пересчитываем каждое помещение по очереди, чтобы specRows заполнились */
       project.forEach(function(_, i){
         setTimeout(function(){ activateRoom(i); }, 200 + i * 300);
       });
-      /* Через секунду возвращаемся на первое */
       setTimeout(function(){ activateRoom(0); }, 200 + project.length * 300 + 200);
     }
     console.log('[k6.3] Загружено из журнала:', rec.number, project.length, 'помещ.');
