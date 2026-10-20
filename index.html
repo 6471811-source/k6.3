@@ -350,7 +350,14 @@ if(!roomPolygon&&W_in>L_in){const t=L_in;L_in=W_in;W_in=t;didSwap=true;}
 params.railW=Math.max(30,Math.min(150,parseInt(railWInput.value)||50));params.railH=Math.max(30,Math.min(200,parseInt(railHInput.value)||50));params.gap=Math.max(20,Math.min(300,parseInt(gapInput.value)||40));params.caps=!!capsChk.checked;params.angle=!!angleChk.checked;params.hangers=!!hangersChk.checked;params.hangerHeight=parseFloat(hangerHInput.value)||0;params.stringerPaint=!!stringerPaintChk.checked;
 let rotationDeg=(parseFloat(rotationInput.value)||0)+(params.rotate90?90:0);
 rotationDeg=((rotationDeg%360)+360)%360;
-const rotRad=rotationDeg*Math.PI/180;const cosR=Math.cos(rotRad),sinR=Math.sin(rotRad);const absC=Math.abs(cosR),absS=Math.abs(sinR);
+const normDeg=((rotationDeg%360)+360)%360;
+let cosR,sinR;
+if(normDeg===0){cosR=1;sinR=0;}
+else if(normDeg===90){cosR=0;sinR=1;}
+else if(normDeg===180){cosR=-1;sinR=0;}
+else if(normDeg===270){cosR=0;sinR=-1;}
+else{const rotRad=normDeg*Math.PI/180;cosR=Math.cos(rotRad);sinR=Math.sin(rotRad);}
+const absC=Math.abs(cosR),absS=Math.abs(sinR);
 const railW=params.railW,railH=params.railH,gap=params.gap;const pitch=railW+gap;const L=L_in,W=W_in;const roomCx=L/2,roomCy=W/2;
 function gridToWorld(gx,gy){return[roomCx+gx*cosR-gy*sinR,roomCy+gx*sinR+gy*cosR];}
 function worldToGrid(wx,wy){const dx=wx-roomCx,dy=wy-roomCy;return[dx*cosR+dy*sinR,-dx*sinR+dy*cosR];}
