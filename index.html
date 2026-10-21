@@ -147,6 +147,7 @@ body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;backgrou
 <div class="ac-title"><svg class="lg" viewBox="0 0 220 220"><defs><clipPath id="lgc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><g clip-path="url(#lgc)"><g stroke="#c00000" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg><span>Калькулятор кубической рейки <span class="br">CUBICA</span></span></div><div class="ac-in"><label>Длина, мм<input type="number" id="ac-length" value="5400" step="100" min="100"></label><label>Ширина, мм<input type="number" id="ac-width" value="4200" step="100" min="100"></label><button type="button" class="draw" id="ac-draw-open">✏️ Начертить</button><button type="button" class="upd" id="ac-update-room" style="display:none;">💾 Сохранить</button><button type="button" class="add" id="ac-add-to-project">+ Новое помещение</button><button type="button" class="kp" id="ac-kp-open">📤 Коммерческое предложение</button><button type="button" class="rst" id="ac-reset">Сбросить</button></div>
 <div class="ac-sliders-row"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Ширина рейки</span><span class="ac-slider-val" id="ac-railw-val">50 мм</span></div><input type="range" id="ac-railw" min="30" max="150" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Высота рейки</span><span class="ac-slider-val" id="ac-railh-val">50 мм</span></div><input type="range" id="ac-railh" min="30" max="200" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Шаг между рейками</span><span class="ac-slider-val" id="ac-gap-val">40 мм</span></div><input type="range" id="ac-gap" min="20" max="300" step="10" value="40"></div></div><div class="ac-colors-row"><div class="ac-colors-block"><div class="ac-colors-title">Цвет RAL</div><div class="ac-swatches-ral" id="ac-color-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9003" style="background:#ecece7"></button><div class="ac-swatch-label">9003</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9006" style="background:#a5a8a9"></button><div class="ac-swatch-label">9006</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7004" style="background:#9ea0a3"></button><div class="ac-swatch-label">7004</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7024" style="background:#474b4e"></button><div class="ac-swatch-label">7024</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9005" style="background:#0a0a0a"></button><div class="ac-swatch-label">9005</div></div></div></div><div class="ac-colors-block grow"><div class="ac-colors-title">Дерево Cubica</div><div class="ac-swatches-wood" id="ac-wood-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch active" data-wood="denver"></button><div class="ac-swatch-label">Denver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="wellington"></button><div class="ac-swatch-label">Wellington</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="tokyo"></button><div class="ac-swatch-label">Tokyo</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="toronto"></button><div class="ac-swatch-label">Toronto</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="vancouver"></button><div class="ac-swatch-label">Vancouver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="rio"></button><div class="ac-swatch-label">Rio</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="stockholm"></button><div class="ac-swatch-label">Stockholm</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="sydney"></button><div class="ac-swatch-label">Sydney</div></div></div></div></div><div class="ac-options-row"><div class="ac-colors-title">Опции</div><label class="ac-chk-inline"><input type="checkbox" id="ac-caps"> Заглушки</label><label class="ac-chk-inline"><input type="checkbox" id="ac-angle"> Уголок</label><label class="ac-chk-inline"><input type="checkbox" id="ac-hangers"> Подвесы</label><label class="ac-chk-inline"><input type="checkbox" id="ac-stringer-paint"> Стрингер окр.</label><div class="ac-hanger-slider disabled" id="ac-hanger-slider-wrap"><div class="ac-slider-head"><span>Высота</span></div><input type="range" id="ac-hanger-h" min="0" max="3" step="0.01" value="0" disabled><span class="ac-slider-val" id="ac-hanger-h-val">0,00 м</span></div></div><div class="ac-lw"><div class="ac-adjust"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Поворот раскладки</span><span class="ac-slider-val" id="ac-rotation-val">0°</span></div><input type="range" id="ac-rotation" min="-45" max="45" step="1" value="0"></div></div><div class="ac-vr"><div class="ac-vt"><button type="button" class="active" data-view="2d">2D · Схема</button><button type="button" data-view="3d">3D · Объём</button></div><button type="button" class="ac-cb" id="ac-rotate90" title="Повернуть раскладку реек на 90°">↻ Повернуть на 90°</button></div><div class="ac-lay" id="ac-layout"></div><div class="ac-l3" id="ac-layout3d" style="display:none;"><canvas id="ac-canvas3d" width="640" height="440"></canvas></div><div class="ac-tb"><label class="ac-chk"><input type="checkbox" id="ac-show-ceiling"> Перекрытие</label><button type="button" class="ac-cb" id="ac-cam-reset">⟲ Камера</button><button type="button" class="ac-cb pr" id="ac-save-2d">📄 2D (PDF)</button><button type="button" class="ac-cb pr" id="ac-save-3d">📄 3D (PDF)</button></div><div class="ac-hint">3D: ЛКМ — вращение · колесо — зум · ПКМ — перенос</div></div><aside class="ac-pn" id="ac-panel"><div class="ac-ph"><h4 class="ac-pt">Спецификация</h4><div class="ac-st" id="ac-spec-toggle"><button type="button" data-specmode="current" class="active">Помещение</button><button type="button" data-specmode="total">Итог</button></div></div><div class="ac-res" id="ac-results"></div><div class="ac-pj"><div class="ac-pjt"><span>Проект CUBICA.BY</span><small><span id="ac-project-count">0</span> помещ.</small></div><ul class="ac-pjl" id="ac-project-list"></ul><div class="ac-pja"><button type="button" class="dg" id="ac-project-clear">Очистить проект</button></div></div></aside></div></main><footer class="ft">© 2026 CUBICA.BY · Кубическая рейка</footer>
 <div class="ac-modal" id="ac-draw-modal"><div class="ac-modal-inner"><h3 class="ac-modal-title">✏️ Начертить помещение</h3><p class="ac-modal-hint">Клик — точка. Клик по первой точке — замкнуть контур.</p><div class="ac-draw-hud"><div class="ac-draw-mode" id="ac-draw-mode">Кликните, чтобы задать первую точку</div><div class="ac-draw-length-wrap"><label for="ac-draw-length-input">Длина:</label><input type="number" id="ac-draw-length-input" placeholder="авто" min="100" step="100"><span>мм</span></div></div><div class="ac-draw-body"><div class="ac-draw-wrap"><canvas id="ac-draw-canvas" class="ac-draw-canvas" width="900" height="520"></canvas><div class="ac-modal-warn" id="ac-modal-warn"></div></div><div class="ac-seg-list" id="ac-seg-list"></div></div><div class="ac-modal-bar"><div class="ac-modal-bar-group"><button type="button" id="ac-draw-undo">↶ Отменить</button><button type="button" id="ac-draw-close-contour">🔒 Замкнуть</button><button type="button" class="dg" id="ac-draw-clear">Очистить</button></div><div class="ac-modal-bar-group"><button type="button" id="ac-draw-cancel">Отмена</button><button type="button" class="pr" id="ac-draw-apply" disabled>Применить</button></div></div></div></div>
+<div class="ac-modal" id="ac-unsaved-modal"><div class="ac-modal-inner" style="max-width:460px"><h3 class="ac-modal-title">Несохранённые изменения</h3><p class="ac-modal-hint" id="ac-unsaved-text">В текущем помещении есть несохранённые изменения.</p><div class="ac-modal-bar" style="justify-content:flex-end;margin-top:8px"><button type="button" id="ac-unsaved-cancel">Отмена</button><button type="button" id="ac-unsaved-discard" class="dg">Не сохранять</button><button type="button" id="ac-unsaved-save" class="pr">Сохранить</button></div></div></div>
 <div class="ac-toast" id="ac-toast"></div>
 
 <script type="module">
@@ -186,6 +187,46 @@ const KP_URL='https://6471811-source.github.io/Cubica-i5/';
 const urlParams = new URLSearchParams(location.search);
 const JID = urlParams.get('jid');
 let currentRecordId = null;
+
+let lastSavedSnapshot = null;
+
+function snapshotKey(snap){
+  if(!snap) return '';
+  const copy = {...snap};
+  delete copy.name;
+  return JSON.stringify(copy);
+}
+
+function hasUnsavedChanges(){
+  if(activeRoomIndex === null) return false;
+  if(!currentLayout) return false;
+  if(!lastSavedSnapshot) return false;
+  const cur = snapshotKey(snapshotRoom());
+  return cur !== lastSavedSnapshot;
+}
+
+function askUnsavedChanges(roomName){
+  return new Promise(resolve => {
+    const modal = $('ac-unsaved-modal');
+    const text = $('ac-unsaved-text');
+    text.textContent = 'В помещении «' + roomName + '» есть несохранённые изменения. Сохранить?';
+    modal.classList.add('open');
+
+    const cleanup = () => {
+      modal.classList.remove('open');
+      $('ac-unsaved-save').removeEventListener('click', onSave);
+      $('ac-unsaved-discard').removeEventListener('click', onDiscard);
+      $('ac-unsaved-cancel').removeEventListener('click', onCancel);
+    };
+    const onSave = () => { cleanup(); resolve('save'); };
+    const onDiscard = () => { cleanup(); resolve('discard'); };
+    const onCancel = () => { cleanup(); resolve('cancel'); };
+
+    $('ac-unsaved-save').addEventListener('click', onSave);
+    $('ac-unsaved-discard').addEventListener('click', onDiscard);
+    $('ac-unsaved-cancel').addEventListener('click', onCancel);
+  });
+}
 
 const COLORS={ral9003:{hex:0xecece7},ral9006:{hex:0xa5a8a9},ral7004:{hex:0x9ea0a3},ral7024:{hex:0x474b4e},ral9005:{hex:0x0a0a0a}};
 const COLOR_NAMES={ral9003:'RAL 9003',ral9006:'RAL 9006',ral7004:'RAL 7004',ral7024:'RAL 7024',ral9005:'RAL 9005'};
@@ -251,12 +292,20 @@ function updateWorkLabel(){
   if(activeRoomIndex!==null&&project[activeRoomIndex]){
     wrap.classList.add('project');
     txt.textContent='Работаю: '+project[activeRoomIndex].name+' (из проекта)';
-    if(hint)hint.textContent='изменения сохраняются автоматически';
-  }else if(currentLayout){
+    if(hint){
+      if(hasUnsavedChanges()){
+        hint.textContent='⚠ есть несохранённые изменения';
+        hint.style.color='#b26a00';
+      } else {
+        hint.textContent='изменения сохранены';
+        hint.style.color='';
+      }
+    }
+  } else if(currentLayout){
     wrap.classList.remove('project');
     txt.textContent='Работаю: Новое помещение (не сохранено)';
     if(hint)hint.textContent='нажмите «+ Новое помещение» чтобы сохранить';
-  }else{
+  } else {
     wrap.classList.remove('project');
     txt.textContent='Новое помещение';
     if(hint)hint.textContent='настройте параметры и нажмите «+ Новое помещение»';
@@ -300,6 +349,7 @@ function resetForNewRoom(){
   roomPolygon=null;
   mergedCutsSet={};mergedResult=null;
   activeRoomIndex=null;
+  lastSavedSnapshot = null;
   calculate();
   renderProjectList();
   updateButtonsVisibility();
@@ -313,10 +363,12 @@ function saveRoomSilent(){
     snap.name='Помещение '+(project.length+1);
     project.push(snap);
     activeRoomIndex=project.length-1;
+    lastSavedSnapshot = snapshotKey(snap);
     return {status:'added',name:snap.name};
   }else{
     snap.name=project[activeRoomIndex].name;
     project[activeRoomIndex]=snap;
+    lastSavedSnapshot = snapshotKey(snap);
     return {status:'saved',name:snap.name};
   }
 }
@@ -413,7 +465,6 @@ if(params.hangers)warnings.push('🔧 Подвесы: высота опуска�
 if(params.rotate90)warnings.push('↻ Раскладка повёрнута на 90°.');
 currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
 renderSpec();drawLayout2D();if(threeInitialized)update3D();
-if(activeRoomIndex!==null&&project[activeRoomIndex]&&currentLayout){const __snap=snapshotRoom();__snap.name=project[activeRoomIndex].name;project[activeRoomIndex]=__snap;renderProjectList();}
 updateWorkLabel();
 updateButtonsVisibility();
 }catch(err){console.error('calculate() error:',err);resultsDiv.innerHTML='<p style="color:#d32f2f;font-size:12px">Ошибка: '+err.message+'</p>';}}
@@ -445,9 +496,20 @@ function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cuts
 function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
 function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rotationDeg,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
-function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
-function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
-function renderProjectList(){projectCountEl.textContent=project.length;if(!project.length){projectListEl.innerHTML='<div class="ac-pje">Пока пусто.</div>';return;}projectListEl.innerHTML=project.map((p,i)=>{const active=(i===activeRoomIndex)?' active':'';let mark='';if(p.polygon)mark+=' ✏️';return '<li class="ac-pji'+active+'" data-idx="'+i+'"><span class="ac-pjn">'+p.name+mark+'</span><span class="ac-pjd">'+p.L_in+' × '+p.W_in+' мм</span><button type="button" class="ac-pjx" data-idx="'+i+'">✕</button></li>';}).join('');projectListEl.querySelectorAll('.ac-pji').forEach(li=>{li.addEventListener('click',e=>{if(e.target.closest('.ac-pjx'))return;activateRoom(parseInt(li.dataset.idx,10));});});projectListEl.querySelectorAll('.ac-pjx').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();removeFromProject(parseInt(e.currentTarget.dataset.idx,10));});});}
+function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;lastSavedSnapshot=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
+function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();lastSavedSnapshot = snapshotKey(snapshotRoom());}
+
+async function activateRoomGuarded(index){
+  if(index === activeRoomIndex) return;
+  if(hasUnsavedChanges()){
+    const choice = await askUnsavedChanges(project[activeRoomIndex].name);
+    if(choice === 'cancel') return;
+    if(choice === 'save') saveRoomSilent();
+  }
+  activateRoom(index);
+}
+
+function renderProjectList(){projectCountEl.textContent=project.length;if(!project.length){projectListEl.innerHTML='<div class="ac-pje">Пока пусто.</div>';return;}projectListEl.innerHTML=project.map((p,i)=>{const active=(i===activeRoomIndex)?' active':'';let mark='';if(p.polygon)mark+=' ✏️';return '<li class="ac-pji'+active+'" data-idx="'+i+'"><span class="ac-pjn">'+p.name+mark+'</span><span class="ac-pjd">'+p.L_in+' × '+p.W_in+' мм</span><button type="button" class="ac-pjx" data-idx="'+i+'">✕</button></li>';}).join('');projectListEl.querySelectorAll('.ac-pji').forEach(li=>{li.addEventListener('click',e=>{if(e.target.closest('.ac-pjx'))return;activateRoomGuarded(parseInt(li.dataset.idx,10));});});projectListEl.querySelectorAll('.ac-pjx').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();removeFromProject(parseInt(e.currentTarget.dataset.idx,10));});});}
   function openKpPage(){
 if(!currentLayout){alert('Сначала расчёт.');return;}
 let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice();
@@ -576,7 +638,18 @@ const url=KP_URL+(KP_URL.includes('?')?'&':'?')+'data='+data;
 window.open(url,'_blank');
 setTimeout(function(){ window.close(); }, 200);
 }
-$('ac-kp-open').addEventListener('click',openKpPage);
+
+async function openKpPageGuarded(){
+  if(!currentLayout){alert('Сначала расчёт.');return;}
+  if(hasUnsavedChanges()){
+    const choice = await askUnsavedChanges(project[activeRoomIndex].name);
+    if(choice === 'cancel') return;
+    if(choice === 'save') saveRoomSilent();
+  }
+  openKpPage();
+}
+
+$('ac-kp-open').addEventListener('click',openKpPageGuarded);
 
 const drawModal=$('ac-draw-modal'),drawCanvas=$('ac-draw-canvas'),drawCtx=drawCanvas.getContext('2d');
 const drawUndoBtn=$('ac-draw-undo'),drawCloseContourBtn=$('ac-draw-close-contour'),drawClearBtn=$('ac-draw-clear');
