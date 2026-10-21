@@ -215,9 +215,19 @@ let mergedCutsSet={};
 let mergedResult=null;
 let calcRaf=null;
 let isDirty=false;
+let lastSavedState=null;
 
 function markDirty(){ if(!isDirty){ isDirty=true; updateWorkLabel(); } }
 function markClean(){ if(isDirty){ isDirty=false; updateWorkLabel(); } }
+function currentFormState(){ return JSON.stringify({
+  L:parseFloat(lengthInput.value)||0, W:parseFloat(widthInput.value)||0,
+  railW:parseFloat(railWInput.value)||0, railH:parseFloat(railHInput.value)||0, gap:parseFloat(gapInput.value)||0,
+  rot:parseFloat(rotationInput.value)||0, rotate90:!!params.rotate90,
+  color:params.color, caps:!!capsChk.checked, angle:!!angleChk.checked, hangers:!!hangersChk.checked,
+  hH:parseFloat(hangerHInput.value)||0, sp:!!stringerPaintChk.checked,
+  poly: roomPolygon ? JSON.stringify(roomPolygon) : null
+});}
+function updateDirtyStatus(){ if(!currentLayout) return; if(lastSavedState === null){ markClean(); return; } if(currentFormState() !== lastSavedState){ markDirty(); } else { markClean(); } }
 
 function scheduleCalculate(){if(calcRaf)return;calcRaf=requestAnimationFrame(()=>{calcRaf=null;calculate();});}
 function b64enc(s){return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
@@ -259,7 +269,7 @@ function updateWorkLabel(){
   if(activeRoomIndex!==null&&project[activeRoomIndex]){
     wrap.classList.add('project');
     txt.textContent='Работаю: '+project[activeRoomIndex].name+' (из проекта)'+dirty;
-    if(hint)hint.textContent=isDirty?'нажмите «Сохранить», чтобы зафиксировать':'изменения сохраняются автоматически';
+    if(hint)hint.textContent=isDirty?'нажмите «Сохранить», чтобы зафиксировать':'все изменения сохранены';
   }else if(currentLayout){
     wrap.classList.remove('project');
     txt.textContent='Работаю: Новое помещение (не сохранено)'+dirty;
@@ -310,6 +320,7 @@ function resetForNewRoom(){
   mergedCutsSet={};mergedResult=null;
   activeRoomIndex=null;
   isDirty=false;
+  lastSavedState=null;
   calculate();
   renderProjectList();
   updateButtonsVisibility();
@@ -323,30 +334,37 @@ function saveRoomSilent(){
     snap.name='Помещение '+(project.length+1);
     project.push(snap);
     activeRoomIndex=project.length-1;
-    isDirty=false;
-    return {status:'added',name:snap.name};
   }else{
     snap.name=project[activeRoomIndex].name;
     project[activeRoomIndex]=snap;
-    isDirty=false;
-    return {status:'saved',name:snap.name};
   }
+  isDirty=false;
+  lastSavedState=currentFormState();
+  renderProjectList();
+  renderSpec();
+  updateWorkLabel();
+  return {status:activeRoomIndex===project.length-1?'added':'saved',name:snap.name};
 }
 
 function newRoomAction(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
+  const isNew = activeRoomIndex===null;
   const result=saveRoomSilent();
   if(!result){alert('Не удалось сохранить.');return;}
-  const savedName=result.name;
-  resetForNewRoom();
-  showToast('✓ '+savedName+' добавлено в проект');
+  if(isNew){
+    const savedName=result.name;
+    resetForNewRoom();
+    showToast('✓ '+savedName+' добавлено в проект');
+  } else {
+    resetForNewRoom();
+    showToast('✓ Помещение сохранено. Готово новое помещение.');
+  }
 }
 
 function saveRoomExplicit(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
   const result=saveRoomSilent();
   if(!result){alert('Не удалось сохранить.');return;}
-  renderProjectList();renderSpec();
   updateButtonsVisibility();updateWorkLabel();
   if(result.status==='added')showToast('✓ '+result.name+' добавлено в проект');
   else showToast('✓ '+result.name+' сохранено');
@@ -424,7 +442,9 @@ if(params.hangers)warnings.push('🔧 Подвесы: высота опуска�
 if(params.rotate90)warnings.push('↻ Раскладка повёрнута на 90°.');
 currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
 renderSpec();drawLayout2D();if(threeInitialized)update3D();
-if(activeRoomIndex!==null&&project[activeRoomIndex]){project[activeRoomIndex]=snapshotRoomWithName(project[activeRoomIndex].name);renderProjectList();}
+if(activeRoomIndex!==null && project[activeRoomIndex] && currentLayout){
+  updateDirtyStatus();
+}
 updateWorkLabel();
 updateButtonsVisibility();
 }catch(err){console.error('calculate() error:',err);resultsDiv.innerHTML='<p style="color:#d32f2f;font-size:12px">Ошибка: '+err.message+'</p>';}}
@@ -471,14 +491,14 @@ function renderSpec(){let source=specMode==='total'?computeTotals():(currentLayo
 if(specMode==='current'&&currentLayout){const marked=Object.keys(currentLayout.mergedCutsSet||{}).filter(k=>currentLayout.mergedCutsSet[k]);const mergeActive=currentLayout.mergeInfo;html+='<div class="ac-merge-bar">';html+='<button type="button" class="do-merge"'+(marked.length===0?' disabled':'')+'>🧩 Объединить'+(marked.length?' ('+marked.length+')':'')+'</button>';html+='<button type="button" class="do-split"'+(mergeActive?'':' disabled')+'>✂️ Разъединить</button>';html+='</div>';if(marked.length>0){if(mergeActive){html+='<div class="ac-note ok">✓ Объединено в размер <b>'+mergeActive.refSize+' мм</b>: +'+mergeActive.extraQty+' шт дополнительно к '+mergeActive.existingQty+' существующим · <b>итого '+mergeActive.totalQty+' шт</b> · отход '+Math.round(mergeActive.waste)+' мм ('+mergeActive.wastePct.toFixed(2)+'%)</div>';html+=renderCuttingScheme(mergeActive.cuttingScheme,mergeActive.refSize);}else if(currentLayout.mergeError==='piece_too_long')html+='<div class="ac-note warn">⚠ Объединение невозможно: есть отмеченная рейка длиннее '+MAX_RAIL_LEN+' мм.</div>';else html+='<div class="ac-note warn">Галочки стоят на '+marked.length+' размере(ах). Нажмите «Объединить», чтобы посчитать.</div>';}}
 if(specMode==='current'&&currentLayout&&currentLayout.warnings&&currentLayout.warnings.length){for(const w of currentLayout.warnings){const cls=(w.indexOf('📐')===0||w.indexOf('ℹ')===0||w.indexOf('✏️')===0||w.indexOf('🔄')===0||w.indexOf('🔧')===0)?'info':'warn';html+='<div class="ac-note '+cls+'">'+w+'</div>';}}
 resultsDiv.innerHTML=html;
-resultsDiv.querySelectorAll('input.chk[data-cut]').forEach(cb=>{cb.addEventListener('change',()=>{const sz=cb.getAttribute('data-cut');if(cb.checked)mergedCutsSet[sz]=true;else delete mergedCutsSet[sz];mergedResult=null;markDirty();calculate();});});
+resultsDiv.querySelectorAll('input.chk[data-cut]').forEach(cb=>{cb.addEventListener('change',()=>{const sz=cb.getAttribute('data-cut');if(cb.checked)mergedCutsSet[sz]=true;else delete mergedCutsSet[sz];mergedResult=null;updateDirtyStatus();calculate();});});
 const btnMerge=resultsDiv.querySelector('button.do-merge');if(btnMerge)btnMerge.addEventListener('click',()=>{doMergeCuts();});
-const btnSplit=resultsDiv.querySelector('button.do-split');if(btnSplit)btnSplit.addEventListener('click',()=>{mergedResult=null;markDirty();calculate();});}
-function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cutsMap;const cutsWithQty=[];Object.keys(mergedCutsSet).forEach(k=>{if(mergedCutsSet[k]){const sz=Number(k);let qty=0;if(sz===3000)qty=currentLayout.n3000;else if(sz===4000)qty=currentLayout.n4000;else qty=cutsMap[sz]||0;if(qty>0)cutsWithQty.push({size:sz,qty:qty});}});if(!cutsWithQty.length){alert('Поставьте галочки хотя бы на один размер.');return;}const allowedRefs=collectAllowedRefs(cutsMap,mergedCutsSet,currentLayout.n4000,currentLayout.n3000);if(!allowedRefs.length){alert('Нет доступного эталона.');return;}const res=tryMergeCuts(cutsWithQty,allowedRefs);if(res&&res.ok){mergedResult=res;markDirty();calculate();}else{mergedResult=res||{ok:false,reason:'unknown'};calculate();}}
+const btnSplit=resultsDiv.querySelector('button.do-split');if(btnSplit)btnSplit.addEventListener('click',()=>{mergedResult=null;updateDirtyStatus();calculate();});}
+function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cutsMap;const cutsWithQty=[];Object.keys(mergedCutsSet).forEach(k=>{if(mergedCutsSet[k]){const sz=Number(k);let qty=0;if(sz===3000)qty=currentLayout.n3000;else if(sz===4000)qty=currentLayout.n4000;else qty=cutsMap[sz]||0;if(qty>0)cutsWithQty.push({size:sz,qty:qty});}});if(!cutsWithQty.length){alert('Поставьте галочки хотя бы на один размер.');return;}const allowedRefs=collectAllowedRefs(cutsMap,mergedCutsSet,currentLayout.n4000,currentLayout.n3000);if(!allowedRefs.length){alert('Нет доступного эталона.');return;}const res=tryMergeCuts(cutsWithQty,allowedRefs);if(res&&res.ok){mergedResult=res;updateDirtyStatus();calculate();}else{mergedResult=res||{ok:false,reason:'unknown'};calculate();}}
 
 function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
-function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;isDirty=false;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
+function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;isDirty=false;lastSavedState=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
 
 function activateRoom(index){
   const r = project[index];
@@ -505,6 +525,7 @@ function activateRoom(index){
   roomPolygon = r.polygon ? r.polygon.map(p=>[p[0],p[1]]) : null;
   mergedCutsSet = r.mergedCutsSet ? {...r.mergedCutsSet} : {};
   mergedResult = r.mergedResult ? {...r.mergedResult} : null;
+  lastSavedState = currentFormState();
   isDirty = false;
   calculate();
   specMode='current';
@@ -528,14 +549,6 @@ function renderProjectList(){
       if(e.target.closest('.ac-pjx')) return;
       const idx=parseInt(li.dataset.idx,10);
       if(idx===activeRoomIndex) return;
-      if(isDirty){
-        const choice=confirm('Есть несохранённые изменения в текущем помещении.\n\nОК — сохранить и переключиться.\nОтмена — отменить изменения и переключиться.');
-        if(choice){
-          saveRoomSilent();
-        } else {
-          isDirty=false;
-        }
-      }
       activateRoom(idx);
     });
   });
@@ -548,7 +561,7 @@ function renderProjectList(){
       if(!confirm('Удалить «'+room.name+'» из проекта?')) return;
       project.splice(idx,1);
       project.forEach((p,i)=>{p.name='Помещение '+(i+1);});
-      if(activeRoomIndex===idx){activeRoomIndex=null;isDirty=false;resetForNewRoom();}
+      if(activeRoomIndex===idx){activeRoomIndex=null;isDirty=false;lastSavedState=null;resetForNewRoom();}
       else if(activeRoomIndex!==null&&activeRoomIndex>idx){activeRoomIndex--;}
       renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();
       showToast('✓ Помещение удалено');
@@ -565,34 +578,12 @@ function renderProjectList(){
       'Отмена — перейти без сохранения (изменения потеряются).'
     );
     if(choice){
-      const res = saveRoomSilent();
-      if(!res){alert('Не удалось сохранить.');return;}
+      saveRoomSilent();
     } else {
       if(activeRoomIndex!==null && project[activeRoomIndex]){
-        const saved = project[activeRoomIndex];
-        lengthInput.value = saved.L_in;
-        widthInput.value = saved.W_in;
-        railWInput.value = saved.railW;
-        railHInput.value = saved.railH;
-        gapInput.value = saved.gap;
-        rotationInput.value = Math.max(-45, Math.min(45, Number(saved.rotationDeg) || 0));
-        params.rotate90 = !!saved.rotate90;
-        updateRotate90UI();
-        capsChk.checked = !!saved.caps;
-        angleChk.checked = !!saved.angle;
-        hangersChk.checked = !!saved.hangers;
-        hangerHInput.value = saved.hangerHeight || 0;
-        syncHangerUI();
-        stringerPaintChk.checked = !!saved.stringerPaint;
-        setActiveColor(saved.color || 'denver');
-        roomPolygon = saved.polygon ? saved.polygon.map(p=>[p[0],p[1]]) : null;
-        mergedCutsSet = saved.mergedCutsSet ? {...saved.mergedCutsSet} : {};
-        mergedResult = saved.mergedResult ? {...saved.mergedResult} : null;
-        updateSliderLabels();
-        updateAdjustLabels();
-        calculate();
+        activateRoom(activeRoomIndex);
       }
-      isDirty = false;
+      isDirty=false;
     }
   }
 
@@ -768,7 +759,7 @@ drawUndoBtn.addEventListener('click',()=>{stopEdgeStretch();if(drawSegments.leng
 drawCloseContourBtn.addEventListener('click',()=>{if(drawSegments.length<2){showErr('⚠ Минимум 2 стороны.');return;}attemptClose();});
 drawClearBtn.addEventListener('click',()=>{stopEdgeStretch();drawStart=null;drawSegments=[];drawClosed=false;autoAddedCount=0;cursorMm=null;redrawDraw(true);renderSegmentList();updateModalWarn();updateDrawHud();drawApplyBtn.disabled=true;});
 drawCancelBtn.addEventListener('click',()=>{stopEdgeStretch();drawModal.classList.remove('open');});
-drawApplyBtn.addEventListener('click',()=>{if(!drawClosed||drawSegments.length<3)return;stopEdgeStretch();const pts=walkPoints();if(pts.length>2){const last=pts[pts.length-1],first=pts[0];if(Math.abs(last[0]-first[0])<1&&Math.abs(last[1]-first[1])<1)pts.pop();}roomPolygon=normalizePoly(pts);const bb=polyBBox(roomPolygon);lengthInput.value=Math.round(bb.W);widthInput.value=Math.round(bb.H);mergedCutsSet={};mergedResult=null;drawModal.classList.remove('open');markDirty();calculate();});
+drawApplyBtn.addEventListener('click',()=>{if(!drawClosed||drawSegments.length<3)return;stopEdgeStretch();const pts=walkPoints();if(pts.length>2){const last=pts[pts.length-1],first=pts[0];if(Math.abs(last[0]-first[0])<1&&Math.abs(last[1]-first[1])<1)pts.pop();}roomPolygon=normalizePoly(pts);const bb=polyBBox(roomPolygon);lengthInput.value=Math.round(bb.W);widthInput.value=Math.round(bb.H);mergedCutsSet={};mergedResult=null;drawModal.classList.remove('open');calculate();});
 drawOpenBtn.addEventListener('click',()=>{stopEdgeStretch();if(roomPolygon){const norm=roomPolygon.map(p=>[p[0],p[1]]);if(norm.length>=3){drawStart=[norm[0][0],norm[0][1]];drawSegments=[];for(let i=0;i<norm.length;i++){const a=norm[i],b=norm[(i+1)%norm.length];const dx=b[0]-a[0],dy=b[1]-a[1];if(Math.abs(dx)>Math.abs(dy))drawSegments.push({axis:'x',sign:dx>=0?1:-1,len:Math.round(Math.abs(dx))});else drawSegments.push({axis:'y',sign:dy>=0?1:-1,len:Math.round(Math.abs(dy))});}drawClosed=true;autoAddedCount=0;}}else{drawStart=null;drawSegments=[];drawClosed=false;autoAddedCount=0;}cursorMm=null;drawLengthInput.value='';redrawDraw(true);renderSegmentList();updateModalWarn();updateDrawHud();drawApplyBtn.disabled=!drawClosed;drawModal.classList.add('open');});
 function renderSegmentList(){if(drawSegments.length===0){segListEl.innerHTML='<div class="ac-seg-empty">Пока нет ни одной стены.</div>';return;}segListEl.innerHTML=drawSegments.map((s,i)=>{let arrow='',lbl='';if(s.axis==='x'){arrow=s.sign>0?'→':'←';lbl='Стена '+(i+1)+' (гориз.)';}else{arrow=s.sign>0?'↓':'↑';lbl='Стена '+(i+1)+' (верт.)';}return '<div class="ac-seg-row"><span class="arrow">'+arrow+'</span><span class="lbl">'+lbl+'</span><input type="number" value="'+s.len+'" step="100" min="100" data-idx="'+i+'"><span>мм</span></div>';}).join('');segListEl.querySelectorAll('input').forEach(inp=>{inp.addEventListener('input',()=>{const idx=parseInt(inp.dataset.idx,10);const v=Math.max(100,parseFloat(inp.value)||100);drawSegments[idx].len=v;if(drawClosed){const p=walkPoints();const first=p[0],last=p[p.length-1];if(Math.abs(last[0]-first[0])>1||Math.abs(last[1]-first[1])>1){drawClosed=false;autoAddedCount=0;drawApplyBtn.disabled=true;}}redrawDraw();updateModalWarn();updateDrawHud();});});}
 
@@ -776,20 +767,20 @@ function updateSliderLabels(){railWVal.textContent=railWInput.value+' мм';rail
 function updateAdjustLabels(){const rot=parseFloat(rotationInput.value)||0;rotationVal.textContent=rot===0?'0°':(rot>0?rot+'° ↻':Math.abs(rot)+'° ↺');}
 function syncHangerUI(){const on=!!hangersChk.checked;hangerHInput.disabled=!on;hangerSliderWrap.classList.toggle('disabled',!on);const v=parseFloat(hangerHInput.value)||0;hangerHVal.textContent=v.toFixed(2).replace('.',',')+' м';}
 function setActiveColor(key){document.querySelectorAll('#ac-color-grid .ac-swatch, #ac-wood-grid .ac-swatch').forEach(b=>b.classList.remove('active'));if(WOOD_PROC[key]){const b=document.querySelector('#ac-wood-grid .ac-swatch[data-wood="'+key+'"]');if(b)b.classList.add('active');}else{const b=document.querySelector('#ac-color-grid .ac-swatch[data-color="'+key+'"]');if(b)b.classList.add('active');}params.color=key;}
-railWInput.addEventListener('input',()=>{updateSliderLabels();markDirty();scheduleCalculate();});
-railHInput.addEventListener('input',()=>{updateSliderLabels();markDirty();scheduleCalculate();});
-gapInput.addEventListener('input',()=>{updateSliderLabels();markDirty();scheduleCalculate();});
-rotationInput.addEventListener('input',()=>{updateAdjustLabels();markDirty();scheduleCalculate();});
-lengthInput.addEventListener('input',()=>{roomPolygon=null;mergedCutsSet={};mergedResult=null;markDirty();calculate();});
-widthInput.addEventListener('input',()=>{roomPolygon=null;mergedCutsSet={};mergedResult=null;markDirty();calculate();});
-capsChk.addEventListener('change',()=>{markDirty();calculate();});
-angleChk.addEventListener('change',()=>{markDirty();calculate();});
-hangersChk.addEventListener('change',()=>{syncHangerUI();markDirty();calculate();});
-hangerHInput.addEventListener('input',()=>{syncHangerUI();markDirty();scheduleCalculate();});
-stringerPaintChk.addEventListener('change',()=>{markDirty();calculate();});
-resetBtn.addEventListener('click',()=>{railWInput.value=50;railHInput.value=50;gapInput.value=40;rotationInput.value=0;updateSliderLabels();updateAdjustLabels();setActiveColor('denver');capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;hangerHInput.value=0;stringerPaintChk.checked=false;syncHangerUI();params.rotate90=false;updateRotate90UI();mergedCutsSet={};mergedResult=null;markDirty();calculate();});
-document.querySelectorAll('#ac-color-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.color);markDirty();calculate();});});
-document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.wood);markDirty();calculate();});});
+railWInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});
+railHInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});
+gapInput.addEventListener('input',()=>{updateSliderLabels();scheduleCalculate();});
+rotationInput.addEventListener('input',()=>{updateAdjustLabels();scheduleCalculate();});
+lengthInput.addEventListener('input',()=>{roomPolygon=null;mergedCutsSet={};mergedResult=null;calculate();});
+widthInput.addEventListener('input',()=>{roomPolygon=null;mergedCutsSet={};mergedResult=null;calculate();});
+capsChk.addEventListener('change',()=>calculate());
+angleChk.addEventListener('change',()=>calculate());
+hangersChk.addEventListener('change',()=>{syncHangerUI();calculate();});
+hangerHInput.addEventListener('input',()=>{syncHangerUI();scheduleCalculate();});
+stringerPaintChk.addEventListener('change',()=>calculate());
+resetBtn.addEventListener('click',()=>{railWInput.value=50;railHInput.value=50;gapInput.value=40;rotationInput.value=0;updateSliderLabels();updateAdjustLabels();setActiveColor('denver');capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;hangerHInput.value=0;stringerPaintChk.checked=false;syncHangerUI();params.rotate90=false;updateRotate90UI();mergedCutsSet={};mergedResult=null;calculate();});
+document.querySelectorAll('#ac-color-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.color);calculate();});});
+document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.wood);calculate();});});
 addBtn.addEventListener('click',newRoomAction);
 updateBtn.addEventListener('click',saveRoomExplicit);
 projectClearBtn.addEventListener('click',clearProject);
@@ -802,7 +793,6 @@ showCeilingChk.addEventListener('change',()=>{if(threeCeilingMesh)threeCeilingMe
 $('ac-rotate90').addEventListener('click',()=>{
   params.rotate90 = !params.rotate90;
   updateRotate90UI();
-  markDirty();
   calculate();
 });
 
