@@ -353,8 +353,7 @@ function saveRoomExplicit(){
 }
 
 function hangerSpecRows(totalHangers,enabled,heightM){if(!enabled)return[];const h=heightM;const rows=[];const push=(label,qty)=>rows.push({label,value:qty+' шт.',num:qty,kind:'count',color:'#3a4048',unit:'шт.'});if(h<0.50){push('Европодвес 500 мм',totalHangers);}else if(h<0.70){push('Тяга-крюк 250 мм d 4,0',totalHangers);push('Тяга-петля 350 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.00){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 500 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.30){push('Тяга-крюк 350 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.50){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<2.00){push('Тяга-крюк 1000 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<2.50){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers*2);push('Пружина европодвеса d 4,0',totalHangers*2);}else{push('Тяга-крюк 1000 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers*2);push('Пружина европодвеса d 4,0',totalHangers*2);}return rows;}
-
-function calculate(){try{
+  function calculate(){try{
 let L_in=parseFloat(lengthInput.value);let W_in=parseFloat(widthInput.value);
 if(isNaN(L_in)||isNaN(W_in)||L_in<=0||W_in<=0){resultsDiv.innerHTML='<p style="color:#d32f2f">Введите корректные размеры.</p>';layout2dDiv.innerHTML='';return;}
 let didSwap=false;
@@ -429,10 +428,37 @@ if(activeRoomIndex!==null&&project[activeRoomIndex]){project[activeRoomIndex]=sn
 updateWorkLabel();
 updateButtonsVisibility();
 }catch(err){console.error('calculate() error:',err);resultsDiv.innerHTML='<p style="color:#d32f2f;font-size:12px">Ошибка: '+err.message+'</p>';}}
-  function snapshotRoomWithName(name){
+
+function snapshotRoomWithName(name){
   const snap = snapshotRoom();
   snap.name = name;
   return snap;
+}
+
+function snapshotRoom(){
+  return {
+    L_in: currentLayout.L_in,
+    W_in: currentLayout.W_in,
+    railW: params.railW,
+    railH: params.railH,
+    gap: params.gap,
+    color: params.color,
+    caps: params.caps,
+    angle: params.angle,
+    hangers: params.hangers,
+    hangerHeight: params.hangerHeight,
+    stringerPaint: params.stringerPaint,
+    rotationDeg: parseFloat(rotationInput.value) || 0,
+    rotate90: params.rotate90,
+    polygon: roomPolygon ? roomPolygon.map(p=>[p[0],p[1]]) : null,
+    specRows: currentLayout.specRows.map(r=>({...r})),
+    mergedCutsSet: {...mergedCutsSet},
+    mergedResult: mergedResult ? {...mergedResult} : null,
+    mergeInfo: currentLayout.mergeInfo ? {
+      ...currentLayout.mergeInfo,
+      cuttingScheme: currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))
+    } : null
+  };
 }
 
 function drawLayout2D(){if(!currentLayout)return;const{L_in,W_in,railW,polygon,colorHex,perRailSegments,perStringerSegments}=currentLayout;const width=640,height=440,padding=60;const s=Math.min((width-2*padding)/L_in,(height-2*padding)/W_in);const drawWidth=L_in*s,drawHeight=W_in*s;const ox=(width-drawWidth)/2,oy=(height-drawHeight)/2;let polySvgPts=null;if(polygon)polySvgPts=polygon.map(p=>[ox+p[0]*s,oy+p[1]*s]);let svg='<svg width="'+width+'" height="'+height+'" viewBox="0 0 '+width+' '+height+'" style="background:#f9f9f9;border:1px solid #e0e0e0;">';svg+='<defs><clipPath id="ac-room-clip" clipPathUnits="userSpaceOnUse">';if(polygon)svg+='<polygon points="'+polySvgPts.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')+'"/>';else svg+='<rect x="'+ox+'" y="'+oy+'" width="'+drawWidth+'" height="'+drawHeight+'"/>';svg+='</clipPath></defs>';if(polygon)svg+='<polygon points="'+polySvgPts.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')+'" fill="white"/>';else svg+='<rect x="'+ox+'" y="'+oy+'" width="'+drawWidth+'" height="'+drawHeight+'" fill="white"/>';svg+='<g clip-path="url(#ac-room-clip)">';const railPxH=Math.max(railW*s,1.5);const railFill='#'+colorHex.toString(16).padStart(6,'0');for(const rseg of perRailSegments){const sx0=ox+rseg.x0*s,sy0=oy+rseg.y0*s;const sx1=ox+rseg.x1*s,sy1=oy+rseg.y1*s;svg+='<line x1="'+sx0.toFixed(2)+'" y1="'+sy0.toFixed(2)+'" x2="'+sx1.toFixed(2)+'" y2="'+sy1.toFixed(2)+'" stroke="'+railFill+'" stroke-width="'+railPxH.toFixed(2)+'" stroke-linecap="butt"/>';const deg=Math.atan2(sy1-sy0,sx1-sx0)*180/Math.PI;let acc=0;for(let i=0;i<rseg.pieces.length;i++){const piece=rseg.pieces[i];const t0=acc/rseg.len,t1=(acc+piece)/rseg.len;const cxa=sx0+(sx1-sx0)*t0,cya=sy0+(sy1-sy0)*t0;const cxb=sx0+(sx1-sx0)*t1,cyb=sy0+(sy1-sy0)*t1;if(i<rseg.pieces.length-1)svg+='<circle cx="'+cxb.toFixed(2)+'" cy="'+cyb.toFixed(2)+'" r="3.5" fill="#ffd54f" stroke="#333" stroke-width="1"/>';const mx=(cxa+cxb)/2,my=(cya+cyb)/2;if(Math.hypot(cxb-cxa,cyb-cya)>14)svg+='<g transform="translate('+mx.toFixed(1)+','+my.toFixed(1)+') rotate('+deg.toFixed(2)+')"><text text-anchor="middle" font-size="9" font-weight="700" fill="#1a1a2e" style="paint-order:stroke;stroke:#ffffff;stroke-width:2.5px;stroke-linejoin:round;">'+piece+'</text></g>';acc+=piece;}}
@@ -440,15 +466,6 @@ for(const sseg of perStringerSegments){for(const sg of sseg.segs){const sx0=ox+s
 svg+='</g>';if(polygon)svg+='<polygon points="'+polySvgPts.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')+'" fill="none" stroke="#333" stroke-width="2"/>';else{svg+='<rect x="'+ox+'" y="'+oy+'" width="'+drawWidth+'" height="'+drawHeight+'" fill="none" stroke="#333" stroke-width="2"/>';svg+='<text x="'+(ox+drawWidth/2)+'" y="'+(oy-12)+'" text-anchor="middle" font-size="12" fill="#333" font-weight="600">'+L_in+' мм</text>';svg+='<text x="'+(ox-12)+'" y="'+(oy+drawHeight/2)+'" text-anchor="middle" font-size="12" fill="#333" font-weight="600" transform="rotate(-90 '+(ox-12)+' '+(oy+drawHeight/2)+')">'+W_in+' мм</text>';}
 if(polygon&&polygon.length>=3){let cxP=0,cyP=0;for(const p of polygon){cxP+=p[0];cyP+=p[1];}cxP/=polygon.length;cyP/=polygon.length;const cxScr=ox+cxP*s,cyScr=oy+cyP*s;for(let i=0;i<polygon.length;i++){const a=polygon[i],b=polygon[(i+1)%polygon.length];const len=Math.round(Math.hypot(b[0]-a[0],b[1]-a[1]));const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;const px=ox+mx*s,py=oy+my*s;let ang=Math.atan2((b[1]-a[1])*s,(b[0]-a[0])*s)*180/Math.PI;if(ang>90)ang-=180;if(ang<-90)ang+=180;const nx=px-cxScr,ny=py-cyScr;const nl=Math.hypot(nx,ny)||1;const OFF=18;const tx=px+nx/nl*OFF,ty=py+ny/nl*OFF;svg+='<g transform="translate('+tx.toFixed(1)+' '+ty.toFixed(1)+') rotate('+ang.toFixed(2)+')"><text text-anchor="middle" font-size="11" font-weight="800" fill="#c00000" style="paint-order:stroke;stroke:#ffffff;stroke-width:4px;stroke-linejoin:round;">'+len+' мм</text></g>';}}
 svg+='</svg>';layout2dDiv.innerHTML=svg;}
-
-function init3D(){const canvas=$('ac-canvas3d');const CW=640,CH=440;threeRenderer=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio,2));threeRenderer.setSize(CW,CH,false);threeScene=new THREE.Scene();threeScene.background=new THREE.Color(0xeef1f5);threeCamera=new THREE.PerspectiveCamera(45,CW/CH,0.05,300);threeControls=new OrbitControls(threeCamera,canvas);threeControls.enableDamping=true;threeControls.dampingFactor=0.08;threeControls.maxPolarAngle=Math.PI*0.98;threeControls.minDistance=0.5;threeControls.maxDistance=100;threeScene.add(new THREE.AmbientLight(0xffffff,0.85));const d1=new THREE.DirectionalLight(0xffffff,0.75);d1.position.set(6,12,8);threeScene.add(d1);const d2=new THREE.DirectionalLight(0xffffff,0.35);d2.position.set(-8,8,-6);threeScene.add(d2);const d3=new THREE.DirectionalLight(0xffffff,0.3);d3.position.set(0,-5,0);threeScene.add(d3);threeRoomGroup=new THREE.Group();threeScene.add(threeRoomGroup);threeGridPivot=new THREE.Group();threeScene.add(threeGridPivot);(function loop(){requestAnimationFrame(loop);threeControls.update();threeRenderer.render(threeScene,threeCamera);})();}
-function ensure3D(){if(threeInitialized)return true;const wasHidden=layout3dDiv.style.display==='none';const prev2d=layout2dDiv.style.display;if(wasHidden){layout2dDiv.style.display='none';layout3dDiv.style.display='';}try{init3D();threeInitialized=true;if(wasHidden&&currentView!=='3d'){layout2dDiv.style.display=prev2d||'';layout3dDiv.style.display='none';}return true;}catch(e){console.error(e);if(wasHidden){layout2dDiv.style.display=prev2d||'';layout3dDiv.style.display='none';}alert('3D ошибка: '+e.message);return false;}}
-function clearGroup(g){while(g.children.length){const o=g.children.pop();if(o.geometry&&!o.geometry.__cached)o.geometry.dispose();if(o.material&&o.material.__shared!==true)o.material.dispose();}}
-function makeRailAsBoxes(railW,railH,wallT,flange,length,material){const g=new THREE.Group();const halfW=railW/2;let f=flange;const maxF=halfW-wallT*1.2;if(f>maxF)f=maxF;const bottom=new THREE.Mesh(new THREE.BoxGeometry(length,wallT,railW-2*wallT),material);bottom.position.set(0,wallT/2,0);g.add(bottom);const leftWall=new THREE.Mesh(new THREE.BoxGeometry(length,railH,wallT),material);leftWall.position.set(0,railH/2,-halfW+wallT/2);g.add(leftWall);const rightWall=new THREE.Mesh(new THREE.BoxGeometry(length,railH,wallT),material);rightWall.position.set(0,railH/2,halfW-wallT/2);g.add(rightWall);const leftFlange=new THREE.Mesh(new THREE.BoxGeometry(length,wallT,f),material);leftFlange.position.set(0,railH-wallT/2,-halfW+f/2);g.add(leftFlange);const rightFlange=new THREE.Mesh(new THREE.BoxGeometry(length,wallT,f),material);rightFlange.position.set(0,railH-wallT/2,halfW-f/2);g.add(rightFlange);return g;}
-function resetCamera(){if(!currentLayout)return;const Lm=currentLayout.L_in/1000,Wm=currentLayout.W_in/1000;const railHm=currentLayout.railH/1000;const s=Math.max(Lm,Wm,1);const centerY=railHm+CARRIER_H/2000;threeControls.target.set(0,centerY,0);threeCamera.position.set(Lm*1.05,centerY+s*0.55,Wm*0.85);threeCamera.lookAt(threeControls.target);threeControls.update();}
-function update3D(){if(!threeInitialized||!currentLayout)return;const{L_in,W_in,railW,railH,perRailSegments,perStringerSegments,polygon,colorHex,caps}=currentLayout;clearGroup(threeRoomGroup);clearGroup(threeGridPivot);threeTilesGroup=new THREE.Group();threeGridPivot.add(threeTilesGroup);threeHangersGroup=new THREE.Group();threeGridPivot.add(threeHangersGroup);threeGridPivot.position.set(0,0,0);threeGridPivot.rotation.y=0;const Lm=L_in/1000,Wm=W_in/1000;const railWm=railW/1000,railHm=railH/1000;const wallTm=RAIL_WALL_T/1000,flangeM=RAIL_FLANGE/1000;const carrierWm=CARRIER_W/1000,carrierHm=CARRIER_H/1000;const hangerRm=0.004,hangerHm=HANGER_ROD/1000;const xOff=-Lm/2,zOff=-Wm/2;let mRailOpts={side:THREE.DoubleSide};if(WOOD_PROC[params.color]){if(!woodTextures[params.color]){const p=WOOD_PROC[params.color];woodTextures[params.color]=makeWoodTexture(p.base,p.dark,p.opts);}mRailOpts.map=woodTextures[params.color];mRailOpts.color=0xffffff;}else{mRailOpts.color=colorHex;}const mRail=new THREE.MeshLambertMaterial(mRailOpts);const mCarrier=new THREE.MeshLambertMaterial({color:0x8a97a6});const mHanger=new THREE.MeshLambertMaterial({color:0x3a4048});const mJoint=new THREE.MeshLambertMaterial({color:0xffd54f});const railY=0;const carrierYCenter=railHm+carrierHm/2;const hangerYCenter=railHm+carrierHm+hangerHm/2;const slabY=railHm+carrierHm+hangerHm+0.03;for(const rseg of perRailSegments){const lenM=rseg.len/1000;if(lenM<0.02)continue;const ux=rseg.ux,uz=rseg.uy;const railAngle=-Math.atan2(uz,ux);let cumM=0;const jointPositions=[];for(let i=0;i<rseg.pieces.length;i++){const remaining=rseg.len-cumM*1000;if(remaining<=1)break;let piece=rseg.pieces[i];if(piece>remaining)piece=remaining;const pieceM=piece/1000;const cxm=rseg.x0/1000+ux*(cumM+pieceM/2)+xOff;const czm=rseg.y0/1000+uz*(cumM+pieceM/2)+zOff;const grp=makeRailAsBoxes(railWm,railHm,wallTm,flangeM,pieceM,mRail);grp.position.set(cxm,railY,czm);grp.rotation.y=railAngle;threeTilesGroup.add(grp);cumM+=pieceM;if(i<rseg.pieces.length-1)jointPositions.push(cumM);}for(const jx of jointPositions){const jcx=rseg.x0/1000+ux*jx+xOff;const jcz=rseg.y0/1000+uz*jx+zOff;const jMesh=new THREE.Mesh(new THREE.BoxGeometry(0.02,railHm*0.7,railWm*0.9),mJoint);jMesh.position.set(jcx,railHm*0.35,jcz);jMesh.rotation.y=railAngle;threeTilesGroup.add(jMesh);}if(caps){const capT=0.0015;const capGeo=new THREE.BoxGeometry(capT,railHm,railWm);const cap1=new THREE.Mesh(capGeo,mRail);cap1.position.set(rseg.x0/1000+ux*(capT/2)+xOff,railHm/2,rseg.y0/1000+uz*(capT/2)+zOff);cap1.rotation.y=railAngle;threeTilesGroup.add(cap1);const cap2=new THREE.Mesh(capGeo,mRail);cap2.position.set(rseg.x1/1000-ux*(capT/2)+xOff,railHm/2,rseg.y1/1000-uz*(capT/2)+zOff);cap2.rotation.y=railAngle;threeTilesGroup.add(cap2);}}for(const sseg of perStringerSegments){for(const sg of sseg.segs){const lenM=sg.len/1000;if(lenM<0.02)continue;const cxM=(sg.x0+sg.x1)/2/1000+xOff;const czM=(sg.y0+sg.y1)/2/1000+zOff;const ux=sg.ux,uz=sg.uy;const strAngle=Math.atan2(ux,uz);const mesh=new THREE.Mesh(new THREE.BoxGeometry(carrierWm,carrierHm,lenM),mCarrier);mesh.position.set(cxM,carrierYCenter,czM);mesh.rotation.y=strAngle;threeTilesGroup.add(mesh);}}const hGeo=new THREE.CylinderGeometry(hangerRm,hangerRm,hangerHm,8);for(const sseg of perStringerSegments){for(const h of sseg.hangers){const mesh=new THREE.Mesh(hGeo,mHanger);mesh.position.set(h.x/1000+xOff,hangerYCenter,h.y/1000+zOff);threeHangersGroup.add(mesh);}}if(threeCeilingMesh){threeCeilingMesh.geometry.dispose();threeCeilingMesh.material.dispose();threeScene.remove(threeCeilingMesh);}if(polygon){const shape=new THREE.Shape(polygon.map(p=>new THREE.Vector2(p[0]/1000+xOff,p[1]/1000+zOff)));const g=new THREE.ShapeGeometry(shape);g.rotateX(Math.PI/2);threeCeilingMesh=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:0xe0e5ea,side:THREE.DoubleSide,transparent:true,opacity:0.25,depthWrite:false}));threeCeilingMesh.position.set(0,slabY,0);}else{threeCeilingMesh=new THREE.Mesh(new THREE.PlaneGeometry(Lm+0.6,Wm+0.6),new THREE.MeshLambertMaterial({color:0xe0e5ea,side:THREE.DoubleSide,transparent:true,opacity:0.25,depthWrite:false}));threeCeilingMesh.rotation.x=Math.PI/2;threeCeilingMesh.position.set(0,slabY,0);}threeCeilingMesh.visible=showCeilingChk.checked;threeScene.add(threeCeilingMesh);resetCamera();}
-
-function renderCuttingScheme(scheme,targetLen){let html='<div class="ac-cutting">';html+='<div class="ac-cutting-title">Схема нарезки — рейки по '+targetLen+' мм</div>';for(let i=0;i<scheme.length;i++){const s=scheme[i];html+='<div class="ac-cutting-row">';html+='<span class="ac-cutting-meta">#'+(i+1)+':</span>';html+='<span class="ac-cutting-bar">';for(const item of s.items){const w=(item/targetLen)*100;html+='<span class="ac-cutting-piece" style="width:'+w+'%" title="'+item+' мм"></span>';}if(s.waste>0){const w=(s.waste/targetLen)*100;html+='<span class="ac-cutting-piece waste" style="width:'+w+'%" title="отход '+s.waste+' мм"></span>';}html+='</span>';const parts=s.items.join(' + ');html+='<span class="ac-cutting-meta">'+parts+(s.waste>0?' (отход '+s.waste+' мм)':'')+'</span>';html+='</div>';}html+='</div>';return html;}
 
 function renderSpec(){let source=specMode==='total'?computeTotals():(currentLayout?currentLayout.specRows:[]);if(!source||!source.length){resultsDiv.innerHTML='<p style="color:#999;font-size:12px;font-style:italic;text-align:center;padding:8px 0">Нет данных.</p>';return;}let html='<ul>';for(const row of source){let swatchStyle='';if(row.color){if(row.color.startsWith('data:'))swatchStyle='background-image:url('+row.color+');background-size:cover;background-position:center';else swatchStyle='background:'+row.color;}const c=swatchStyle?'<span class="cl" style="'+swatchStyle+'"></span>':'';let chkHtml='';if(row.kind==='cut'&&row.checkable){const checkedAttr=row.checked?' checked':'';chkHtml='<input type="checkbox" class="chk" data-cut="'+row.cutSize+'"'+checkedAttr+' title="Отметить для объединения">';}let liStyle='';if(row.mergedRow)liStyle=' style="background:#e8f5e9;border-radius:4px;padding-left:6px;padding-right:6px"';html+='<li'+liStyle+'>'+chkHtml+c+'<span class="lb">'+row.label+'</span><span class="vl">'+row.value+'</span></li>';}html+='</ul>';
 if(specMode==='current'&&currentLayout){const marked=Object.keys(currentLayout.mergedCutsSet||{}).filter(k=>currentLayout.mergedCutsSet[k]);const mergeActive=currentLayout.mergeInfo;html+='<div class="ac-merge-bar">';html+='<button type="button" class="do-merge"'+(marked.length===0?' disabled':'')+'>🧩 Объединить'+(marked.length?' ('+marked.length+')':'')+'</button>';html+='<button type="button" class="do-split"'+(mergeActive?'':' disabled')+'>✂️ Разъединить</button>';html+='</div>';if(marked.length>0){if(mergeActive){html+='<div class="ac-note ok">✓ Объединено в размер <b>'+mergeActive.refSize+' мм</b>: +'+mergeActive.extraQty+' шт дополнительно к '+mergeActive.existingQty+' существующим · <b>итого '+mergeActive.totalQty+' шт</b> · отход '+Math.round(mergeActive.waste)+' мм ('+mergeActive.wastePct.toFixed(2)+'%)</div>';html+=renderCuttingScheme(mergeActive.cuttingScheme,mergeActive.refSize);}else if(currentLayout.mergeError==='piece_too_long')html+='<div class="ac-note warn">⚠ Объединение невозможно: есть отмеченная рейка длиннее '+MAX_RAIL_LEN+' мм.</div>';else html+='<div class="ac-note warn">Галочки стоят на '+marked.length+' размере(ах). Нажмите «Объединить», чтобы посчитать.</div>';}}
@@ -461,9 +478,43 @@ function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cuts
 
 function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
-function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rotationDeg,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
 function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;isDirty=false;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
-function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;isDirty=false;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
+
+function activateRoom(index){
+  const r = project[index];
+  if(!r) return;
+  activeRoomIndex = index;
+  const savedRot = Number(r.rotationDeg) || 0;
+  rotationInput.value = Math.max(-45, Math.min(45, savedRot));
+  params.rotate90 = !!r.rotate90;
+  updateRotate90UI();
+  lengthInput.value = r.L_in;
+  widthInput.value = r.W_in;
+  railWInput.value = r.railW || 50;
+  railHInput.value = r.railH || 50;
+  gapInput.value = r.gap || 40;
+  updateSliderLabels();
+  updateAdjustLabels();
+  setActiveColor(r.color || 'denver');
+  capsChk.checked = !!r.caps;
+  angleChk.checked = !!r.angle;
+  hangersChk.checked = !!r.hangers;
+  hangerHInput.value = (r.hangerHeight || 0);
+  syncHangerUI();
+  stringerPaintChk.checked = !!r.stringerPaint;
+  roomPolygon = r.polygon ? r.polygon.map(p=>[p[0],p[1]]) : null;
+  mergedCutsSet = r.mergedCutsSet ? {...r.mergedCutsSet} : {};
+  mergedResult = r.mergedResult ? {...r.mergedResult} : null;
+  isDirty = false;
+  calculate();
+  specMode='current';
+  specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));
+  renderProjectList();
+  renderSpec();
+  updateButtonsVisibility();
+  updateWorkLabel();
+}
+
 function renderProjectList(){
   projectCountEl.textContent=project.length;
   if(!project.length){projectListEl.innerHTML='<div class="ac-pje">Пока пусто.</div>';return;}
@@ -507,7 +558,6 @@ function renderProjectList(){
   function openKpPage(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
 
-  // ★ Dirty-флаг: спросить, если есть несохранённые изменения
   if(isDirty){
     const choice = confirm(
       'В помещении есть несохранённые изменения.\n\n' +
@@ -518,11 +568,31 @@ function renderProjectList(){
       const res = saveRoomSilent();
       if(!res){alert('Не удалось сохранить.');return;}
     } else {
-      // откатить — перезагрузить из сохранённого
       if(activeRoomIndex!==null && project[activeRoomIndex]){
-        activateRoom(activeRoomIndex);
+        const saved = project[activeRoomIndex];
+        lengthInput.value = saved.L_in;
+        widthInput.value = saved.W_in;
+        railWInput.value = saved.railW;
+        railHInput.value = saved.railH;
+        gapInput.value = saved.gap;
+        rotationInput.value = Math.max(-45, Math.min(45, Number(saved.rotationDeg) || 0));
+        params.rotate90 = !!saved.rotate90;
+        updateRotate90UI();
+        capsChk.checked = !!saved.caps;
+        angleChk.checked = !!saved.angle;
+        hangersChk.checked = !!saved.hangers;
+        hangerHInput.value = saved.hangerHeight || 0;
+        syncHangerUI();
+        stringerPaintChk.checked = !!saved.stringerPaint;
+        setActiveColor(saved.color || 'denver');
+        roomPolygon = saved.polygon ? saved.polygon.map(p=>[p[0],p[1]]) : null;
+        mergedCutsSet = saved.mergedCutsSet ? {...saved.mergedCutsSet} : {};
+        mergedResult = saved.mergedResult ? {...saved.mergedResult} : null;
+        updateSliderLabels();
+        updateAdjustLabels();
+        calculate();
       }
-      isDirty=false;
+      isDirty = false;
     }
   }
 
@@ -736,7 +806,6 @@ $('ac-rotate90').addEventListener('click',()=>{
   calculate();
 });
 
-// ★ beforeunload — предупреждение при закрытии с несохранёнными изменениями
 window.addEventListener('beforeunload', function(e){
   if(isDirty){
     e.preventDefault();
@@ -806,4 +875,3 @@ calculate();
 </script>
 </body>
 </html>
-
