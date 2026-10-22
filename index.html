@@ -622,44 +622,52 @@ async function openKpPageViaWorker(){
 
     const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,rotate90:!!currentLayout.rotate90,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
     
-    // Если есть JID (открыто из журнала), работаем через журнал (оставляем как было)
+    // Если есть JID (открыто из журнала), ОБНОВЛЯЕМ запись в журнале полностью
     if(JID && window.CubicaJournal){
       const rec = window.CubicaJournal.get(JID);
       if(rec){
+        // ★ КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: полностью перезаписываем rooms, meta и rows
         rec.rooms = rooms;
         rec.meta = payload.meta;
-        var newRows = rows.map(function(r){
-          var row = {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
-          if(r.labelFull) row.labelFull = r.labelFull;
+        
+        // Перезаписываем rows, сохраняя только цены из старой записи (если позиция с тем же label существует)
+        const oldRows = Array.isArray(rec.rows) ? rec.rows : [];
+        const oldPricesMap = {}; // label -> { price, qtyReserve }
+        oldRows.forEach(function(oldR){
+          if(oldR && oldR.label){
+            oldPricesMap[oldR.label] = {
+              price: Number(oldR.price) || 0,
+              qtyReserve: Number(oldR.qtyReserve) || 0
+            };
+          }
+        });
+        
+        rec.rows = rows.map(function(newR){
+          var price = 0;
+          var qtyReserve = 0;
+          if(oldPricesMap[newR.label]){
+            price = oldPricesMap[newR.label].price;
+            qtyReserve = oldPricesMap[newR.label].qtyReserve;
+          }
+          var row = {
+            label: newR.label,
+            qtyCalc: Number(newR.qty) || 0,
+            qtyReserve: qtyReserve,
+            unit: newR.unit || 'шт.',
+            price: price
+          };
+          if(newR.pieces) row.pieces = newR.pieces;
+          if(newR.labelFull) row.labelFull = newR.labelFull;
           return row;
         });
-        var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
-        var mergedRows = [];
-        var usedLabels = {};
-        oldRows.forEach(function(oldR){
-          var label = String(oldR.label || '');
-          usedLabels[label] = true;
-          var match = newRows.find(function(nr){ return nr.label === label; });
-          if(match){
-            var row = {label: oldR.label,qtyCalc: match.qty,qtyReserve: oldR.qtyReserve || 0,unit: oldR.unit || match.unit,price: oldR.price || 0};
-            if(match.pieces) row.pieces = match.pieces;
-            if(match.labelFull) row.labelFull = match.labelFull;
-            mergedRows.push(row);
-          } else {
-            mergedRows.push(oldR);
-          }
-        });
-        newRows.forEach(function(nr){
-          if(!usedLabels[nr.label]){
-            var row = {label: nr.label,qtyCalc: nr.qty,qtyReserve: 0,unit: nr.unit,price: 0};
-            if(nr.pieces) row.pieces = nr.pieces;
-            if(nr.labelFull) row.labelFull = nr.labelFull;
-            mergedRows.push(row);
-          }
-        });
-        rec.rows = mergedRows;
+        
         rec.history = rec.history || [];
-        rec.history.push({at: window.CubicaJournal.nowISO(),by: window.CubicaJournal.manager(),action: 'from calculator'});
+        rec.history.push({
+          at: window.CubicaJournal.nowISO(),
+          by: window.CubicaJournal.manager(),
+          action: 'from calculator (updated)'
+        });
+        
         window.CubicaJournal.save(rec, {assignNumber:false});
         const i5url = window.CubicaJournal.i5UrlForRecord(rec);
         window.open(i5url, '_blank');
@@ -681,14 +689,12 @@ async function openKpPageViaWorker(){
     const j = await res.json();
     if (!j.id) throw new Error('No id returned');
 
-    // Открываем i5 по короткой ссылке
     window.open(KP_URL + '?s=' + j.id, '_blank');
     
   } catch (e) {
     console.error('Ошибка Worker:', e);
     alert('Не удалось создать короткую ссылку: ' + e.message + '\nПопробуем длинную...');
     
-    // Fallback - длинная ссылка (как было раньше)
     const data = b64enc(JSON.stringify(payload));
     const url = KP_URL + (KP_URL.includes('?') ? '&' : '?') + 'data=' + data;
     if (url.length > 8000 && !confirm('Ссылка очень длинная (может не открыться). Продолжить?')) return;
