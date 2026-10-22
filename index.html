@@ -182,7 +182,8 @@ const HANGER_ROD=300,MAX_RAILS=200;
 const RAIL_RULE_MIN_LEN=300,RAIL_ABSOLUTE_MIN_LEN=50;
 const CUBICA_RED='#c00000',CUBICA_RED_RGB=[192,0,0];
 const MAX_RAIL_LEN=4000;
-const KP_URL='https://6471811-source.github.io/Cubica-i5/';
+const KP_URL='https://6471811-source.github.io/Cubica-i5/'; // Обновлено на i5
+const SHORT_URL='https://cubica-kp-15ab.6471811.workers.dev';
 
 const urlParams = new URLSearchParams(location.search);
 const JID = urlParams.get('jid');
@@ -510,147 +511,205 @@ async function activateRoomGuarded(index){
 }
 
 function renderProjectList(){projectCountEl.textContent=project.length;if(!project.length){projectListEl.innerHTML='<div class="ac-pje">Пока пусто.</div>';return;}projectListEl.innerHTML=project.map((p,i)=>{const active=(i===activeRoomIndex)?' active':'';let mark='';if(p.polygon)mark+=' ✏️';return '<li class="ac-pji'+active+'" data-idx="'+i+'"><span class="ac-pjn">'+p.name+mark+'</span><span class="ac-pjd">'+p.L_in+' × '+p.W_in+' мм</span><button type="button" class="ac-pjx" data-idx="'+i+'">✕</button></li>';}).join('');projectListEl.querySelectorAll('.ac-pji').forEach(li=>{li.addEventListener('click',e=>{if(e.target.closest('.ac-pjx'))return;activateRoomGuarded(parseInt(li.dataset.idx,10));});});projectListEl.querySelectorAll('.ac-pjx').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();removeFromProject(parseInt(e.currentTarget.dataset.idx,10));});});}
-  function openKpPage(){
-if(!currentLayout){alert('Сначала расчёт.');return;}
-let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice();
-const rows=[];
-var railGroups = {};
-var otherRows = [];
-for(const r of totals){
-  if(!r||r.kind==='area')continue;
-  const qty=Number(r.num)||0;
-  if(qty<=0)continue;
-  var label = String(r.label||'');
-  var cleanLabel = label.replace(/\s*\(объединено\)\s*$/i, '').trim();
-  var m = cleanLabel.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
-  if(m){
-    var size = parseInt(m[2], 10);
-    var key = 'Рейка Cubica ' + m[1];
-    if(!railGroups[key]) railGroups[key] = { pieces: {}, lengthMp: 0 };
-    railGroups[key].pieces[size] = (railGroups[key].pieces[size] || 0) + qty;
-    railGroups[key].lengthMp += qty * size / 1000;
-  } else {
-    otherRows.push({label: label, qty: qty, unit: r.unit || 'шт.'});
+
+function removeFromProject(idx) {
+  if (!project[idx]) return;
+  if (activeRoomIndex === idx) {
+    if (hasUnsavedChanges()) {
+      if (!confirm('В текущем помещении есть несохранённые изменения. Удалить его из проекта?')) return;
+    }
   }
-}
-Object.keys(railGroups).sort().forEach(function(key){
-  var g = railGroups[key];
-  rows.push({label: key,qty: Math.round(g.lengthMp * 100) / 100,unit: 'м.п.',pieces: g.pieces});
-});
-otherRows.forEach(function(r){ rows.push(r); });
-const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in: currentLayout.L_in,W_in: currentLayout.W_in,railW: currentLayout.railW,railH: currentLayout.railH,gap: currentLayout.gap,color: currentLayout.color,colorLabel: currentLayout.colorLabel,caps: currentLayout.caps,angle: currentLayout.angle,rotationDeg: currentLayout.rotationDeg,rotate90: currentLayout.rotate90,polygon: currentLayout.polygon,specRows: currentLayout.specRows,areaM2: currentLayout.areaM2}];
-const rooms = srcRooms.map((room, i) => {
-  const roomRows = (room.specRows||[])
-    .filter(r => r && r.kind!=='area')
-    .map(r => ({label:String(r.label||''), qty:Number(r.num)||0, unit:r.unit||'шт.'}))
-    .filter(r => r.qty > 0);
-  return {
-    name: room.name || ('Помещение '+(i+1)),
-    L_in: room.L_in,
-    W_in: room.W_in,
-    railW: room.railW,
-    railH: room.railH,
-    gap: room.gap,
-    color: room.color,
-    colorLabel: room.colorLabel || getColorLabel(room.color||'denver'),
-    caps: !!room.caps,
-    angle: !!room.angle,
-    rotation: room.rotationDeg || 0,
-    rotate90: !!room.rotate90,
-    polygon: room.polygon || null,
-    areaM2: room.areaM2 || 0,
-    rows: roomRows,
-    mergedCutsSet: room.mergedCutsSet ? {...room.mergedCutsSet} : {},
-    mergedResult: room.mergedResult ? {
-      ok: !!room.mergedResult.ok,
-      target: room.mergedResult.target,
-      existingQty: room.mergedResult.existingQty,
-      extraQty: room.mergedResult.extraQty,
-      totalQty: room.mergedResult.totalQty,
-      waste: room.mergedResult.waste,
-      wastePct: room.mergedResult.wastePct,
-      refSize: room.mergedResult.refSize,
-      source: room.mergedResult.source,
-      cuttingScheme: Array.isArray(room.mergedResult.cuttingScheme)
-        ? room.mergedResult.cuttingScheme.map(s => ({items: s.items.slice(), used: s.used, waste: s.waste}))
-        : []
-    } : null,
-    cuttingScheme: (room.mergeInfo && room.mergeInfo.cuttingScheme)
-      ? {
-          refSize: room.mergeInfo.refSize,
-          extraQty: room.mergeInfo.extraQty,
-          waste: room.mergeInfo.waste,
-          wastePct: room.mergeInfo.wastePct,
-          scheme: room.mergeInfo.cuttingScheme.map(function(s){
-            return { items: s.items.slice(), used: s.used, waste: s.waste };
-          })
-        }
-      : null
-  };
-});
-const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,rotate90:!!currentLayout.rotate90,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
-if(JID && window.CubicaJournal){
-  const rec = window.CubicaJournal.get(JID);
-  if(rec){
-    rec.rooms = rooms;
-    rec.meta = payload.meta;
-    var newRows = rows.map(function(r){
-      var row = {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
-      if(r.labelFull) row.labelFull = r.labelFull;
-      return row;
-    });
-    var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
-    var mergedRows = [];
-    var usedLabels = {};
-    oldRows.forEach(function(oldR){
-      var label = String(oldR.label || '');
-      usedLabels[label] = true;
-      var match = newRows.find(function(nr){ return nr.label === label; });
-      if(match){
-        var row = {label: oldR.label,qtyCalc: match.qty,qtyReserve: oldR.qtyReserve || 0,unit: oldR.unit || match.unit,price: oldR.price || 0};
-        if(match.pieces) row.pieces = match.pieces;
-        if(match.labelFull) row.labelFull = match.labelFull;
-        mergedRows.push(row);
-      } else {
-        mergedRows.push(oldR);
-      }
-    });
-    newRows.forEach(function(nr){
-      if(!usedLabels[nr.label]){
-        var row = {label: nr.label,qtyCalc: nr.qty,qtyReserve: 0,unit: nr.unit,price: 0};
-        if(nr.pieces) row.pieces = nr.pieces;
-        if(nr.labelFull) row.labelFull = nr.labelFull;
-        mergedRows.push(row);
-      }
-    });
-    rec.rows = mergedRows;
-    rec.history = rec.history || [];
-    rec.history.push({at: window.CubicaJournal.nowISO(),by: window.CubicaJournal.manager(),action: 'from calculator'});
-    window.CubicaJournal.save(rec, {assignNumber:false});
-    const i5url = window.CubicaJournal.i5UrlForRecord(rec);
-    window.open(i5url, '_blank');
-    setTimeout(function(){ window.close(); }, 200);
-    return;
+  project.splice(idx, 1);
+  if (activeRoomIndex === idx) {
+    activeRoomIndex = null;
+    lastSavedSnapshot = null;
+    resetForNewRoom();
+  } else if (activeRoomIndex > idx) {
+    activeRoomIndex--;
   }
-}
-const data=b64enc(JSON.stringify(payload));
-const url=KP_URL+(KP_URL.includes('?')?'&':'?')+'data='+data;
-window.open(url,'_blank');
-setTimeout(function(){ window.close(); }, 200);
+  renderProjectList();
+  renderSpec();
+  updateWorkLabel();
+  updateButtonsVisibility();
+  showToast('Помещение удалено');
 }
 
-async function openKpPageGuarded(){
+async function openKpPageViaWorker(){
+  const btn = $('ac-kp-open');
+  const oldText = btn.textContent;
+  btn.textContent = '⏳ Формируем...';
+  btn.disabled = true;
+
+  try {
+    let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice();
+    const rows=[];
+    var railGroups = {};
+    var otherRows = [];
+    for(const r of totals){
+      if(!r||r.kind==='area')continue;
+      const qty=Number(r.num)||0;
+      if(qty<=0)continue;
+      var label = String(r.label||'');
+      var cleanLabel = label.replace(/\s*\(объединено\)\s*$/i, '').trim();
+      var m = cleanLabel.match(/^Рейка Cubica (.+?)\s+(\d+)\s*мм$/);
+      if(m){
+        var size = parseInt(m[2], 10);
+        var key = 'Рейка Cubica ' + m[1];
+        if(!railGroups[key]) railGroups[key] = { pieces: {}, lengthMp: 0 };
+        railGroups[key].pieces[size] = (railGroups[key].pieces[size] || 0) + qty;
+        railGroups[key].lengthMp += qty * size / 1000;
+      } else {
+        otherRows.push({label: label, qty: qty, unit: r.unit || 'шт.'});
+      }
+    }
+    Object.keys(railGroups).sort().forEach(function(key){
+      var g = railGroups[key];
+      rows.push({label: key,qty: Math.round(g.lengthMp * 100) / 100,unit: 'м.п.',pieces: g.pieces});
+    });
+    otherRows.forEach(function(r){ rows.push(r); });
+
+    const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in: currentLayout.L_in,W_in: currentLayout.W_in,railW: currentLayout.railW,railH: currentLayout.railH,gap: currentLayout.gap,color: currentLayout.color,colorLabel: currentLayout.colorLabel,caps: currentLayout.caps,angle: currentLayout.angle,rotationDeg: currentLayout.rotationDeg,rotate90: currentLayout.rotate90,polygon: currentLayout.polygon,specRows: currentLayout.specRows,areaM2: currentLayout.areaM2}];
+    
+    const rooms = srcRooms.map((room, i) => {
+      const roomRows = (room.specRows||[])
+        .filter(r => r && r.kind!=='area')
+        .map(r => ({label:String(r.label||''), qty:Number(r.num)||0, unit:r.unit||'шт.'}))
+        .filter(r => r.qty > 0);
+      return {
+        name: room.name || ('Помещение '+(i+1)),
+        L_in: room.L_in,
+        W_in: room.W_in,
+        railW: room.railW,
+        railH: room.railH,
+        gap: room.gap,
+        color: room.color,
+        colorLabel: room.colorLabel || getColorLabel(room.color||'denver'),
+        caps: !!room.caps,
+        angle: !!room.angle,
+        rotation: room.rotationDeg || 0,
+        rotate90: !!room.rotate90,
+        polygon: room.polygon || null,
+        areaM2: room.areaM2 || 0,
+        rows: roomRows,
+        mergedCutsSet: room.mergedCutsSet ? {...room.mergedCutsSet} : {},
+        mergedResult: room.mergedResult ? {
+          ok: !!room.mergedResult.ok,
+          target: room.mergedResult.target,
+          existingQty: room.mergedResult.existingQty,
+          extraQty: room.mergedResult.extraQty,
+          totalQty: room.mergedResult.totalQty,
+          waste: room.mergedResult.waste,
+          wastePct: room.mergedResult.wastePct,
+          refSize: room.mergedResult.refSize,
+          source: room.mergedResult.source,
+          cuttingScheme: Array.isArray(room.mergedResult.cuttingScheme)
+            ? room.mergedResult.cuttingScheme.map(s => ({items: s.items.slice(), used: s.used, waste: s.waste}))
+            : []
+        } : null,
+        cuttingScheme: (room.mergeInfo && room.mergeInfo.cuttingScheme)
+          ? {
+              refSize: room.mergeInfo.refSize,
+              extraQty: room.mergeInfo.extraQty,
+              waste: room.mergeInfo.waste,
+              wastePct: room.mergeInfo.wastePct,
+              scheme: room.mergeInfo.cuttingScheme.map(function(s){
+                return { items: s.items.slice(), used: s.used, waste: s.waste };
+              })
+            }
+          : null
+      };
+    });
+
+    const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,rotate90:!!currentLayout.rotate90,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
+    
+    // Если есть JID (открыто из журнала), работаем через журнал (оставляем как было)
+    if(JID && window.CubicaJournal){
+      const rec = window.CubicaJournal.get(JID);
+      if(rec){
+        rec.rooms = rooms;
+        rec.meta = payload.meta;
+        var newRows = rows.map(function(r){
+          var row = {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
+          if(r.labelFull) row.labelFull = r.labelFull;
+          return row;
+        });
+        var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
+        var mergedRows = [];
+        var usedLabels = {};
+        oldRows.forEach(function(oldR){
+          var label = String(oldR.label || '');
+          usedLabels[label] = true;
+          var match = newRows.find(function(nr){ return nr.label === label; });
+          if(match){
+            var row = {label: oldR.label,qtyCalc: match.qty,qtyReserve: oldR.qtyReserve || 0,unit: oldR.unit || match.unit,price: oldR.price || 0};
+            if(match.pieces) row.pieces = match.pieces;
+            if(match.labelFull) row.labelFull = match.labelFull;
+            mergedRows.push(row);
+          } else {
+            mergedRows.push(oldR);
+          }
+        });
+        newRows.forEach(function(nr){
+          if(!usedLabels[nr.label]){
+            var row = {label: nr.label,qtyCalc: nr.qty,qtyReserve: 0,unit: nr.unit,price: 0};
+            if(nr.pieces) row.pieces = nr.pieces;
+            if(nr.labelFull) row.labelFull = nr.labelFull;
+            mergedRows.push(row);
+          }
+        });
+        rec.rows = mergedRows;
+        rec.history = rec.history || [];
+        rec.history.push({at: window.CubicaJournal.nowISO(),by: window.CubicaJournal.manager(),action: 'from calculator'});
+        window.CubicaJournal.save(rec, {assignNumber:false});
+        const i5url = window.CubicaJournal.i5UrlForRecord(rec);
+        window.open(i5url, '_blank');
+        setTimeout(function(){ window.close(); }, 200);
+        return;
+      }
+    }
+
+    // ИНАЧЕ - отправляем в Worker и открываем i5 с коротким ID
+    const data = b64enc(JSON.stringify(payload));
+    
+    const res = await fetch(SHORT_URL + '/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payload: data })
+    });
+    
+    if (!res.ok) throw new Error('Worker error: ' + res.status);
+    const j = await res.json();
+    if (!j.id) throw new Error('No id returned');
+
+    // Открываем i5 по короткой ссылке
+    window.open(KP_URL + '?s=' + j.id, '_blank');
+    
+  } catch (e) {
+    console.error('Ошибка Worker:', e);
+    alert('Не удалось создать короткую ссылку: ' + e.message + '\nПопробуем длинную...');
+    
+    // Fallback - длинная ссылка (как было раньше)
+    const data = b64enc(JSON.stringify(payload));
+    const url = KP_URL + (KP_URL.includes('?') ? '&' : '?') + 'data=' + data;
+    if (url.length > 8000 && !confirm('Ссылка очень длинная (может не открыться). Продолжить?')) return;
+    window.open(url, '_blank');
+  } finally {
+    btn.textContent = oldText;
+    btn.disabled = false;
+  }
+}
+
+$('ac-kp-open').addEventListener('click', async () => {
   if(!currentLayout){alert('Сначала расчёт.');return;}
   if(hasUnsavedChanges()){
     const choice = await askUnsavedChanges(project[activeRoomIndex].name);
     if(choice === 'cancel') return;
     if(choice === 'save') saveRoomSilent();
   }
-  openKpPage();
-}
+  await openKpPageViaWorker();
+});
 
-$('ac-kp-open').addEventListener('click',openKpPageGuarded);
-
+// Остальные обработчики
 const drawModal=$('ac-draw-modal'),drawCanvas=$('ac-draw-canvas'),drawCtx=drawCanvas.getContext('2d');
 const drawUndoBtn=$('ac-draw-undo'),drawCloseContourBtn=$('ac-draw-close-contour'),drawClearBtn=$('ac-draw-clear');
 const drawCancelBtn=$('ac-draw-cancel'),drawApplyBtn=$('ac-draw-apply');
