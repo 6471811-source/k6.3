@@ -182,7 +182,7 @@ const HANGER_ROD=300,MAX_RAILS=200;
 const RAIL_RULE_MIN_LEN=300,RAIL_ABSOLUTE_MIN_LEN=50;
 const CUBICA_RED='#c00000',CUBICA_RED_RGB=[192,0,0];
 const MAX_RAIL_LEN=4000;
-const KP_URL='https://6471811-source.github.io/Cubica-i5/'; // Обновлено на i5
+const KP_URL='https://6471811-source.github.io/Cubica-i5/';
 const SHORT_URL='https://cubica-kp-15ab.6471811.workers.dev';
 
 const urlParams = new URLSearchParams(location.search);
@@ -333,18 +333,37 @@ function updateRotate90UI(){
   }
 }
 
+// Создание нового помещения с сохранением текущих параметров реек/цвета/галочек
 function resetForNewRoom(){
+  // Сохраняем текущие параметры реек, цвета и галочек
+  const savedRailW = railWInput.value;
+  const savedRailH = railHInput.value;
+  const savedGap = gapInput.value;
+  const savedColor = params.color;
+  const savedCaps = capsChk.checked;
+  const savedAngle = angleChk.checked;
+  const savedHangers = hangersChk.checked;
+  const savedHangerH = hangerHInput.value;
+  const savedStringerPaint = stringerPaintChk.checked;
+
+  // Сбрасываем только размеры помещения, поворот, полигон и merged-данные
   lengthInput.value=1000;
   widthInput.value=1000;
-  railWInput.value=50;
-  railHInput.value=50;
-  gapInput.value=40;
   rotationInput.value=0;
   updateSliderLabels();updateAdjustLabels();
-  setActiveColor('denver');
-  capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;
-  hangerHInput.value=0;syncHangerUI();
-  stringerPaintChk.checked=false;
+
+  // Восстанавливаем сохранённые параметры
+  railWInput.value = savedRailW;
+  railHInput.value = savedRailH;
+  gapInput.value = savedGap;
+  setActiveColor(savedColor);
+  capsChk.checked = savedCaps;
+  angleChk.checked = savedAngle;
+  hangersChk.checked = savedHangers;
+  hangerHInput.value = savedHangerH;
+  stringerPaintChk.checked = savedStringerPaint;
+  syncHangerUI();
+
   params.rotate90=false;
   updateRotate90UI();
   roomPolygon=null;
@@ -464,7 +483,7 @@ const overlapTxt=Math.ceil((2*pitch)/10)*10;warnings.push('📐 Рейки: '+nR
 if(rotationDeg!==0)warnings.push('📐 Поворот: '+rotationDeg+'°.');if(mergeError==='piece_too_long')warnings.push('⚠ Объединение невозможно: есть отмеченная рейка длиннее '+MAX_RAIL_LEN+' мм.');
 if(params.hangers)warnings.push('🔧 Подвесы: высота опускания '+params.hangerHeight.toFixed(2).replace('.',',')+' м.');
 if(params.rotate90)warnings.push('↻ Раскладка повёрнута на 90°.');
-currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
+currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,rawRotation:parseFloat(rotationInput.value)||0,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
 renderSpec();drawLayout2D();if(threeInitialized)update3D();
 updateWorkLabel();
 updateButtonsVisibility();
@@ -496,7 +515,7 @@ function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cuts
 
 function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
-function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rotationDeg,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
+function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rawRotation,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
 function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;lastSavedSnapshot=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
 function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();lastSavedSnapshot = snapshotKey(snapshotRoom());}
 
@@ -622,52 +641,43 @@ async function openKpPageViaWorker(){
 
     const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,rotate90:!!currentLayout.rotate90,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
     
-    // Если есть JID (открыто из журнала), ОБНОВЛЯЕМ запись в журнале полностью
     if(JID && window.CubicaJournal){
       const rec = window.CubicaJournal.get(JID);
       if(rec){
-        // ★ КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: полностью перезаписываем rooms, meta и rows
         rec.rooms = rooms;
         rec.meta = payload.meta;
-        
-        // Перезаписываем rows, сохраняя только цены из старой записи (если позиция с тем же label существует)
-        const oldRows = Array.isArray(rec.rows) ? rec.rows : [];
-        const oldPricesMap = {}; // label -> { price, qtyReserve }
-        oldRows.forEach(function(oldR){
-          if(oldR && oldR.label){
-            oldPricesMap[oldR.label] = {
-              price: Number(oldR.price) || 0,
-              qtyReserve: Number(oldR.qtyReserve) || 0
-            };
-          }
-        });
-        
-        rec.rows = rows.map(function(newR){
-          var price = 0;
-          var qtyReserve = 0;
-          if(oldPricesMap[newR.label]){
-            price = oldPricesMap[newR.label].price;
-            qtyReserve = oldPricesMap[newR.label].qtyReserve;
-          }
-          var row = {
-            label: newR.label,
-            qtyCalc: Number(newR.qty) || 0,
-            qtyReserve: qtyReserve,
-            unit: newR.unit || 'шт.',
-            price: price
-          };
-          if(newR.pieces) row.pieces = newR.pieces;
-          if(newR.labelFull) row.labelFull = newR.labelFull;
+        var newRows = rows.map(function(r){
+          var row = {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
+          if(r.labelFull) row.labelFull = r.labelFull;
           return row;
         });
-        
-        rec.history = rec.history || [];
-        rec.history.push({
-          at: window.CubicaJournal.nowISO(),
-          by: window.CubicaJournal.manager(),
-          action: 'from calculator (updated)'
+        var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
+        var mergedRows = [];
+        var usedLabels = {};
+        oldRows.forEach(function(oldR){
+          var label = String(oldR.label || '');
+          usedLabels[label] = true;
+          var match = newRows.find(function(nr){ return nr.label === label; });
+          if(match){
+            var row = {label: oldR.label,qtyCalc: match.qty,qtyReserve: oldR.qtyReserve || 0,unit: oldR.unit || match.unit,price: oldR.price || 0};
+            if(match.pieces) row.pieces = match.pieces;
+            if(match.labelFull) row.labelFull = match.labelFull;
+            mergedRows.push(row);
+          } else {
+            mergedRows.push(oldR);
+          }
         });
-        
+        newRows.forEach(function(nr){
+          if(!usedLabels[nr.label]){
+            var row = {label: nr.label,qtyCalc: nr.qty,qtyReserve: 0,unit: nr.unit,price: 0};
+            if(nr.pieces) row.pieces = nr.pieces;
+            if(nr.labelFull) row.labelFull = nr.labelFull;
+            mergedRows.push(row);
+          }
+        });
+        rec.rows = mergedRows;
+        rec.history = rec.history || [];
+        rec.history.push({at: window.CubicaJournal.nowISO(),by: window.CubicaJournal.manager(),action: 'from calculator'});
         window.CubicaJournal.save(rec, {assignNumber:false});
         const i5url = window.CubicaJournal.i5UrlForRecord(rec);
         window.open(i5url, '_blank');
@@ -676,7 +686,6 @@ async function openKpPageViaWorker(){
       }
     }
 
-    // ИНАЧЕ - отправляем в Worker и открываем i5 с коротким ID
     const data = b64enc(JSON.stringify(payload));
     
     const res = await fetch(SHORT_URL + '/save', {
@@ -715,7 +724,6 @@ $('ac-kp-open').addEventListener('click', async () => {
   await openKpPageViaWorker();
 });
 
-// Остальные обработчики
 const drawModal=$('ac-draw-modal'),drawCanvas=$('ac-draw-canvas'),drawCtx=drawCanvas.getContext('2d');
 const drawUndoBtn=$('ac-draw-undo'),drawCloseContourBtn=$('ac-draw-close-contour'),drawClearBtn=$('ac-draw-clear');
 const drawCancelBtn=$('ac-draw-cancel'),drawApplyBtn=$('ac-draw-apply');
