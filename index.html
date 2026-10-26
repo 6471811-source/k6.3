@@ -1,159 +1,3 @@
-<!DOCTYPE html>
-<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Калькулятор CUBICA — кубическая рейка</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script src="https://6471811-source.github.io/Cubica-journal/journal-core.js"></script><script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script><style>
-*{box-sizing:border-box}
-body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;background:#f4f5f7;line-height:1.6;padding:24px 20px 40px}
-.ac{max-width:1280px;margin:0 auto;padding:24px;border:1px solid #e6e6e6;border-radius:12px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.05);display:grid;grid-template-columns:minmax(0,1fr) 360px;grid-template-areas:"w w" "t t" "i i" "s s" "c c" "o o" "l p";gap:16px;align-items:start}
-/* Sticky-строка «Работаю...» */
-.ac-work{grid-area:w;position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:10px 16px;background:linear-gradient(90deg,#eef4fb,#fff);border:1px solid #cfdcec;border-radius:8px;font-size:13px;color:#1565c0;font-weight:600;transition:background .3s,border-color .3s,color .3s;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.ac-work .dot{width:8px;height:8px;border-radius:50%;background:#1565c0;flex-shrink:0;box-shadow:0 0 6px rgba(21,101,192,.6)}
-.ac-work .hint{margin-left:auto;font-size:11.5px;color:#888;font-weight:400}
-.ac-work.project{background:linear-gradient(90deg,#e8f5e9,#fff);border-color:#a5d6a7;color:#2e7d32}
-.ac-work.project .dot{background:#2e7d32;box-shadow:0 0 6px rgba(46,125,50,.6)}
-.ac-title{grid-area:t;font-size:20px;font-weight:800;color:#1a1a2e;padding-bottom:14px;border-bottom:2px solid #d32f2f;display:flex;align-items:center;gap:12px}
-.ac-title .lg{flex-shrink:0;width:38px;height:38px}
-.ac-title .br{color:#c00000}
-.ac-in{grid-area:i;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;padding:14px 16px;background:#fafafa;border-radius:8px;border:1px solid #eee}
-.ac-in label{font-size:12px;color:#555;font-weight:600;display:flex;flex-direction:column;gap:5px}
-.ac-in input[type=number]{width:110px;padding:9px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
-.ac-in button{padding:10px 14px;background:#666;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;font-family:inherit}
-.ac-in button.add{background:#2e7d32}.ac-in button.draw{background:#6a1b9a}.ac-in button.upd{background:#1565c0}.ac-in button.rst{background:#777}.ac-in button.journal{background:#1565c0}.ac-in button.save-j{background:#00838f}.ac-in button.kp{background:#c00000}
-.ac-in button:disabled{opacity:.5;cursor:not-allowed}
-.ac-sliders-row{grid-area:s;display:flex;flex-wrap:wrap;gap:12px;padding:14px 16px;background:#fafafa;border:1px solid #eee;border-radius:8px}
-.ac-slider-sec{display:flex;flex-direction:column;gap:6px;padding:10px 14px;background:#fff;border:1px solid #eee;border-radius:8px;flex:1 1 200px;min-width:180px;user-select:none;-webkit-user-select:none}
-.ac-slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11px;font-weight:700;color:#9aa1ac;letter-spacing:.8px;text-transform:uppercase}
-.ac-slider-head .ac-slider-val{color:#161a1f;font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;white-space:nowrap}
-.ac-slider-sec input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:14px;background:transparent;padding:0;margin:0;cursor:pointer;outline:none;display:block;border:none;touch-action:manipulation}
-.ac-slider-sec input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:#e0e4ea;border:none}
-.ac-slider-sec input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#161a1f;margin-top:-9px;cursor:grab;box-shadow:0 2px 6px rgba(0,0,0,.25);border:2px solid #fff}
-.ac-slider-sec input[type=range]:hover::-webkit-slider-thumb,.ac-slider-sec input[type=range]:active::-webkit-slider-thumb{background:#c8672b;transform:scale(1.08)}
-.ac-slider-sec input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:#e0e4ea}
-.ac-slider-sec input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#161a1f;border:2px solid #fff;cursor:grab}
-@media(max-width:600px){.ac-slider-sec input[type=range]{height:32px}.ac-slider-sec input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}.ac-slider-sec input[type=range]::-webkit-slider-thumb{width:28px;height:28px;margin-top:-11px}}
-.ac-colors-row{grid-area:c;display:flex;flex-wrap:wrap;gap:16px;padding:14px 16px;background:#fafafa;border:1px solid #eee;border-radius:8px;align-items:flex-start}
-.ac-colors-block{display:flex;flex-direction:column;gap:8px;flex:0 0 auto}
-.ac-colors-block.grow{flex:1 1 auto;min-width:0}
-.ac-colors-title{font-size:10px;font-weight:700;color:#9aa1ac;letter-spacing:.8px;text-transform:uppercase}
-.ac-swatches-ral{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:280px;max-width:100%}
-.ac-swatches-wood{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;width:560px;max-width:100%}
-@media(max-width:900px){.ac-swatches-wood{grid-template-columns:repeat(4,1fr);width:280px}}
-.ac-swatch-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
-.ac-swatch{aspect-ratio:1;border-radius:50%;border:none;cursor:pointer;padding:0;background-size:cover;background-position:center;width:100%;outline:none;transition:transform .15s,box-shadow .15s}
-.ac-swatch.active{box-shadow:0 0 0 2px #161a1f,0 0 0 4px #fff}
-.ac-swatch-label{font-size:8px;color:#5a6572;font-weight:700;text-align:center;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.ac-options-row{grid-area:o;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 16px;background:#fafafa;border:1px solid #eee;border-radius:8px}
-.ac-options-row .ac-colors-title{margin-right:6px;flex-shrink:0}
-.ac-chk-inline{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:6px;font-size:12.5px;color:#444;cursor:pointer;padding:8px 12px;border:1px solid #ccc;border-radius:6px;background:#fff;user-select:none;height:36px}
-.ac-chk-inline input{accent-color:#d32f2f;margin:0}
-.ac-hanger-slider{padding:6px 12px;background:#fff;border:1px solid #eee;border-radius:6px;display:flex;align-items:center;gap:10px;transition:opacity .2s;min-width:200px;flex:1 1 260px;max-width:340px}
-.ac-hanger-slider.disabled{opacity:.45;pointer-events:none}
-.ac-hanger-slider .ac-slider-head{font-size:10px;margin-bottom:0;flex:0 0 auto}
-.ac-hanger-slider input[type=range]{flex:1;height:22px}
-.ac-hanger-slider .ac-slider-val{font-size:12.5px;min-width:52px;text-align:right;color:#1a1a2e;font-weight:700;white-space:nowrap}
-.ac-lw{grid-area:l;display:grid;grid-template-rows:auto auto auto auto;gap:14px;min-width:0;align-self:start}
-.ac-adjust{display:flex;flex-wrap:wrap;gap:12px;padding:12px 16px;background:#fafafa;border:1px solid #eee;border-radius:8px}
-.ac-adjust .ac-slider-sec{flex:1 1 260px}
-.ac-vr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
-.ac-vt{display:inline-flex;background:#f0f0f0;border-radius:8px;padding:4px;border:1px solid #e0e0e0}
-.ac-vt button{background:transparent;border:none;padding:8px 18px;font-size:13px;font-weight:600;color:#666;border-radius:6px;cursor:pointer;font-family:inherit}
-.ac-vt button.active{background:#fff;color:#d32f2f;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.ac-lay{text-align:center}
-.ac-lay svg{max-width:100%;height:auto;display:block;margin:0 auto;border-radius:8px}
-.ac-l3 canvas{display:block;max-width:100%;height:auto;margin:0 auto;border-radius:8px;background:#f0f2f5;cursor:grab;touch-action:none}
-.ac-tb{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;padding:10px 12px;background:#fafafa;border:1px solid #eee;border-radius:8px}
-.ac-chk{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#444;cursor:pointer;padding:4px 8px}
-.ac-chk input{accent-color:#d32f2f}
-.ac-cb{padding:6px 12px;font-size:12px;font-weight:600;border:1px solid #ddd;background:#fff;color:#333;border-radius:6px;cursor:pointer;font-family:inherit;white-space:nowrap}
-.ac-cb.pr{background:#c00000;color:#fff;border-color:#c00000}
-.ac-hint{text-align:center;font-size:11.5px;color:#999}
-.ac-pn{grid-area:p;background:#fafafa;border:1px solid #eee;border-radius:10px;padding:18px 20px;align-self:start;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto}
-.ac-ph{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:2px solid #d32f2f;padding-bottom:10px;margin-bottom:14px}
-.ac-pt{margin:0;font-size:13px;font-weight:800;color:#1a1a2e;text-transform:uppercase;letter-spacing:1px}
-.ac-st{display:inline-flex;background:#f0f0f0;border-radius:6px;padding:3px;border:1px solid #e0e0e0}
-.ac-st button{background:transparent;border:none;padding:5px 10px;font-size:11px;font-weight:600;color:#666;border-radius:4px;cursor:pointer;font-family:inherit}
-.ac-st button.active{background:#fff;color:#c00000}
-.ac-res{font-size:13.5px;line-height:1.6;color:#333}
-.ac-res ul{list-style:none;padding:0;margin:0}
-.ac-res li{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed #e6e6e6}
-.ac-res li:last-child{border-bottom:none}
-.ac-res .cl{display:inline-block;width:14px;height:14px;border-radius:3px;flex-shrink:0;background-size:cover;background-position:center}
-.ac-res .lb{flex:1;color:#555}
-.ac-res .vl{font-weight:700;color:#1a1a2e;white-space:nowrap;text-align:right}
-.ac-res .chk{flex-shrink:0;margin:0 2px 0 0;accent-color:#c00000;cursor:pointer}
-.ac-note{margin-top:14px;padding-top:12px;border-top:1px solid #eee;font-size:11.5px;color:#888;line-height:1.5}
-.ac-note.warn{color:#b26a00;background:#fff8e5;border:1px solid #f0d896;border-radius:6px;padding:10px 12px;margin-top:12px}
-.ac-note.info{color:#1565c0;background:#eef4fb;border:1px solid #cfdcec;border-radius:6px;padding:10px 12px;margin-top:12px}
-.ac-note.ok{color:#2e7d32;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:10px 12px;margin-top:12px}
-.ac-merge-bar{display:flex;gap:8px;margin-top:10px;margin-bottom:4px;flex-wrap:wrap}
-.ac-merge-bar button{flex:1 1 auto;padding:9px 12px;font-size:12.5px;font-weight:700;border-radius:6px;cursor:pointer;font-family:inherit;border:1px solid #ddd;background:#fff;color:#333}
-.ac-merge-bar button.do-merge{background:#2e7d32;color:#fff;border-color:#2e7d32}
-.ac-merge-bar button.do-merge:disabled{opacity:.5;cursor:not-allowed}
-.ac-merge-bar button.do-split{background:#fff;color:#c00000;border-color:#f0c0c0}
-.ac-merge-bar button.do-split:disabled{opacity:.5;cursor:not-allowed}
-.ac-cutting{border:1px solid #a5d6a7;background:#f1f8e9;border-radius:6px;padding:10px 14px;margin-top:8px;font-size:11.5px;color:#2e7d32;line-height:1.6}
-.ac-cutting-title{font-weight:800;margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:.6px}
-.ac-cutting-row{display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap}
-.ac-cutting-bar{display:inline-flex;height:16px;border-radius:3px;overflow:hidden;background:#fff;border:1px solid #c5e1a5;min-width:60px;width:160px}
-.ac-cutting-piece{display:inline-block;height:100%;border-right:1px solid #fff;background:#66bb6a}
-.ac-cutting-piece.waste{background:#ffab91}
-.ac-cutting-meta{font-family:Consolas,'Courier New',monospace;font-size:11px;color:#555}
-.ac-pj{margin-top:16px;padding-top:14px;border-top:1px solid #e6e6e6}
-.ac-pjt{font-size:12px;font-weight:800;color:#1a1a2e;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:flex;justify-content:space-between}
-.ac-pjt small{font-weight:600;color:#888;font-size:11px;text-transform:none}
-.ac-pjl{list-style:none;padding:0;margin:0 0 10px 0}
-.ac-pji{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border:1px solid #eee;border-radius:6px;margin-bottom:6px;cursor:pointer;transition:all .15s}
-.ac-pji.active{background:#fff5f5;border-color:#f0c0c0;box-shadow:inset 3px 0 0 #c00000}
-.ac-pji.unsaved{background:#fffaf0;border-color:#f0d896;box-shadow:inset 3px 0 0 #b26a00}
-.ac-pjn{font-size:12.5px;font-weight:700;color:#1a1a2e}
-.ac-pjd{flex:1;font-size:11.5px;color:#888;text-align:right}
-.ac-pjx{background:transparent;border:none;color:#999;font-size:14px;cursor:pointer;padding:2px 6px;font-family:inherit;line-height:1}
-.ac-pje{font-size:12px;color:#999;text-align:center;padding:10px 0;font-style:italic}
-.ac-pja{display:flex;gap:8px;justify-content:flex-end}
-.ac-pja button{padding:6px 12px;font-size:11.5px;font-weight:600;border:1px solid #ddd;background:#fff;color:#555;border-radius:6px;cursor:pointer;font-family:inherit}
-.ac-pja button.dg{color:#c00000;border-color:#f0c0c0}
-.ft{max-width:1280px;margin:20px auto 0;color:#888;font-size:12px;text-align:center}
-.ac-modal{position:fixed;inset:0;background:rgba(15,15,25,.72);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
-.ac-modal.open{display:flex}
-.ac-modal-inner{background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.35);max-width:1100px;width:100%;padding:20px;display:flex;flex-direction:column;gap:12px;max-height:96vh;overflow:auto}
-.ac-modal-title{margin:0;font-size:15px;font-weight:800;color:#1a1a2e}
-.ac-modal-hint{font-size:12px;color:#888;margin:0}
-.ac-draw-hud{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:10px 14px;background:#fafafa;border:1px solid #eee;border-radius:8px}
-.ac-draw-mode{font-size:13px;font-weight:700;color:#6a1b9a}
-.ac-draw-length-wrap{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#555}
-.ac-draw-length-wrap input{width:100px;padding:6px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px;text-align:right}
-.ac-draw-body{display:flex;flex-direction:row;gap:12px;align-items:stretch}
-.ac-draw-wrap{position:relative;background:#fafafa;border:1px solid #e6e6e6;border-radius:8px;overflow:hidden;aspect-ratio:900/520;flex:1 1 0;min-width:0}
-.ac-draw-canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair;background:#fff}
-.ac-seg-list{flex:0 0 240px;width:240px;overflow-y:auto;border:1px solid #eee;border-radius:8px;padding:8px;background:#fafafa;display:flex;flex-direction:column;gap:6px}
-.ac-seg-row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#444}
-.ac-seg-row .arrow{width:26px;text-align:center;font-weight:800;color:#c00000;font-size:16px}
-.ac-seg-row .lbl{flex:1;color:#777;font-size:12px}
-.ac-seg-row input{width:110px;padding:5px 8px;border:1px solid #ccc;border-radius:4px;font-size:12.5px;text-align:right}
-.ac-seg-empty{font-size:12px;color:#999;text-align:center;padding:6px 0;font-style:italic}
-.ac-modal-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
-.ac-modal-bar button{padding:9px 16px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;font-family:inherit;border:1px solid #ddd;background:#fff;color:#333}
-.ac-modal-bar button.pr{background:#c00000;color:#fff;border-color:#c00000}
-.ac-modal-bar button.dg{color:#c00000;border-color:#f0c0c0}
-.ac-modal-bar button:disabled{opacity:.45;cursor:not-allowed}
-.ac-modal-bar-group{display:flex;gap:8px;flex-wrap:wrap}
-.ac-modal-warn{position:absolute;left:12px;right:12px;top:12px;padding:8px 12px;border-radius:6px;font-size:12px;line-height:1.5;display:none;background:rgba(255,248,229,.96);border:1px solid #f0d896;color:#b26a00;z-index:5;pointer-events:none}
-.ac-modal-warn.show{display:block}
-.ac-modal-warn.err{background:rgba(255,235,235,.96);border-color:#f0a0a0;color:#a00000}
-.ac-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%);background:#2e7d32;color:#fff;padding:14px 26px;border-radius:10px;font-weight:700;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:3000;display:none;font-family:'Segoe UI',Roboto,Arial,sans-serif}
-.ac-toast.show{display:block;animation:acToastIn .3s ease-out}
-@keyframes acToastIn{from{transform:translateX(-50%) translateY(-30px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
-@media(max-width:1024px){.ac{grid-template-columns:1fr;grid-template-areas:"w" "t" "i" "s" "c" "o" "l" "p"}.ac-pn{position:static;max-height:none}}
-@media(max-width:700px){.ac-draw-body{flex-direction:column}.ac-draw-wrap{width:100%}.ac-seg-list{flex:0 0 auto;width:100%;max-height:180px}}
-@media(max-width:640px){.ac{padding:16px}.ac-in input[type=number]{width:100%}}
-</style></head><body>
-  <main><div class="ac">
-<div class="ac-work" id="ac-work-label"><span class="dot"></span><span id="ac-work-text">Новое помещение</span><span class="hint" id="ac-work-hint">настройте параметры и нажмите «+ Новое помещение»</span></div>
-<div class="ac-title"><svg class="lg" viewBox="0 0 220 220"><defs><clipPath id="lgc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><g clip-path="url(#lgc)"><g stroke="#c00000" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg><span>Калькулятор кубической рейки <span class="br">CUBICA</span></span></div><div class="ac-in"><label>Длина, мм<input type="number" id="ac-length" value="5400" step="100" min="100"></label><label>Ширина, мм<input type="number" id="ac-width" value="4200" step="100" min="100"></label><button type="button" class="draw" id="ac-draw-open">✏️ Начертить</button><button type="button" class="upd" id="ac-update-room" style="display:none;">💾 Сохранить</button><button type="button" class="add" id="ac-add-to-project">+ Новое помещение</button><button type="button" class="kp" id="ac-kp-open">📤 Коммерческое предложение</button><button type="button" class="rst" id="ac-reset">Сбросить</button></div>
-<div class="ac-sliders-row"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Ширина рейки</span><span class="ac-slider-val" id="ac-railw-val">50 мм</span></div><input type="range" id="ac-railw" min="30" max="150" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Высота рейки</span><span class="ac-slider-val" id="ac-railh-val">50 мм</span></div><input type="range" id="ac-railh" min="30" max="200" step="10" value="50"></div><div class="ac-slider-sec"><div class="ac-slider-head"><span>Шаг между рейками</span><span class="ac-slider-val" id="ac-gap-val">40 мм</span></div><input type="range" id="ac-gap" min="20" max="300" step="10" value="40"></div></div><div class="ac-colors-row"><div class="ac-colors-block"><div class="ac-colors-title">Цвет RAL</div><div class="ac-swatches-ral" id="ac-color-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9003" style="background:#ecece7"></button><div class="ac-swatch-label">9003</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9006" style="background:#a5a8a9"></button><div class="ac-swatch-label">9006</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7004" style="background:#9ea0a3"></button><div class="ac-swatch-label">7004</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral7024" style="background:#474b4e"></button><div class="ac-swatch-label">7024</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-color="ral9005" style="background:#0a0a0a"></button><div class="ac-swatch-label">9005</div></div></div></div><div class="ac-colors-block grow"><div class="ac-colors-title">Дерево Cubica</div><div class="ac-swatches-wood" id="ac-wood-grid"><div class="ac-swatch-wrap"><button type="button" class="ac-swatch active" data-wood="denver"></button><div class="ac-swatch-label">Denver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="wellington"></button><div class="ac-swatch-label">Wellington</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="tokyo"></button><div class="ac-swatch-label">Tokyo</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="toronto"></button><div class="ac-swatch-label">Toronto</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="vancouver"></button><div class="ac-swatch-label">Vancouver</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="rio"></button><div class="ac-swatch-label">Rio</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="stockholm"></button><div class="ac-swatch-label">Stockholm</div></div><div class="ac-swatch-wrap"><button type="button" class="ac-swatch" data-wood="sydney"></button><div class="ac-swatch-label">Sydney</div></div></div></div></div><div class="ac-options-row"><div class="ac-colors-title">Опции</div><label class="ac-chk-inline"><input type="checkbox" id="ac-caps"> Заглушки</label><label class="ac-chk-inline"><input type="checkbox" id="ac-angle"> Уголок</label><label class="ac-chk-inline"><input type="checkbox" id="ac-hangers"> Подвесы</label><label class="ac-chk-inline"><input type="checkbox" id="ac-stringer-paint"> Стрингер окр.</label><div class="ac-hanger-slider disabled" id="ac-hanger-slider-wrap"><div class="ac-slider-head"><span>Высота</span></div><input type="range" id="ac-hanger-h" min="0" max="3" step="0.01" value="0" disabled><span class="ac-slider-val" id="ac-hanger-h-val">0,00 м</span></div></div><div class="ac-lw"><div class="ac-adjust"><div class="ac-slider-sec"><div class="ac-slider-head"><span>Поворот раскладки</span><span class="ac-slider-val" id="ac-rotation-val">0°</span></div><input type="range" id="ac-rotation" min="-45" max="45" step="1" value="0"></div></div><div class="ac-vr"><div class="ac-vt"><button type="button" class="active" data-view="2d">2D · Схема</button><button type="button" data-view="3d">3D · Объём</button></div><button type="button" class="ac-cb" id="ac-rotate90" title="Повернуть раскладку реек на 90°">↻ Повернуть на 90°</button></div><div class="ac-lay" id="ac-layout"></div><div class="ac-l3" id="ac-layout3d" style="display:none;"><canvas id="ac-canvas3d" width="640" height="440"></canvas></div><div class="ac-tb"><label class="ac-chk"><input type="checkbox" id="ac-show-ceiling"> Перекрытие</label><button type="button" class="ac-cb" id="ac-cam-reset">⟲ Камера</button><button type="button" class="ac-cb pr" id="ac-save-2d">📄 2D (PDF)</button><button type="button" class="ac-cb pr" id="ac-save-3d">📄 3D (PDF)</button></div><div class="ac-hint">3D: ЛКМ — вращение · колесо — зум · ПКМ — перенос</div></div><aside class="ac-pn" id="ac-panel"><div class="ac-ph"><h4 class="ac-pt">Спецификация</h4><div class="ac-st" id="ac-spec-toggle"><button type="button" data-specmode="current" class="active">Помещение</button><button type="button" data-specmode="total">Итог</button></div></div><div class="ac-res" id="ac-results"></div><div class="ac-pj"><div class="ac-pjt"><span>Проект CUBICA.BY</span><small><span id="ac-project-count">0</span> помещ.</small></div><ul class="ac-pjl" id="ac-project-list"></ul><div class="ac-pja"><button type="button" class="dg" id="ac-project-clear">Очистить проект</button></div></div></aside></div></main><footer class="ft">© 2026 CUBICA.BY · Кубическая рейка</footer>
-<div class="ac-modal" id="ac-draw-modal"><div class="ac-modal-inner"><h3 class="ac-modal-title">✏️ Начертить помещение</h3><p class="ac-modal-hint">Клик — точка. Клик по первой точке — замкнуть контур.</p><div class="ac-draw-hud"><div class="ac-draw-mode" id="ac-draw-mode">Кликните, чтобы задать первую точку</div><div class="ac-draw-length-wrap"><label for="ac-draw-length-input">Длина:</label><input type="number" id="ac-draw-length-input" placeholder="авто" min="100" step="100"><span>мм</span></div></div><div class="ac-draw-body"><div class="ac-draw-wrap"><canvas id="ac-draw-canvas" class="ac-draw-canvas" width="900" height="520"></canvas><div class="ac-modal-warn" id="ac-modal-warn"></div></div><div class="ac-seg-list" id="ac-seg-list"></div></div><div class="ac-modal-bar"><div class="ac-modal-bar-group"><button type="button" id="ac-draw-undo">↶ Отменить</button><button type="button" id="ac-draw-close-contour">🔒 Замкнуть</button><button type="button" class="dg" id="ac-draw-clear">Очистить</button></div><div class="ac-modal-bar-group"><button type="button" id="ac-draw-cancel">Отмена</button><button type="button" class="pr" id="ac-draw-apply" disabled>Применить</button></div></div></div></div>
-<div class="ac-modal" id="ac-unsaved-modal"><div class="ac-modal-inner" style="max-width:460px"><h3 class="ac-modal-title">Несохранённые изменения</h3><p class="ac-modal-hint" id="ac-unsaved-text">В текущем помещении есть несохранённые изменения.</p><div class="ac-modal-bar" style="justify-content:flex-end;margin-top:8px"><button type="button" id="ac-unsaved-cancel">Отмена</button><button type="button" id="ac-unsaved-discard" class="dg">Не сохранять</button><button type="button" id="ac-unsaved-save" class="pr">Сохранить</button></div></div></div>
-<div class="ac-toast" id="ac-toast"></div>
-
-<script type="module">
   import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 (function(){
@@ -191,7 +35,6 @@ const SHORT_URL='https://cubica-kp-15ab.6471811.workers.dev';
 const urlParams = new URLSearchParams(location.search);
 const JID = urlParams.get('jid');
 let currentRecordId = null;
-
 let lastSavedSnapshot = null;
 
 function snapshotKey(snap){
@@ -200,9 +43,11 @@ function snapshotKey(snap){
   delete copy.name;
   return JSON.stringify(copy);
 }
-
 function hasUnsavedChanges(){
-  if(activeRoomIndex === null) return false;
+  if(activeRoomIndex === null){
+    // Новое помещение — считаем, что изменения есть всегда (пока не сохранено)
+    return true;
+  }
   if(!currentLayout) return false;
   if(!lastSavedSnapshot) return false;
   const cur = snapshotKey(snapshotRoom());
@@ -215,7 +60,6 @@ function askUnsavedChanges(roomName){
     const text = $('ac-unsaved-text');
     text.textContent = 'В помещении «' + roomName + '» есть несохранённые изменения. Сохранить?';
     modal.classList.add('open');
-
     const cleanup = () => {
       modal.classList.remove('open');
       $('ac-unsaved-save').removeEventListener('click', onSave);
@@ -225,7 +69,6 @@ function askUnsavedChanges(roomName){
     const onSave = () => { cleanup(); resolve('save'); };
     const onDiscard = () => { cleanup(); resolve('discard'); };
     const onCancel = () => { cleanup(); resolve('cancel'); };
-
     $('ac-unsaved-save').addEventListener('click', onSave);
     $('ac-unsaved-discard').addEventListener('click', onDiscard);
     $('ac-unsaved-cancel').addEventListener('click', onCancel);
@@ -287,53 +130,62 @@ function showToast(msg,color){
   t.textContent=msg;t.style.background=color||'#2e7d32';
   t.classList.add('show');
   clearTimeout(showToast._t);
-  showToast._t=setTimeout(()=>t.classList.remove('show'),2500);
+  showToast._t=setTimeout(()=>t.classList.remove('show'),4000);
 }
 
+// ============ ЯВНЫЙ СТАТУС + ПОДСКАЗКА ============
 function updateWorkLabel(){
-  const wrap=$('ac-work-label'),txt=$('ac-work-text'),hint=$('ac-work-hint');
-  if(!wrap||!txt)return;
-  if(activeRoomIndex!==null&&project[activeRoomIndex]){
-    wrap.classList.add('project');
-    txt.textContent='Работаю: '+project[activeRoomIndex].name+' (из проекта)';
-    if(hint){
-      if(hasUnsavedChanges()){
-        hint.textContent='⚠ есть несохранённые изменения';
-        hint.style.color='#b26a00';
-      } else {
-        hint.textContent='изменения сохранены';
-        hint.style.color='';
-      }
-    }
-  } else if(currentLayout){
-    wrap.classList.remove('project');
-    txt.textContent='Новое помещение (не сохранено)';
-    if(hint)hint.textContent='нажмите «Сохранить» чтобы добавить в проект';
+  const badge=$('ac-work-badge'),nameEl=$('ac-work-text'),hintEl=$('ac-work-hint');
+  const contextHint=$('ac-context-hint'),contextText=$('ac-context-text');
+  if(!badge||!nameEl)return;
+
+  let mode, badgeText, badgeClass, name, hint, contextTextContent, contextClass, contextIcon;
+
+  if(activeRoomIndex === null){
+    // ЧЕРНОВИК — новое помещение
+    mode = 'draft';
+    badgeText = '🟡 ЧЕРНОВИК';
+    badgeClass = 'badge draft';
+    name = 'Новое помещение (не сохранено)';
+    hint = 'Ещё не в проекте';
+    contextIcon = '💡';
+    contextTextContent = 'Это <b>новое помещение</b>. Нажмите «💾 Сохранить в проект», чтобы добавить его к другим.';
+    contextClass = 'ac-context-hint draft';
+  } else if(hasUnsavedChanges()){
+    // РЕДАКТИРОВАНИЕ с изменениями
+    mode = 'editing';
+    badgeText = '🔵 РЕДАКТИРОВАНИЕ';
+    badgeClass = 'badge editing';
+    name = project[activeRoomIndex].name;
+    hint = '⚠ есть несохранённые изменения';
+    contextIcon = '✏️';
+    contextTextContent = 'Вы редактируете <b>' + escapeHtml(project[activeRoomIndex].name) + '</b>. Изменения ещё не сохранены. Нажмите «💾 Сохранить изменения» или «+ Новое помещение» (сохранит и создаст новое).';
+    contextClass = 'ac-context-hint editing';
   } else {
-    wrap.classList.remove('project');
-    txt.textContent='Новое помещение';
-    if(hint)hint.textContent='настройте параметры и нажмите «+ Новое помещение»';
+    // СОХРАНЕНО
+    mode = 'saved';
+    badgeText = '🟢 СОХРАНЕНО';
+    badgeClass = 'badge saved';
+    name = project[activeRoomIndex].name;
+    hint = 'Всё сохранено';
+    contextIcon = '✓';
+    contextTextContent = 'Вы редактируете <b>' + escapeHtml(project[activeRoomIndex].name) + '</b>. Все изменения сохранены. Нажмите «+ Новое помещение», чтобы создать следующее.';
+    contextClass = 'ac-context-hint saved';
   }
-}
 
-function updateButtonsVisibility(){
-  if(updateBtn)updateBtn.style.display=currentLayout?'':'none';
-}
+  badge.textContent = badgeText;
+  badge.className = badgeClass;
+  nameEl.textContent = name;
+  hintEl.textContent = hint;
+  contextText.innerHTML = contextTextContent;
+  contextHint.className = contextClass;
+  contextHint.querySelector('.ic').textContent = contextIcon;
 
-function updateAddButtonState(){
-  if(!addBtn) return;
-  if(activeRoomIndex === null && currentLayout){
-    // Работаем над новым помещением — кнопка должна сохранить
-    addBtn.textContent = '💾 Сохранить в проект';
-    addBtn.style.background = '#2e7d32';
-    addBtn.classList.add('add');
-  } else if(activeRoomIndex !== null){
-    // Работаем над существующим — кнопка создаёт новое
-    addBtn.textContent = '+ Новое помещение';
-    addBtn.style.background = '#2e7d32';
-  } else {
-    addBtn.textContent = '+ Новое помещение';
-    addBtn.style.background = '#2e7d32';
+  // Кнопка «Сохранить изменения» — видна только в режиме редактирования
+  if(updateBtn){
+    updateBtn.style.display = (activeRoomIndex !== null) ? '' : 'none';
+    updateBtn.disabled = !hasUnsavedChanges();
+    updateBtn.style.opacity = hasUnsavedChanges() ? '1' : '0.5';
   }
 }
 
@@ -353,7 +205,6 @@ function updateRotate90UI(){
   }
 }
 
-// Создание нового помещения с сохранением текущих параметров реек/цвета/галочек
 function resetForNewRoom(){
   const savedRailW = railWInput.value;
   const savedRailH = railHInput.value;
@@ -389,9 +240,7 @@ function resetForNewRoom(){
   lastSavedSnapshot = null;
   calculate();
   renderProjectList();
-  updateButtonsVisibility();
   updateWorkLabel();
-  updateAddButtonState();
 }
 
 function saveRoomSilent(){
@@ -411,33 +260,40 @@ function saveRoomSilent(){
   }
 }
 
-function newRoomAction(){
+// Кнопка «+ Новое помещение»
+async function newRoomAction(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
+  
   if(activeRoomIndex === null){
-    // Работаем над новым — просто сохраняем
+    // Работаем над новым — сохраняем и создаём ещё одно новое
     const result=saveRoomSilent();
     if(!result){alert('Не удалось сохранить.');return;}
     renderProjectList();renderSpec();
-    updateButtonsVisibility();updateWorkLabel();updateAddButtonState();
     showToast('✓ '+result.name+' добавлено в проект');
-  } else {
-    // Работаем над существующим — сохраняем и создаём новое
-    const result=saveRoomSilent();
-    if(!result){alert('Не удалось сохранить.');return;}
-    const savedName=result.name;
     resetForNewRoom();
-    showToast('✓ '+savedName+' сохранено, создано новое');
+  } else {
+    // Работаем над существующим — если есть несохранённые изменения, спрашиваем
+    if(hasUnsavedChanges()){
+      const choice = await askUnsavedChanges(project[activeRoomIndex].name);
+      if(choice === 'cancel') return;
+      if(choice === 'save') saveRoomSilent();
+      // 'discard' — не сохраняем
+    }
+    resetForNewRoom();
+    renderProjectList();
+    showToast('Создано новое помещение', '#1565c0');
   }
 }
 
+// Кнопка «💾 Сохранить изменения»
 function saveRoomExplicit(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
   const result=saveRoomSilent();
   if(!result){alert('Не удалось сохранить.');return;}
   renderProjectList();renderSpec();
-  updateButtonsVisibility();updateWorkLabel();updateAddButtonState();
+  updateWorkLabel();
   if(result.status==='added')showToast('✓ '+result.name+' добавлено в проект');
-  else showToast('✓ '+result.name+' сохранено');
+  else showToast('✓ '+result.name+' — изменения сохранены');
 }
 
 function hangerSpecRows(totalHangers,enabled,heightM){if(!enabled)return[];const h=heightM;const rows=[];const push=(label,qty)=>rows.push({label,value:qty+' шт.',num:qty,kind:'count',color:'#3a4048',unit:'шт.'});if(h<0.50){push('Европодвес 500 мм',totalHangers);}else if(h<0.70){push('Тяга-крюк 250 мм d 4,0',totalHangers);push('Тяга-петля 350 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.00){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 500 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.30){push('Тяга-крюк 350 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<1.50){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<2.00){push('Тяга-крюк 1000 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers);push('Пружина европодвеса d 4,0',totalHangers);}else if(h<2.50){push('Тяга-крюк 500 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers*2);push('Пружина европодвеса d 4,0',totalHangers*2);}else{push('Тяга-крюк 1000 мм d 4,0',totalHangers);push('Тяга-петля 1000 мм d 4,0',totalHangers*2);push('Пружина европодвеса d 4,0',totalHangers*2);}return rows;}
@@ -512,9 +368,17 @@ if(rotationDeg!==0)warnings.push('📐 Поворот: '+rotationDeg+'°.');if(m
 if(params.hangers)warnings.push('🔧 Подвесы: высота опускания '+params.hangerHeight.toFixed(2).replace('.',',')+' м.');
 if(params.rotate90)warnings.push('↻ Раскладка повёрнута на 90°.');
 currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,rawRotation:parseFloat(rotationInput.value)||0,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
+
+// ★ Автосинхронизация для корректного «Итого»
+if(activeRoomIndex !== null && project[activeRoomIndex] && currentLayout){
+  // Обновляем только specRows и areaM2 — чтобы «Итого» всегда было свежим
+  // НЕ трогаем lastSavedSnapshot — hasUnsavedChanges() покажет разницу
+  project[activeRoomIndex].specRows = currentLayout.specRows.map(r => ({...r}));
+  project[activeRoomIndex].areaM2 = currentLayout.areaM2;
+}
+
 renderSpec();drawLayout2D();if(threeInitialized)update3D();
 updateWorkLabel();
-updateButtonsVisibility();
 }catch(err){console.error('calculate() error:',err);resultsDiv.innerHTML='<p style="color:#d32f2f;font-size:12px">Ошибка: '+err.message+'</p>';}}
 
 function drawLayout2D(){if(!currentLayout)return;const{L_in,W_in,railW,polygon,colorHex,perRailSegments,perStringerSegments}=currentLayout;const width=640,height=440,padding=60;const s=Math.min((width-2*padding)/L_in,(height-2*padding)/W_in);const drawWidth=L_in*s,drawHeight=W_in*s;const ox=(width-drawWidth)/2,oy=(height-drawHeight)/2;let polySvgPts=null;if(polygon)polySvgPts=polygon.map(p=>[ox+p[0]*s,oy+p[1]*s]);let svg='<svg width="'+width+'" height="'+height+'" viewBox="0 0 '+width+' '+height+'" style="background:#f9f9f9;border:1px solid #e0e0e0;">';svg+='<defs><clipPath id="ac-room-clip" clipPathUnits="userSpaceOnUse">';if(polygon)svg+='<polygon points="'+polySvgPts.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')+'"/>';else svg+='<rect x="'+ox+'" y="'+oy+'" width="'+drawWidth+'" height="'+drawHeight+'"/>';svg+='</clipPath></defs>';if(polygon)svg+='<polygon points="'+polySvgPts.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')+'" fill="white"/>';else svg+='<rect x="'+ox+'" y="'+oy+'" width="'+drawWidth+'" height="'+drawHeight+'" fill="white"/>';svg+='<g clip-path="url(#ac-room-clip)">';const railPxH=Math.max(railW*s,1.5);const railFill='#'+colorHex.toString(16).padStart(6,'0');for(const rseg of perRailSegments){const sx0=ox+rseg.x0*s,sy0=oy+rseg.y0*s;const sx1=ox+rseg.x1*s,sy1=oy+rseg.y1*s;svg+='<line x1="'+sx0.toFixed(2)+'" y1="'+sy0.toFixed(2)+'" x2="'+sx1.toFixed(2)+'" y2="'+sy1.toFixed(2)+'" stroke="'+railFill+'" stroke-width="'+railPxH.toFixed(2)+'" stroke-linecap="butt"/>';const deg=Math.atan2(sy1-sy0,sx1-sx0)*180/Math.PI;let acc=0;for(let i=0;i<rseg.pieces.length;i++){const piece=rseg.pieces[i];const t0=acc/rseg.len,t1=(acc+piece)/rseg.len;const cxa=sx0+(sx1-sx0)*t0,cya=sy0+(sy1-sy0)*t0;const cxb=sx0+(sx1-sx0)*t1,cyb=sy0+(sy1-sy0)*t1;if(i<rseg.pieces.length-1)svg+='<circle cx="'+cxb.toFixed(2)+'" cy="'+cyb.toFixed(2)+'" r="3.5" fill="#ffd54f" stroke="#333" stroke-width="1"/>';const mx=(cxa+cxb)/2,my=(cya+cyb)/2;if(Math.hypot(cxb-cxa,cyb-cya)>14)svg+='<g transform="translate('+mx.toFixed(1)+','+my.toFixed(1)+') rotate('+deg.toFixed(2)+')"><text text-anchor="middle" font-size="9" font-weight="700" fill="#1a1a2e" style="paint-order:stroke;stroke:#ffffff;stroke-width:2.5px;stroke-linejoin:round;">'+piece+'</text></g>';acc+=piece;}}
@@ -541,15 +405,24 @@ const btnMerge=resultsDiv.querySelector('button.do-merge');if(btnMerge)btnMerge.
 const btnSplit=resultsDiv.querySelector('button.do-split');if(btnSplit)btnSplit.addEventListener('click',()=>{mergedResult=null;calculate();});}
 function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cutsMap;const cutsWithQty=[];Object.keys(mergedCutsSet).forEach(k=>{if(mergedCutsSet[k]){const sz=Number(k);let qty=0;if(sz===3000)qty=currentLayout.n3000;else if(sz===4000)qty=currentLayout.n4000;else qty=cutsMap[sz]||0;if(qty>0)cutsWithQty.push({size:sz,qty:qty});}});if(!cutsWithQty.length){alert('Поставьте галочки хотя бы на один размер.');return;}const allowedRefs=collectAllowedRefs(cutsMap,mergedCutsSet,currentLayout.n4000,currentLayout.n3000);if(!allowedRefs.length){alert('Нет доступного эталона.');return;}const res=tryMergeCuts(cutsWithQty,allowedRefs);if(res&&res.ok){mergedResult=res;calculate();}else{mergedResult=res||{ok:false,reason:'unknown'};calculate();}}
 
-function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
+function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){if(!room.specRows)continue;for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
 function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rawRotation,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
-function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;lastSavedSnapshot=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();updateAddButtonState();}
-function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();lastSavedSnapshot = snapshotKey(snapshotRoom());updateAddButtonState();}
+function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;lastSavedSnapshot=null;renderProjectList();renderSpec();updateWorkLabel();}
+function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();lastSavedSnapshot = snapshotKey(snapshotRoom());updateWorkLabel();}
 
 async function activateRoomGuarded(index){
   if(index === activeRoomIndex) return;
-  if(hasUnsavedChanges()){
+  if(activeRoomIndex === null){
+    // Работаем над новым — спрашиваем, сохранить ли
+    if(currentLayout){
+      if(!confirm('Текущее помещение не сохранено. Сохранить его перед переходом?')){
+        // Пользователь нажал "Отмена" — не переходим
+        // Но проверим, может хочет "Не сохранять" — упростим: спросим один раз
+      }
+    }
+  }
+  if(hasUnsavedChanges() && activeRoomIndex !== null){
     const choice = await askUnsavedChanges(project[activeRoomIndex].name);
     if(choice === 'cancel') return;
     if(choice === 'save') saveRoomSilent();
@@ -577,8 +450,6 @@ function removeFromProject(idx) {
   renderProjectList();
   renderSpec();
   updateWorkLabel();
-  updateButtonsVisibility();
-  updateAddButtonState();
   showToast('Помещение удалено');
 }
 
@@ -710,9 +581,17 @@ async function openKpPageViaWorker(){
         window.CubicaJournal.save(rec, {assignNumber:false});
         const i5url = window.CubicaJournal.i5UrlForRecord(rec);
         window.open(i5url, '_blank');
-        // ★ Проблема 1: закрываем калькулятор если открыт из журнала
+        // ★ Закрытие вкладки калькулятора, если открыт из журнала
         if(JID){
-          setTimeout(function(){ window.close(); }, 500);
+          setTimeout(function(){
+            window.close();
+            // Если не закрылось — покажем тост
+            setTimeout(function(){
+              if(!document.hidden){
+                showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
+              }
+            }, 300);
+          }, 500);
         }
         return;
       }
@@ -731,9 +610,15 @@ async function openKpPageViaWorker(){
     if (!j.id) throw new Error('No id returned');
 
     window.open(KP_URL + '?s=' + j.id, '_blank');
-    // ★ Проблема 1: закрываем калькулятор если открыт из журнала
     if(JID){
-      setTimeout(function(){ window.close(); }, 500);
+      setTimeout(function(){
+        window.close();
+        setTimeout(function(){
+          if(!document.hidden){
+            showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
+          }
+        }, 300);
+      }, 500);
     }
     
   } catch (e) {
@@ -745,7 +630,14 @@ async function openKpPageViaWorker(){
     if (url.length > 8000 && !confirm('Ссылка очень длинная (может не открыться). Продолжить?')) return;
     window.open(url, '_blank');
     if(JID){
-      setTimeout(function(){ window.close(); }, 500);
+      setTimeout(function(){
+        window.close();
+        setTimeout(function(){
+          if(!document.hidden){
+            showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
+          }
+        }, 300);
+      }, 500);
     }
   } finally {
     btn.textContent = oldText;
@@ -756,7 +648,7 @@ async function openKpPageViaWorker(){
 $('ac-kp-open').addEventListener('click', async () => {
   if(!currentLayout){alert('Сначала расчёт.');return;}
   if(hasUnsavedChanges()){
-    const choice = await askUnsavedChanges(project[activeRoomIndex].name);
+    const choice = await askUnsavedChanges(project[activeRoomIndex] ? project[activeRoomIndex].name : 'Новое помещение');
     if(choice === 'cancel') return;
     if(choice === 'save') saveRoomSilent();
   }
@@ -858,9 +750,8 @@ async function generatePdf(view){if(specMode==='total')await generateProjectPdf(
 buildWoodCache();
 document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{const w=btn.dataset.wood;if(woodSwatches[w])btn.style.backgroundImage='url('+woodSwatches[w]+')';});
 updateSliderLabels();updateAdjustLabels();syncHangerUI();
-renderProjectList();updateButtonsVisibility();updateWorkLabel();
+renderProjectList();updateWorkLabel();
 updateRotate90UI();
-updateAddButtonState();
 
 if(JID && window.CubicaJournal){
   const rec = window.CubicaJournal.get(JID);
