@@ -3,7 +3,8 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;background:#f4f5f7;line-height:1.6;padding:24px 20px 40px}
 .ac{max-width:1280px;margin:0 auto;padding:24px;border:1px solid #e6e6e6;border-radius:12px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.05);display:grid;grid-template-columns:minmax(0,1fr) 360px;grid-template-areas:"w w" "t t" "i i" "s s" "c c" "o o" "l p";gap:16px;align-items:start}
-.ac-work{grid-area:w;display:flex;align-items:center;gap:10px;padding:10px 16px;background:linear-gradient(90deg,#eef4fb,#fff);border:1px solid #cfdcec;border-radius:8px;font-size:13px;color:#1565c0;font-weight:600;transition:background .3s,border-color .3s,color .3s}
+/* Sticky-строка «Работаю...» */
+.ac-work{grid-area:w;position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:10px 16px;background:linear-gradient(90deg,#eef4fb,#fff);border:1px solid #cfdcec;border-radius:8px;font-size:13px;color:#1565c0;font-weight:600;transition:background .3s,border-color .3s,color .3s;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .ac-work .dot{width:8px;height:8px;border-radius:50%;background:#1565c0;flex-shrink:0;box-shadow:0 0 6px rgba(21,101,192,.6)}
 .ac-work .hint{margin-left:auto;font-size:11.5px;color:#888;font-weight:400}
 .ac-work.project{background:linear-gradient(90deg,#e8f5e9,#fff);border-color:#a5d6a7;color:#2e7d32}
@@ -16,6 +17,7 @@ body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;backgrou
 .ac-in input[type=number]{width:110px;padding:9px 10px;border:1px solid #ccc;border-radius:6px;font-size:14px}
 .ac-in button{padding:10px 14px;background:#666;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;font-family:inherit}
 .ac-in button.add{background:#2e7d32}.ac-in button.draw{background:#6a1b9a}.ac-in button.upd{background:#1565c0}.ac-in button.rst{background:#777}.ac-in button.journal{background:#1565c0}.ac-in button.save-j{background:#00838f}.ac-in button.kp{background:#c00000}
+.ac-in button:disabled{opacity:.5;cursor:not-allowed}
 .ac-sliders-row{grid-area:s;display:flex;flex-wrap:wrap;gap:12px;padding:14px 16px;background:#fafafa;border:1px solid #eee;border-radius:8px}
 .ac-slider-sec{display:flex;flex-direction:column;gap:6px;padding:10px 14px;background:#fff;border:1px solid #eee;border-radius:8px;flex:1 1 200px;min-width:180px;user-select:none;-webkit-user-select:none}
 .ac-slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11px;font-weight:700;color:#9aa1ac;letter-spacing:.8px;text-transform:uppercase}
@@ -98,8 +100,9 @@ body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;backgrou
 .ac-pjt{font-size:12px;font-weight:800;color:#1a1a2e;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:flex;justify-content:space-between}
 .ac-pjt small{font-weight:600;color:#888;font-size:11px;text-transform:none}
 .ac-pjl{list-style:none;padding:0;margin:0 0 10px 0}
-.ac-pji{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border:1px solid #eee;border-radius:6px;margin-bottom:6px;cursor:pointer}
+.ac-pji{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border:1px solid #eee;border-radius:6px;margin-bottom:6px;cursor:pointer;transition:all .15s}
 .ac-pji.active{background:#fff5f5;border-color:#f0c0c0;box-shadow:inset 3px 0 0 #c00000}
+.ac-pji.unsaved{background:#fffaf0;border-color:#f0d896;box-shadow:inset 3px 0 0 #b26a00}
 .ac-pjn{font-size:12.5px;font-weight:700;color:#1a1a2e}
 .ac-pjd{flex:1;font-size:11.5px;color:#888;text-align:right}
 .ac-pjx{background:transparent;border:none;color:#999;font-size:14px;cursor:pointer;padding:2px 6px;font-family:inherit;line-height:1}
@@ -304,8 +307,8 @@ function updateWorkLabel(){
     }
   } else if(currentLayout){
     wrap.classList.remove('project');
-    txt.textContent='Работаю: Новое помещение (не сохранено)';
-    if(hint)hint.textContent='нажмите «+ Новое помещение» чтобы сохранить';
+    txt.textContent='Новое помещение (не сохранено)';
+    if(hint)hint.textContent='нажмите «Сохранить» чтобы добавить в проект';
   } else {
     wrap.classList.remove('project');
     txt.textContent='Новое помещение';
@@ -315,6 +318,23 @@ function updateWorkLabel(){
 
 function updateButtonsVisibility(){
   if(updateBtn)updateBtn.style.display=currentLayout?'':'none';
+}
+
+function updateAddButtonState(){
+  if(!addBtn) return;
+  if(activeRoomIndex === null && currentLayout){
+    // Работаем над новым помещением — кнопка должна сохранить
+    addBtn.textContent = '💾 Сохранить в проект';
+    addBtn.style.background = '#2e7d32';
+    addBtn.classList.add('add');
+  } else if(activeRoomIndex !== null){
+    // Работаем над существующим — кнопка создаёт новое
+    addBtn.textContent = '+ Новое помещение';
+    addBtn.style.background = '#2e7d32';
+  } else {
+    addBtn.textContent = '+ Новое помещение';
+    addBtn.style.background = '#2e7d32';
+  }
 }
 
 function updateRotate90UI(){
@@ -335,7 +355,6 @@ function updateRotate90UI(){
 
 // Создание нового помещения с сохранением текущих параметров реек/цвета/галочек
 function resetForNewRoom(){
-  // Сохраняем текущие параметры реек, цвета и галочек
   const savedRailW = railWInput.value;
   const savedRailH = railHInput.value;
   const savedGap = gapInput.value;
@@ -346,13 +365,11 @@ function resetForNewRoom(){
   const savedHangerH = hangerHInput.value;
   const savedStringerPaint = stringerPaintChk.checked;
 
-  // Сбрасываем только размеры помещения, поворот, полигон и merged-данные
   lengthInput.value=1000;
   widthInput.value=1000;
   rotationInput.value=0;
   updateSliderLabels();updateAdjustLabels();
 
-  // Восстанавливаем сохранённые параметры
   railWInput.value = savedRailW;
   railHInput.value = savedRailH;
   gapInput.value = savedGap;
@@ -374,6 +391,7 @@ function resetForNewRoom(){
   renderProjectList();
   updateButtonsVisibility();
   updateWorkLabel();
+  updateAddButtonState();
 }
 
 function saveRoomSilent(){
@@ -395,11 +413,21 @@ function saveRoomSilent(){
 
 function newRoomAction(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
-  const result=saveRoomSilent();
-  if(!result){alert('Не удалось сохранить.');return;}
-  const savedName=result.name;
-  resetForNewRoom();
-  showToast('✓ '+savedName+' добавлено в проект');
+  if(activeRoomIndex === null){
+    // Работаем над новым — просто сохраняем
+    const result=saveRoomSilent();
+    if(!result){alert('Не удалось сохранить.');return;}
+    renderProjectList();renderSpec();
+    updateButtonsVisibility();updateWorkLabel();updateAddButtonState();
+    showToast('✓ '+result.name+' добавлено в проект');
+  } else {
+    // Работаем над существующим — сохраняем и создаём новое
+    const result=saveRoomSilent();
+    if(!result){alert('Не удалось сохранить.');return;}
+    const savedName=result.name;
+    resetForNewRoom();
+    showToast('✓ '+savedName+' сохранено, создано новое');
+  }
 }
 
 function saveRoomExplicit(){
@@ -407,7 +435,7 @@ function saveRoomExplicit(){
   const result=saveRoomSilent();
   if(!result){alert('Не удалось сохранить.');return;}
   renderProjectList();renderSpec();
-  updateButtonsVisibility();updateWorkLabel();
+  updateButtonsVisibility();updateWorkLabel();updateAddButtonState();
   if(result.status==='added')showToast('✓ '+result.name+' добавлено в проект');
   else showToast('✓ '+result.name+' сохранено');
 }
@@ -516,8 +544,8 @@ function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cuts
 function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
 function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rawRotation,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
-function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;lastSavedSnapshot=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();}
-function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();lastSavedSnapshot = snapshotKey(snapshotRoom());}
+function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;lastSavedSnapshot=null;renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();updateAddButtonState();}
+function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||50;railHInput.value=r.railH||50;gapInput.value=r.gap||40;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'denver');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();updateButtonsVisibility();updateWorkLabel();lastSavedSnapshot = snapshotKey(snapshotRoom());updateAddButtonState();}
 
 async function activateRoomGuarded(index){
   if(index === activeRoomIndex) return;
@@ -550,6 +578,7 @@ function removeFromProject(idx) {
   renderSpec();
   updateWorkLabel();
   updateButtonsVisibility();
+  updateAddButtonState();
   showToast('Помещение удалено');
 }
 
@@ -681,7 +710,10 @@ async function openKpPageViaWorker(){
         window.CubicaJournal.save(rec, {assignNumber:false});
         const i5url = window.CubicaJournal.i5UrlForRecord(rec);
         window.open(i5url, '_blank');
-        setTimeout(function(){ window.close(); }, 200);
+        // ★ Проблема 1: закрываем калькулятор если открыт из журнала
+        if(JID){
+          setTimeout(function(){ window.close(); }, 500);
+        }
         return;
       }
     }
@@ -699,6 +731,10 @@ async function openKpPageViaWorker(){
     if (!j.id) throw new Error('No id returned');
 
     window.open(KP_URL + '?s=' + j.id, '_blank');
+    // ★ Проблема 1: закрываем калькулятор если открыт из журнала
+    if(JID){
+      setTimeout(function(){ window.close(); }, 500);
+    }
     
   } catch (e) {
     console.error('Ошибка Worker:', e);
@@ -708,6 +744,9 @@ async function openKpPageViaWorker(){
     const url = KP_URL + (KP_URL.includes('?') ? '&' : '?') + 'data=' + data;
     if (url.length > 8000 && !confirm('Ссылка очень длинная (может не открыться). Продолжить?')) return;
     window.open(url, '_blank');
+    if(JID){
+      setTimeout(function(){ window.close(); }, 500);
+    }
   } finally {
     btn.textContent = oldText;
     btn.disabled = false;
@@ -821,6 +860,7 @@ document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{const w=btn.
 updateSliderLabels();updateAdjustLabels();syncHangerUI();
 renderProjectList();updateButtonsVisibility();updateWorkLabel();
 updateRotate90UI();
+updateAddButtonState();
 
 if(JID && window.CubicaJournal){
   const rec = window.CubicaJournal.get(JID);
