@@ -3,7 +3,6 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;background:#f4f5f7;line-height:1.6;padding:24px 20px 40px}
 .ac{max-width:1280px;margin:0 auto;padding:24px;border:1px solid #e6e6e6;border-radius:12px;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,.05);display:grid;grid-template-columns:minmax(0,1fr) 360px;grid-template-areas:"w w" "t t" "i i" "s s" "c c" "o o" "l p";gap:16px;align-items:start}
-/* ==================== STICKY STATUS BAR ==================== */
 .ac-work{grid-area:w;position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:12px 18px;background:#fff;border:2px solid #cfdcec;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:all .3s}
 .ac-work .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
 .ac-work .badge.draft{background:#fff3cd;color:#856404;border:1px solid #ffeeba}
@@ -11,13 +10,11 @@ body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;backgrou
 .ac-work .badge.saved{background:#d1e7dd;color:#0f5132;border:1px solid #badbcc}
 .ac-work .name{font-size:15px;font-weight:800;color:#1a1a2e;flex:0 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ac-work .hint{margin-left:auto;font-size:12px;color:#666;font-weight:500;flex-shrink:0}
-/* Большая плашка-подсказка под кнопками */
 .ac-context-hint{grid-area:w;margin-top:-8px;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;line-height:1.5;display:flex;align-items:center;gap:10px}
 .ac-context-hint.draft{background:#fff3cd;border:1px solid #ffeeba;color:#856404}
 .ac-context-hint.editing{background:#cfe2ff;border:1px solid #b6d4fe;color:#084298}
 .ac-context-hint.saved{background:#d1e7dd;border:1px solid #badbcc;color:#0f5132}
 .ac-context-hint .ic{font-size:18px;flex-shrink:0}
-
 .ac-title{grid-area:t;font-size:20px;font-weight:800;color:#1a1a2e;padding-bottom:14px;border-bottom:2px solid #d32f2f;display:flex;align-items:center;gap:12px}
 .ac-title .lg{flex-shrink:0;width:38px;height:38px}
 .ac-title .br{color:#c00000}
@@ -211,7 +208,6 @@ function snapshotKey(snap){
 }
 function hasUnsavedChanges(){
   if(activeRoomIndex === null){
-    // Новое помещение — считаем, что изменения есть всегда (пока не сохранено)
     return true;
   }
   if(!currentLayout) return false;
@@ -299,7 +295,6 @@ function showToast(msg,color){
   showToast._t=setTimeout(()=>t.classList.remove('show'),4000);
 }
 
-// ============ ЯВНЫЙ СТАТУС + ПОДСКАЗКА ============
 function updateWorkLabel(){
   const badge=$('ac-work-badge'),nameEl=$('ac-work-text'),hintEl=$('ac-work-hint');
   const contextHint=$('ac-context-hint'),contextText=$('ac-context-text');
@@ -308,17 +303,15 @@ function updateWorkLabel(){
   let mode, badgeText, badgeClass, name, hint, contextTextContent, contextClass, contextIcon;
 
   if(activeRoomIndex === null){
-    // ЧЕРНОВИК — новое помещение
     mode = 'draft';
     badgeText = '🟡 ЧЕРНОВИК';
     badgeClass = 'badge draft';
     name = 'Новое помещение (не сохранено)';
     hint = 'Ещё не в проекте';
     contextIcon = '💡';
-    contextTextContent = 'Это <b>новое помещение</b>. Нажмите «💾 Сохранить в проект», чтобы добавить его к другим.';
+    contextTextContent = 'Это <b>новое помещение</b>. Нажмите «💾 Сохранить изменения», чтобы добавить его к другим.';
     contextClass = 'ac-context-hint draft';
   } else if(hasUnsavedChanges()){
-    // РЕДАКТИРОВАНИЕ с изменениями
     mode = 'editing';
     badgeText = '🔵 РЕДАКТИРОВАНИЕ';
     badgeClass = 'badge editing';
@@ -328,7 +321,6 @@ function updateWorkLabel(){
     contextTextContent = 'Вы редактируете <b>' + escapeHtml(project[activeRoomIndex].name) + '</b>. Изменения ещё не сохранены. Нажмите «💾 Сохранить изменения» или «+ Новое помещение» (сохранит и создаст новое).';
     contextClass = 'ac-context-hint editing';
   } else {
-    // СОХРАНЕНО
     mode = 'saved';
     badgeText = '🟢 СОХРАНЕНО';
     badgeClass = 'badge saved';
@@ -347,7 +339,6 @@ function updateWorkLabel(){
   contextHint.className = contextClass;
   contextHint.querySelector('.ic').textContent = contextIcon;
 
-  // Кнопка «Сохранить изменения» — видна только в режиме редактирования
   if(updateBtn){
     updateBtn.style.display = (activeRoomIndex !== null) ? '' : 'none';
     updateBtn.disabled = !hasUnsavedChanges();
@@ -426,24 +417,20 @@ function saveRoomSilent(){
   }
 }
 
-// Кнопка «+ Новое помещение»
 async function newRoomAction(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
   
   if(activeRoomIndex === null){
-    // Работаем над новым — сохраняем и создаём ещё одно новое
     const result=saveRoomSilent();
     if(!result){alert('Не удалось сохранить.');return;}
     renderProjectList();renderSpec();
     showToast('✓ '+result.name+' добавлено в проект');
     resetForNewRoom();
   } else {
-    // Работаем над существующим — если есть несохранённые изменения, спрашиваем
     if(hasUnsavedChanges()){
       const choice = await askUnsavedChanges(project[activeRoomIndex].name);
       if(choice === 'cancel') return;
       if(choice === 'save') saveRoomSilent();
-      // 'discard' — не сохраняем
     }
     resetForNewRoom();
     renderProjectList();
@@ -451,7 +438,6 @@ async function newRoomAction(){
   }
 }
 
-// Кнопка «💾 Сохранить изменения»
 function saveRoomExplicit(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
   const result=saveRoomSilent();
@@ -535,10 +521,7 @@ if(params.hangers)warnings.push('🔧 Подвесы: высота опуска�
 if(params.rotate90)warnings.push('↻ Раскладка повёрнута на 90°.');
 currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,rawRotation:parseFloat(rotationInput.value)||0,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
 
-// ★ Автосинхронизация для корректного «Итого»
 if(activeRoomIndex !== null && project[activeRoomIndex] && currentLayout){
-  // Обновляем только specRows и areaM2 — чтобы «Итого» всегда было свежим
-  // НЕ трогаем lastSavedSnapshot — hasUnsavedChanges() покажет разницу
   project[activeRoomIndex].specRows = currentLayout.specRows.map(r => ({...r}));
   project[activeRoomIndex].areaM2 = currentLayout.areaM2;
 }
@@ -580,11 +563,8 @@ function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex
 async function activateRoomGuarded(index){
   if(index === activeRoomIndex) return;
   if(activeRoomIndex === null){
-    // Работаем над новым — спрашиваем, сохранить ли
     if(currentLayout){
       if(!confirm('Текущее помещение не сохранено. Сохранить его перед переходом?')){
-        // Пользователь нажал "Отмена" — не переходим
-        // Но проверим, может хочет "Не сохранять" — упростим: спросим один раз
       }
     }
   }
@@ -710,48 +690,49 @@ async function openKpPageViaWorker(){
     if(JID && window.CubicaJournal){
       const rec = window.CubicaJournal.get(JID);
       if(rec){
+        // ★ КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: полностью перезаписываем rooms, meta и rows
         rec.rooms = rooms;
         rec.meta = payload.meta;
-        var newRows = rows.map(function(r){
-          var row = {label: r.label, qty: r.qty, unit: r.unit || 'шт.', pieces: r.pieces};
-          if(r.labelFull) row.labelFull = r.labelFull;
+        
+        // ★ Перезаписываем rows: сохраняем price и qtyReserve только для тех label, которые остались
+        var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
+        var oldMap = {};
+        oldRows.forEach(function(oldR){
+          if(oldR && oldR.label){
+            oldMap[oldR.label] = {
+              price: Number(oldR.price) || 0,
+              qtyReserve: Number(oldR.qtyReserve) || 0
+            };
+          }
+        });
+        
+        // ★ Формируем новые rows ТОЛЬКО из тех, что пришли из калькулятора
+        rec.rows = rows.map(function(newR){
+          var oldInfo = oldMap[newR.label] || { price: 0, qtyReserve: 0 };
+          var row = {
+            label: newR.label,
+            qtyCalc: Number(newR.qty) || 0,
+            qtyReserve: oldInfo.qtyReserve,
+            unit: newR.unit || 'шт.',
+            price: oldInfo.price
+          };
+          if(newR.pieces) row.pieces = newR.pieces;
+          if(newR.labelFull) row.labelFull = newR.labelFull;
           return row;
         });
-        var oldRows = Array.isArray(rec.rows) ? rec.rows : [];
-        var mergedRows = [];
-        var usedLabels = {};
-        oldRows.forEach(function(oldR){
-          var label = String(oldR.label || '');
-          usedLabels[label] = true;
-          var match = newRows.find(function(nr){ return nr.label === label; });
-          if(match){
-            var row = {label: oldR.label,qtyCalc: match.qty,qtyReserve: oldR.qtyReserve || 0,unit: oldR.unit || match.unit,price: oldR.price || 0};
-            if(match.pieces) row.pieces = match.pieces;
-            if(match.labelFull) row.labelFull = match.labelFull;
-            mergedRows.push(row);
-          } else {
-            mergedRows.push(oldR);
-          }
-        });
-        newRows.forEach(function(nr){
-          if(!usedLabels[nr.label]){
-            var row = {label: nr.label,qtyCalc: nr.qty,qtyReserve: 0,unit: nr.unit,price: 0};
-            if(nr.pieces) row.pieces = nr.pieces;
-            if(nr.labelFull) row.labelFull = nr.labelFull;
-            mergedRows.push(row);
-          }
-        });
-        rec.rows = mergedRows;
+        
         rec.history = rec.history || [];
-        rec.history.push({at: window.CubicaJournal.nowISO(),by: window.CubicaJournal.manager(),action: 'from calculator'});
+        rec.history.push({
+          at: window.CubicaJournal.nowISO(),
+          by: window.CubicaJournal.manager(),
+          action: 'from calculator (full sync)'
+        });
         window.CubicaJournal.save(rec, {assignNumber:false});
         const i5url = window.CubicaJournal.i5UrlForRecord(rec);
         window.open(i5url, '_blank');
-        // ★ Закрытие вкладки калькулятора, если открыт из журнала
         if(JID){
           setTimeout(function(){
             window.close();
-            // Если не закрылось — покажем тост
             setTimeout(function(){
               if(!document.hidden){
                 showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
