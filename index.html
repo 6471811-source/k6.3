@@ -339,10 +339,27 @@ function updateWorkLabel(){
   contextHint.className = contextClass;
   contextHint.querySelector('.ic').textContent = contextIcon;
 
+  // --- УПРАВЛЕНИЕ КНОПКАМИ ---
+  const hasChanges = hasUnsavedChanges();
+  
+  // 1. Кнопка "Сохранить изменения" (активна, если есть что сохранять)
   if(updateBtn){
-    updateBtn.style.display = (activeRoomIndex !== null) ? '' : 'none';
-    updateBtn.disabled = !hasUnsavedChanges();
-    updateBtn.style.opacity = hasUnsavedChanges() ? '1' : '0.5';
+    updateBtn.style.display = ''; // Всегда видима
+    updateBtn.disabled = !hasChanges;
+    updateBtn.style.opacity = hasChanges ? '1' : '0.5';
+    
+    // Меняем текст для черновика
+    if (activeRoomIndex === null) {
+      updateBtn.textContent = '💾 Добавить в проект';
+    } else {
+      updateBtn.textContent = '💾 Сохранить изменения';
+    }
+  }
+  
+  // 2. Кнопка "+ Новое помещение" (активна ТОЛЬКО если всё сохранено)
+  if(addBtn){
+    addBtn.disabled = hasChanges;
+    addBtn.style.opacity = hasChanges ? '0.5' : '1';
   }
 }
 
@@ -420,31 +437,27 @@ function saveRoomSilent(){
 async function newRoomAction(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
   
-  if(activeRoomIndex === null){
-    const result=saveRoomSilent();
-    if(!result){alert('Не удалось сохранить.');return;}
-    renderProjectList();renderSpec();
-    showToast('✓ '+result.name+' добавлено в проект');
-    resetForNewRoom();
-  } else {
-    if(hasUnsavedChanges()){
-      const choice = await askUnsavedChanges(project[activeRoomIndex].name);
-      if(choice === 'cancel') return;
-      if(choice === 'save') saveRoomSilent();
-    }
-    resetForNewRoom();
-    renderProjectList();
-    showToast('Создано новое помещение', '#1565c0');
+  // Если есть несохраненные изменения или это черновик — не даем создать новое
+  if(hasUnsavedChanges()){
+    showToast('Сначала сохраните текущие изменения!', '#c00000');
+    return;
   }
+  
+  resetForNewRoom();
+  renderProjectList();
+  showToast('Создано новое помещение', '#1565c0');
 }
-
 function saveRoomExplicit(){
   if(!currentLayout){alert('Сначала расчёт.');return;}
   const result=saveRoomSilent();
   if(!result){alert('Не удалось сохранить.');return;}
-  renderProjectList();renderSpec();
-  updateWorkLabel();
-  if(result.status==='added')showToast('✓ '+result.name+' добавлено в проект');
+  
+  // Обновляем всё: список, спецификацию и НАДПИСИ НА КНОПКАХ
+  renderProjectList();
+  renderSpec();
+  updateWorkLabel(); 
+  
+  if(result.status==='added') showToast('✓ '+result.name+' добавлено в проект');
   else showToast('✓ '+result.name+' — изменения сохранены');
 }
 
