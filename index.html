@@ -730,14 +730,12 @@ async function openKpPageViaWorker(){
         window.CubicaJournal.save(rec, {assignNumber:false});
         const i5url = window.CubicaJournal.i5UrlForRecord(rec);
         window.open(i5url, '_blank');
-if(JID){
-  try{ window.close(); }catch(e){}
-  setTimeout(function(){
-    if(!document.hidden){
-      showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
-    }
-  }, 500);
-}
+try{ window.close(); }catch(e){}
+setTimeout(function(){
+  if(!document.hidden){
+    showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
+  }
+}, 500);
         return;
       }
     }
@@ -755,14 +753,12 @@ if(JID){
     if (!j.id) throw new Error('No id returned');
 
     window.open(KP_URL + '?s=' + j.id, '_blank');
-if(JID){
-  try{ window.close(); }catch(e){}
-  setTimeout(function(){
-    if(!document.hidden){
-      showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
-    }
-  }, 500);
-}
+try{ window.close(); }catch(e){}
+setTimeout(function(){
+  if(!document.hidden){
+    showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
+  }
+}, 500);
     
   } catch (e) {
     console.error('Ошибка Worker:', e);
@@ -772,14 +768,12 @@ if(JID){
     const url = KP_URL + (KP_URL.includes('?') ? '&' : '?') + 'data=' + data;
     if (url.length > 8000 && !confirm('Ссылка очень длинная (может не открыться). Продолжить?')) return;
     window.open(url, '_blank');
-if(JID){
-  try{ window.close(); }catch(e){}
-  setTimeout(function(){
-    if(!document.hidden){
-      showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
-    }
-  }, 500);
-}
+try{ window.close(); }catch(e){}
+setTimeout(function(){
+  if(!document.hidden){
+    showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
+  }
+}, 500);
   } finally {
     btn.textContent = oldText;
     btn.disabled = false;
