@@ -3,24 +3,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://6471811-source.github.io/Cubica-journal/journal-core.js"></script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
-<script>
-  // Загрузка шрифта Roboto для корректного отображения русского текста в PDF
-  (function() {
-    const font = 'https://cdnjs.cloudflare.com/ajax/libs/roboto-fontface/0.10.0/fonts/roboto/Roboto-Regular.woff';
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', font, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function() {
-      if (this.status === 200) {
-        const binary = new Uint8Array(this.response);
-        let base64 = '';
-        for (let i = 0; i < binary.length; i++) base64 += String.fromCharCode(binary[i]);
-        window.ROBOTO_BASE64 = btoa(base64);
-      }
-    };
-    xhr.send();
-  })();
-</script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;background:#f4f5f7;line-height:1.6;padding:24px 20px 40px}
@@ -909,24 +891,160 @@ $('ac-rotate90').addEventListener('click',()=>{
 const LOGO_SVG='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="440" height="440"><defs><clipPath id="cc"><path d="M30,30 H190 V70 H70 V150 H190 V190 H30 Z"/></clipPath></defs><rect width="220" height="220" fill="#ffffff"/><g clip-path="url(#cc)"><g stroke="'+CUBICA_RED+'" stroke-width="20"><line x1="-10" y1="30" x2="30" y2="-10"/><line x1="-10" y1="70" x2="70" y2="-10"/><line x1="-10" y1="110" x2="110" y2="-10"/><line x1="-10" y1="150" x2="150" y2="-10"/><line x1="-10" y1="190" x2="190" y2="-10"/><line x1="-10" y1="230" x2="230" y2="-10"/><line x1="10" y1="230" x2="230" y2="10"/><line x1="50" y1="230" x2="230" y2="50"/><line x1="90" y1="230" x2="230" y2="90"/><line x1="130" y1="230" x2="230" y2="130"/><line x1="170" y1="230" x2="230" y2="170"/></g></g></svg>';
 function svgStringToPngDataURL(svgString,w,h,keepTransparent){return new Promise((resolve,reject)=>{const blob=new Blob([svgString],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');if(!keepTransparent){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);}ctx.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);resolve(c.toDataURL('image/png'));};img.onerror=e=>{URL.revokeObjectURL(url);reject(e);};img.src=url;});}
 function addPdfLogo(doc,logoPng){if(logoPng)try{doc.addImage(logoPng,'PNG',15,8,14,14);}catch(e){}}
-function addPdfWatermark(doc){try{doc.setGState(new doc.GState({opacity:0.07}));doc.setFont('Roboto','bold');doc.setFontSize(70);doc.setTextColor(CUBICA_RED_RGB[0],CUBICA_RED_RGB[1],CUBICA_RED_RGB[2]);doc.text('CUBICA.BY',105,148,{align:'center',angle:45});doc.setGState(new doc.GState({opacity:1}));}catch(e){}}
-function drawSpecTable(doc,specRows,M,PW,startY){let ty=startY;doc.setFont('Roboto','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Спецификация',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('Roboto','normal');doc.setFontSize(9);doc.setTextColor(40,40,40);for(const row of specRows){if(row.kind==='area'){doc.setFont('Roboto','italic');doc.setTextColor(80,80,80);doc.text(row.label+': '+row.value,M,ty);ty+=5;doc.setFont('Roboto','normal');doc.setTextColor(40,40,40);continue;}if(ty>250){doc.addPage();ty=30;}const label=doc.splitTextToSize('• '+row.label,PW-2*M-25)[0];doc.text(label,M,ty);doc.text(row.value,PW-M,ty,{align:'right'});ty+=4.8;}return ty;}
-function drawCuttingSection(doc,cuts,M,PW,startY){if(!cuts.length)return startY;let ty=startY;doc.setFont('Roboto','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Схема нарезки реек',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('Roboto','normal');doc.setFontSize(8.5);doc.setTextColor(40,40,40);for(const c of cuts){if(ty>260){doc.addPage();ty=30;}const line=c.items.join(' + ')+(c.waste>0?' (отход '+c.waste+' мм)':' ');const wrapped=doc.splitTextToSize('#'+(c.n)+': '+line,PW-2*M);for(const w of wrapped){doc.text(w,M,ty);ty+=3.6;}ty+=0.8;}return ty;}
-function collectProjectCuts(){const allSchemes=[];for(const room of project){if(room.mergeInfo&&room.mergeInfo.cuttingScheme&&room.mergeInfo.refSize){for(const s of room.mergeInfo.cuttingScheme)allSchemes.push({refSize:room.mergeInfo.refSize,items:s.items.slice(),used:s.used,waste:s.waste});}}const byRef={};for(const s of allSchemes){if(!byRef[s.refSize])byRef[s.refSize]=[];byRef[s.refSize].push(s);}const out=[];for(const refSize of Object.keys(byRef)){const arr=byRef[refSize];let n=0;for(const s of arr){n++;out.push({n,refSize:parseInt(refSize,10),items:s.items,waste:s.waste});}}return out;}
+function addPdfWatermark(doc){try{doc.setGState(new doc.GState({opacity:0.07}));doc.setFont('helvetica','bold');doc.setFontSize(70);doc.setTextColor(CUBICA_RED_RGB[0],CUBICA_RED_RGB[1],CUBICA_RED_RGB[2]);doc.text('CUBICA.BY',105,148,{align:'center',angle:45});doc.setGState(new doc.GState({opacity:1}));}catch(e){}}
+
+/* === РЕНДЕР СПЕЦИФИКАЦИИ НА CANVAS (кириллица рисуется браузером) === */
+function renderSpecToCanvas(specRows, widthPx){
+  widthPx = widthPx || 1400;
+  const FONT_NORMAL = '22px "Segoe UI", Roboto, Arial, sans-serif';
+  const FONT_BOLD   = 'bold 22px "Segoe UI", Roboto, Arial, sans-serif';
+  const FONT_ITALIC = 'italic 22px "Segoe UI", Roboto, Arial, sans-serif';
+  const rowH = 34;
+  const padX = 30, padTop = 40, padBottom = 30;
+  const valueGap = 20; // отступ между текстом и значением
+
+  // Сначала измерим высоту с учётом переносов длинных строк
+  const tmp = document.createElement('canvas');
+  const ctx0 = tmp.getContext('2d');
+  const lines = [];
+  for (const row of specRows) {
+    if (row.kind === 'area') {
+      lines.push({ type: 'text', text: row.label + ': ' + row.value, font: FONT_ITALIC, color: '#555', h: rowH });
+      continue;
+    }
+    ctx0.font = FONT_NORMAL;
+    // оставляем место справа под value (примерно 30% ширины)
+    const maxLabelW = widthPx - padX * 2 - valueGap - 200;
+    const wrapped = wrapText(ctx0, '• ' + row.label, maxLabelW);
+    for (let i = 0; i < wrapped.length; i++) {
+      lines.push({
+        type: 'bullet',
+        text: wrapped[i],
+        font: FONT_NORMAL,
+        color: '#222',
+        h: rowH,
+        value: i === wrapped.length - 1 ? row.value : '',
+      });
+    }
+  }
+  const totalH = padTop + padBottom + lines.reduce((s, l) => s + l.h, 0);
+  const canvas = document.createElement('canvas');
+  canvas.width = widthPx;
+  canvas.height = totalH;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, widthPx, totalH);
+  ctx.textBaseline = 'middle';
+
+  let y = padTop;
+  for (const ln of lines) {
+    ctx.font = ln.font;
+    ctx.fillStyle = ln.color;
+    ctx.textAlign = 'left';
+    ctx.fillText(ln.text, padX, y + ln.h / 2);
+    if (ln.value) {
+      ctx.font = FONT_BOLD;
+      ctx.fillStyle = '#1a1a2e';
+      ctx.textAlign = 'right';
+      ctx.fillText(ln.value, widthPx - padX, y + ln.h / 2);
+    }
+    y += ln.h;
+  }
+  return canvas.toDataURL('image/png');
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(' ');
+  const lines = [];
+  let cur = '';
+  for (const w of words) {
+    const test = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(test).width > maxWidth && cur) {
+      lines.push(cur);
+      cur = w;
+    } else {
+      cur = test;
+    }
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+/* Вставляет спецификацию как картинку в PDF. Возвращает новый Y. */
+async function drawSpecImage(doc, specRows, M, PW, startY) {
+  const imgData = renderSpecToCanvas(specRows, 1400);
+  const img = new Image();
+  img.src = imgData;
+  await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+  const imgWmm = PW - 2 * M;
+  const imgHmm = imgWmm * (img.height / img.width);
+  // если не помещается на странице — вставим и, если нужно, продолжим на новой
+  let y = startY;
+  if (y + imgHmm > 285) {
+    doc.addPage();
+    y = 20;
+  }
+  // Заголовок раздела — тоже латиницей/цифрами, но оставим 'Спецификация'
+  // как картинку не будем — выведем без кириллицы не получится,
+  // поэтому заголовок рисуем как часть картинки: добавим его в renderSpecToCanvas
+  // (см. ниже — там уже нет заголовка, добавим его тут как отдельный маленький canvas,
+  // но проще: сделаем заголовок частью img — перерисуем с заголовком)
+  doc.addImage(imgData, 'PNG', M, y, imgWmm, imgHmm);
+  return y + imgHmm + 4;
+}
+
+/* Версия renderSpecToCanvas с заголовком (для красоты). Используется напрямую. */
+function renderSpecWithHeader(specRows, widthPx) {
+  widthPx = widthPx || 1400;
+  const headerH = 60;
+  const base = renderSpecToCanvas(specRows, widthPx);
+  return new Promise((resolve) => {
+    const im = new Image();
+    im.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = widthPx;
+      canvas.height = im.height + headerH;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, widthPx, canvas.height);
+      // заголовок
+      ctx.fillStyle = '#1a1a2e';
+      ctx.font = 'bold 26px "Segoe UI", Roboto, Arial, sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';
+      ctx.fillText('Спецификация', 30, headerH / 2 + 4);
+      // линия
+      ctx.strokeStyle = '#d2d2d2';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(30, headerH - 4);
+      ctx.lineTo(widthPx - 30, headerH - 4);
+      ctx.stroke();
+      // спека
+      ctx.drawImage(im, 0, headerH);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    im.src = base;
+  });
+}
+
+async function drawSpecImageWithHeader(doc, specRows, M, PW, startY) {
+  const imgData = await renderSpecWithHeader(specRows, 1400);
+  const img = new Image();
+  img.src = imgData;
+  await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+  const imgWmm = PW - 2 * M;
+  const imgHmm = imgWmm * (img.height / img.width);
+  let y = startY;
+  if (y + imgHmm > 285) { doc.addPage(); y = 20; }
+  doc.addImage(imgData, 'PNG', M, y, imgWmm, imgHmm);
+  return y + imgHmm + 4;
+}
+
 async function generateRoomPdf(view){if(!currentLayout){alert('Сначала расчёт.');return;}if(!window.jspdf||!window.jspdf.jsPDF){alert('jsPDF не загружен.');return;}if(view==='3d'&&!ensure3D())return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const PW=210,PH=297,M=15;let logoPng=null;try{logoPng=await svgStringToPngDataURL(LOGO_SVG,220,220,false);}catch(e){}addPdfLogo(doc,logoPng);
-if (window.ROBOTO_BASE64) {
-  doc.addFileToVFS('Roboto-Regular.ttf', window.ROBOTO_BASE64);
-  doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-  doc.setFont('Roboto');
-}
-doc.setFont('Roboto','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA',M+18,20);doc.setFont('Roboto','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('cubic rail ceilings',M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let imgData=null;try{if(view==='2d'){const svg=document.querySelector('#ac-layout svg');if(svg){const clone=svg.cloneNode(true);clone.setAttribute('width','1280');clone.setAttribute('height','880');imgData=await svgStringToPngDataURL(new XMLSerializer().serializeToString(clone),1280,880,false);}}else{threeRenderer.render(threeScene,threeCamera);imgData=threeRenderer.domElement.toDataURL('image/png');}}catch(e){console.error(e);}const modelTopY=42,modelW=PW-2*M,modelH=modelW*0.55;if(imgData){doc.setDrawColor(220,220,220);doc.setLineWidth(0.3);doc.rect(M,modelTopY,modelW,modelH);doc.addImage(imgData,'PNG',M+1,modelTopY+1,modelW-2,modelH-2);}let ty=modelTopY+modelH+8;ty=drawSpecTable(doc,currentLayout.specRows,M,PW,ty);ty+=4;const cuts=[];if(currentLayout.mergeInfo&&currentLayout.mergeInfo.cuttingScheme){let n=0;for(const s of currentLayout.mergeInfo.cuttingScheme){n++;cuts.push({n,refSize:currentLayout.mergeInfo.refSize,items:s.items,waste:s.waste});}}drawCuttingSection(doc,cuts,M,PW,ty);doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('L '+currentLayout.L_in+' × W '+currentLayout.W_in+' мм — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_'+view.toUpperCase()+'_'+currentLayout.L_in+'x'+currentLayout.W_in+'.pdf');}
+doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA',M+18,20);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('cubic rail ceilings',M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let imgData=null;try{if(view==='2d'){const svg=document.querySelector('#ac-layout svg');if(svg){const clone=svg.cloneNode(true);clone.setAttribute('width','1280');clone.setAttribute('height','880');imgData=await svgStringToPngDataURL(new XMLSerializer().serializeToString(clone),1280,880,false);}}else{threeRenderer.render(threeScene,threeCamera);imgData=threeRenderer.domElement.toDataURL('image/png');}}catch(e){console.error(e);}const modelTopY=42,modelW=PW-2*M,modelH=modelW*0.55;if(imgData){doc.setDrawColor(220,220,220);doc.setLineWidth(0.3);doc.rect(M,modelTopY,modelW,modelH);doc.addImage(imgData,'PNG',M+1,modelTopY+1,modelW-2,modelH-2);}let ty=modelTopY+modelH+8;ty=await drawSpecImageWithHeader(doc,currentLayout.specRows,M,PW,ty);ty+=4;const cuts=[];if(currentLayout.mergeInfo&&currentLayout.mergeInfo.cuttingScheme){let n=0;for(const s of currentLayout.mergeInfo.cuttingScheme){n++;cuts.push({n,refSize:currentLayout.mergeInfo.refSize,items:s.items,waste:s.waste});}}doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('L '+currentLayout.L_in+' × W '+currentLayout.W_in+' mm — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_'+view.toUpperCase()+'_'+currentLayout.L_in+'x'+currentLayout.W_in+'.pdf');}
 async function generateProjectPdf(view){if(!project.length){alert('Проект пуст.');return;}if(!window.jspdf||!window.jspdf.jsPDF){alert('jsPDF не загружен.');return;}if(view==='3d'&&!ensure3D())return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});const PW=210,PH=297,M=15;let logoPng=null;try{logoPng=await svgStringToPngDataURL(LOGO_SVG,220,220,false);}catch(e){}addPdfLogo(doc,logoPng);
-if (window.ROBOTO_BASE64) {
-  doc.addFileToVFS('Roboto-Regular.ttf', window.ROBOTO_BASE64);
-  doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-  doc.setFont('Roboto');
-}
-doc.setFont('Roboto','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA — Проект',M+18,20);doc.setFont('Roboto','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('Всего помещений: '+project.length,M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let ty=42;ty=drawSpecTable(doc,computeTotals(),M,PW,ty);ty+=4;ty=drawCuttingSection(doc,collectProjectCuts(),M,PW,ty);ty+=4;if(ty>240){doc.addPage();ty=30;}doc.setFont('Roboto','bold');doc.setFontSize(10);doc.setTextColor(30,30,30);doc.text('Помещения проекта',M,ty);ty+=6;doc.setDrawColor(210,210,210);doc.setLineWidth(0.2);doc.line(M,ty,PW-M,ty);ty+=3;doc.setFont('Roboto','normal');doc.setFontSize(9);doc.setTextColor(40,40,40);project.forEach((r,i)=>{if(ty>260){doc.addPage();ty=30;}doc.text((i+1)+'. '+r.name+' — '+r.L_in+' × '+r.W_in+' мм, рейка '+r.railW+'/'+r.railH+' '+getColorLabel(r.color||'denver'),M,ty);ty+=5;});doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Итог по проекту — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_PROJECT_'+view.toUpperCase()+'.pdf');}
+doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(20,20,20);doc.text('CUBICA — Project',M+18,20);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(120,120,120);doc.text('Total rooms: '+project.length,M+18,26);doc.setDrawColor(200,200,200);doc.setLineWidth(0.2);doc.line(M,34,PW-M,34);addPdfWatermark(doc);let ty=42;ty=await drawSpecImageWithHeader(doc,computeTotals(),M,PW,ty);ty+=4;if(ty>240){doc.addPage();ty=30;}/* Заголовок «Помещения проекта» — кириллица, поэтому только как часть картинки — упростим: уберём отдельный заголовок, т.к. ниже просто список */doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Project total — CUBICA.BY',PW/2,PH-10,{align:'center'});doc.save('CUBICA_RAIL_PROJECT_'+view.toUpperCase()+'.pdf');}
 async function generatePdf(view){if(specMode==='total')await generateProjectPdf(view);else await generateRoomPdf(view);}
 
 buildWoodCache();
