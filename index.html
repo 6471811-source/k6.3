@@ -870,7 +870,25 @@ angleChk.addEventListener('change',()=>calculate());
 hangersChk.addEventListener('change',()=>{syncHangerUI();calculate();});
 hangerHInput.addEventListener('input',()=>{syncHangerUI();scheduleCalculate();});
 stringerPaintChk.addEventListener('change',()=>calculate());
-resetBtn.addEventListener('click',()=>{railWInput.value=30;railHInput.value=30;gapInput.value=20;rotationInput.value=0;updateSliderLabels();updateAdjustLabels();setActiveColor('ral9003');capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;hangerHInput.value=0;stringerPaintChk.checked=false;syncHangerUI();params.rotate90=false;updateRotate90UI();mergedCutsSet={};mergedResult=null;calculate();});
+resetBtn.addEventListener('click',()=>{
+  // Если редактируем сохранённое помещение — откатываем к сохранённому снапшоту
+  if(activeRoomIndex !== null && project[activeRoomIndex]){
+    activateRoom(activeRoomIndex);
+    showToast('↺ Возврат к сохранённому расчёту', '#1565c0');
+    return;
+  }
+  // Черновик (не сохранён) — сбрасываем к заводским
+  railWInput.value=30;railHInput.value=30;gapInput.value=20;rotationInput.value=0;
+  updateSliderLabels();updateAdjustLabels();
+  setActiveColor('ral9003');
+  capsChk.checked=false;angleChk.checked=false;hangersChk.checked=false;
+  hangerHInput.value=0;stringerPaintChk.checked=false;
+  syncHangerUI();
+  params.rotate90=false;updateRotate90UI();
+  mergedCutsSet={};mergedResult=null;
+  calculate();
+  showToast('↺ Сброшено к базовым настройкам', '#1565c0');
+});
 document.querySelectorAll('#ac-color-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.color);calculate();});});
 document.querySelectorAll('#ac-wood-grid .ac-swatch').forEach(btn=>{btn.addEventListener('click',()=>{setActiveColor(btn.dataset.wood);calculate();});});
 addBtn.addEventListener('click',newRoomAction);
