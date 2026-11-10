@@ -622,7 +622,10 @@ async function openKpPageViaWorker(){
   btn.textContent = '⏳ Формируем...';
   btn.disabled = true;
 
-  try {
+  try {    
+    // ★ ПРИНУДИТЕЛЬНЫЙ ПЕРЕСЧЕТ ПЕРЕД ОТПРАВКОЙ
+    // Это гарантирует, что currentLayout.rotationDeg возьмет актуальное значение ползунка
+    calculate();
     let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice();
     const rows=[];
     var railGroups = {};
