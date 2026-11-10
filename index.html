@@ -650,7 +650,8 @@ async function openKpPageViaWorker(){
     });
     otherRows.forEach(function(r){ rows.push(r); });
 
-const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in: currentLayout.L_in,W_in: currentLayout.W_in,railW: currentLayout.railW,railH: currentLayout.railH,gap: currentLayout.gap,color: currentLayout.color,colorLabel: currentLayout.colorLabel,caps: currentLayout.caps,angle: currentLayout.angle,rotationDeg: currentLayout.rawRotation,rotate90: currentLayout.rotate90,polygon: currentLayout.polygon,specRows: currentLayout.specRows,areaM2: currentLayout.areaM2}];
+    const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in: currentLayout.L_in,W_in: currentLayout.W_in,railW: currentLayout.railW,railH: currentLayout.railH,gap: currentLayout.gap,color: currentLayout.color,colorLabel: currentLayout.colorLabel,caps: currentLayout.caps,angle: currentLayout.angle,rotationDeg: currentLayout.rotationDeg,rotate90: currentLayout.rotate90,polygon: currentLayout.polygon,specRows: currentLayout.specRows,areaM2: currentLayout.areaM2}];
+    
     const rooms = srcRooms.map((room, i) => {
       const roomRows = (room.specRows||[])
         .filter(r => r && r.kind!=='area')
@@ -667,10 +668,8 @@ const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in
         colorLabel: room.colorLabel || getColorLabel(room.color||'denver'),
         caps: !!room.caps,
         angle: !!room.angle,
-        // Если это текущее активное помещение — берем свежий угол с ползунка, 
-        // иначе берем сохраненный угол из проекта
-        rotation: (activeRoomIndex === i || project.length === 0) ? Number(currentLayout.rawRotation) : Number(room.rotationDeg) || 0,
-        rotate90: (activeRoomIndex === i || project.length === 0) ? !!params.rotate90 : !!room.rotate90,
+        rotation: room.rotationDeg || 0,
+        rotate90: !!room.rotate90,
         polygon: room.polygon || null,
         areaM2: room.areaM2 || 0,
         rows: roomRows,
