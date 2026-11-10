@@ -668,8 +668,9 @@ async function openKpPageViaWorker(){
         colorLabel: room.colorLabel || getColorLabel(room.color||'denver'),
         caps: !!room.caps,
         angle: !!room.angle,
-        rotation: room.rotationDeg || 0,
-        rotate90: !!room.rotate90,
+        // Берем свежий угол с ползунка текущего экрана (или из сохраненного, если это не текущее помещение)
+        rotation: (activeRoomIndex === i || project.length === 0) ? Number(currentLayout.rawRotation) : (Number(room.rotationDeg) || 0),
+        rotate90: (activeRoomIndex === i || project.length === 0) ? !!params.rotate90 : !!room.rotate90,
         polygon: room.polygon || null,
         areaM2: room.areaM2 || 0,
         rows: roomRows,
@@ -702,7 +703,8 @@ async function openKpPageViaWorker(){
       };
     });
 
-    const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,rotate90:!!currentLayout.rotate90,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
+    const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rawRotation,
+rotate90:!!params.rotate90,caps:currentLayout.caps,angle:currentLayout.angle,polygon:currentLayout.polygon||null}};
     
     if(JID && window.CubicaJournal){
       const rec = window.CubicaJournal.get(JID);
