@@ -650,8 +650,7 @@ async function openKpPageViaWorker(){
     });
     otherRows.forEach(function(r){ rows.push(r); });
 
-    const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in: currentLayout.L_in,W_in: currentLayout.W_in,railW: currentLayout.railW,railH: currentLayout.railH,gap: currentLayout.gap,color: currentLayout.color,colorLabel: currentLayout.colorLabel,caps: currentLayout.caps,angle: currentLayout.angle,rotationDeg: currentLayout.rotationDeg,rotate90: currentLayout.rotate90,polygon: currentLayout.polygon,specRows: currentLayout.specRows,areaM2: currentLayout.areaM2}];
-    
+const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in: currentLayout.L_in,W_in: currentLayout.W_in,railW: currentLayout.railW,railH: currentLayout.railH,gap: currentLayout.gap,color: currentLayout.color,colorLabel: currentLayout.colorLabel,caps: currentLayout.caps,angle: currentLayout.angle,rotationDeg: currentLayout.rawRotation,rotate90: currentLayout.rotate90,polygon: currentLayout.polygon,specRows: currentLayout.specRows,areaM2: currentLayout.areaM2}];
     const rooms = srcRooms.map((room, i) => {
       const roomRows = (room.specRows||[])
         .filter(r => r && r.kind!=='area')
