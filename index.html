@@ -667,8 +667,10 @@ const srcRooms = project.length>0 ? project : [{name:'Помещение 1',L_in
         colorLabel: room.colorLabel || getColorLabel(room.color||'denver'),
         caps: !!room.caps,
         angle: !!room.angle,
-        rotation: room.rotationDeg || 0,
-        rotate90: !!room.rotate90,
+        // Если это текущее активное помещение — берем свежий угол с ползунка, 
+        // иначе берем сохраненный угол из проекта
+        rotation: (activeRoomIndex === i || project.length === 0) ? Number(currentLayout.rawRotation) : Number(room.rotationDeg) || 0,
+        rotate90: (activeRoomIndex === i || project.length === 0) ? !!params.rotate90 : !!room.rotate90,
         polygon: room.polygon || null,
         areaM2: room.areaM2 || 0,
         rows: roomRows,
