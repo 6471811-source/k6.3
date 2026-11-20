@@ -1233,3 +1233,10 @@ calculate();
 </script>
 </body>
 </html>
+
+// Временный отладочный доступ к переменным
+window.__debug = { 
+  getLayout: () => currentLayout, 
+  getProject: () => project,
+  getParams: () => params
+};
