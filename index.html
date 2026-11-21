@@ -1213,9 +1213,22 @@ if(JID && window.CubicaJournal){
         polygon: r.polygon || null,
         specRows: [],
         mergedCutsSet: r.mergedCutsSet ? {...r.mergedCutsSet} : {},
-        mergedResult: r.mergedResult ? {...r.mergedResult} : null
+        mergedResult: r.mergedResult ? {...r.mergedResult} : null,
+
+        // ★ ДОБАВЛЕНО ДЛЯ НАРЕЗКИ: восстанавливаем mergeInfo при загрузке
+        mergeInfo: (r.cuttingScheme && Array.isArray(r.cuttingScheme.scheme)) ? {
+          refSize: r.cuttingScheme.refSize,
+          extraQty: r.cuttingScheme.extraQty,
+          waste: r.cuttingScheme.waste,
+          wastePct: r.cuttingScheme.wastePct,
+          cuttingScheme: r.cuttingScheme.scheme.map(function(s){
+            return { items: s.items.slice(), used: s.used, waste: s.waste };
+          })
+        } : null
+        // ★ КОНЕЦ ДОБАВЛЕННОГО
       };
     });
+    
     if(project.length){
       project.forEach(function(_, i){
         setTimeout(function(){ activateRoom(i); }, 200 + i * 300);
