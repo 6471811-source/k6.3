@@ -715,9 +715,6 @@ async function openKpPageViaWorker(){
       console.log('Строки в комнате (rm.rows):', rm.rows.map(r => `${r.label} (${r.qty} ${r.unit})`));
     });
     // =========================================================
-// >>> ОСТАНОВКА ПЕРЕД ФОРМИРОВАНИЕМ КП <<<
-debugger;
-
     
     const payload={v:2,rows:rows,rooms:rooms,company:{...
     
