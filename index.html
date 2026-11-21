@@ -621,7 +621,7 @@ async function openKpPageViaWorker(){
   const oldText = btn.textContent;
   btn.textContent = '⏳ Формируем...';
   btn.disabled = true;
-
+alert('Отладка: сейчас вкладка не закроется. Нажмите ОК и смотрите в консоль (F12).');
   try {
     let totals = project.length>0 ? computeTotals() : currentLayout.specRows.slice();
     const rows=[];
@@ -705,6 +705,17 @@ async function openKpPageViaWorker(){
       };
     });
 
+    // ================= ОТЛАДКА ДЛЯ 3000/4000 =================
+    console.log('=== ОТЛАДКА: ЧТО УХОДИТ В КП ===');
+    console.log('Плоский rows (сводка):', rows.map(r => r.label));
+    rooms.forEach((rm, idx) => {
+      console.log(`--- Помещение ${idx+1} (${rm.name}) ---`);
+      console.log('mergeInfo/cuttingScheme:', rm.cuttingScheme ? 'ЕСТЬ' : 'НЕТ');
+      if(rm.cuttingScheme) console.log('Целевой размер (refSize):', rm.cuttingScheme.refSize);
+      console.log('Строки в комнате (rm.rows):', rm.rows.map(r => `${r.label} (${r.qty} ${r.unit})`));
+    });
+    // =========================================================
+    
     const payload={v:2,rows:rows,rooms:rooms,company:{name:'ООО «ВК ТЕРМ»',address:'РБ, 223051, Минская обл., Минский р-н, аг. Колодищи, ул. Минская, д. 5, пом. 107-4',phone:'+375 (44) 752-70-73',email:'7527073@armstrong.by',site:'cubica.by',site2:'armstrong.by',unp:'191202287',account:'BY79MTBK30120001093300125719',bank:'ЗАО «МТБанк», г. Минск',bic:'MTBKBY22',director:'Креминский И. Ю.',directorPosition:'Директор',tagline:'modern ceiling solutions',issueAddress:'аг. Колодищи, ул. Минская, 5, этаж 5, офис 508',pickupAddress:'аг. Колодищи, территория учебного парка',hours:'Пн–Пт, 09:00–15:00'},meta:{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:currentLayout.railW,railH:currentLayout.railH,gap:currentLayout.gap,color:currentLayout.colorLabel,area:currentLayout.areaM2,rotation:currentLayout.rotationDeg,rotate90:!!currentLayout.rotate90,caps:currentLayout.caps,angle:currentLayout.angle,hangers: !!currentLayout.hangers,hangerHeight: Number(currentLayout.hangerHeight)||0,stringerPaint: !!currentLayout.stringerPaint,polygon:currentLayout.polygon||null}};
     
     if(JID && window.CubicaJournal){
@@ -773,7 +784,7 @@ setTimeout(function(){
     if (!j.id) throw new Error('No id returned');
 
     window.open(KP_URL + '?s=' + j.id, '_blank');
-try{ window.close(); }catch(e){}
+// ★ try{ window.close(); }catch(e){}
 setTimeout(function(){
   if(!document.hidden){
     showToast('Готово! Эту вкладку можно закрыть', '#1565c0');
