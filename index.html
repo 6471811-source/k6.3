@@ -94,6 +94,31 @@ body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:#222;backgrou
 .ac-note.warn{color:#b26a00;background:#fff8e5;border:1px solid #f0d896;border-radius:6px;padding:10px 12px;margin-top:12px}
 .ac-note.info{color:#1565c0;background:#eef4fb;border:1px solid #cfdcec;border-radius:6px;padding:10px 12px;margin-top:12px}
 .ac-note.ok{color:#2e7d32;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:10px 12px;margin-top:12px}
+.ac-rz{margin-top:12px;border:1px solid #e3e6ea;border-radius:8px;background:#fafbfc}
+.ac-rz>summary{cursor:pointer;padding:9px 12px;font-size:12.5px;font-weight:700;color:#1a1a2e;list-style:none;display:flex;align-items:center;gap:8px}
+.ac-rz>summary::-webkit-details-marker{display:none}
+.ac-rz>summary .ar{margin-left:auto;font-weight:600;color:#c00000;font-size:12px}
+.ac-rz>summary::before{content:'▸';color:#888;transition:transform .15s}
+.ac-rz[open]>summary::before{transform:rotate(90deg)}
+.ac-rz-body{padding:0 12px 10px}
+.ac-rz-hint{font-size:11.5px;color:#777;line-height:1.45;margin:0 0 8px}
+.ac-rz table{width:100%;border-collapse:collapse;font-size:12.5px}
+.ac-rz th{font-size:10.5px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.3px;text-align:left;padding:4px 4px;border-bottom:1px solid #e3e6ea}
+.ac-rz td{white-space:nowrap;padding:5px 4px;border-bottom:1px solid #f0f1f3;vertical-align:middle}
+.ac-rz tr.on td{background:#fff4f4}
+.ac-rz td.sz{font-weight:700;white-space:nowrap}
+.ac-rz td.q{color:#555;white-space:nowrap}
+.ac-rz input[type=number]{width:66px;padding:5px 6px;border:1px solid #d6d9de;border-radius:5px;font:inherit;font-size:12.5px;text-align:right;background:#fff}
+.ac-rz input[type=number].pl{width:50px}
+.ac-rz input[type=number]:disabled{background:#f1f2f4;color:#aaa}
+.ac-rz input[type=checkbox]{width:16px;height:16px;accent-color:#c00000;cursor:pointer}
+.ac-rz .arw{color:#999;padding:0 2px}
+.ac-rz .whole{font-size:11px;color:#999}
+.ac-rz-btns{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+.ac-rz-btns button{flex:1 1 auto;padding:7px 10px;font-size:12px;font-weight:700;border-radius:6px;cursor:pointer;font-family:inherit;border:1px solid #ddd;background:#fff;color:#333}
+.ac-rz-btns button.all{border-color:#f0c0c0;color:#c00000}
+.ac-rz-sum{margin-top:8px;font-size:12px;color:#1a1a2e}
+.rz-tag{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:9px;background:#fde8e8;color:#c00000;font-size:10.5px;font-weight:700;vertical-align:1px;white-space:nowrap}
 .ac-merge-bar{display:flex;gap:8px;margin-top:10px;margin-bottom:4px;flex-wrap:wrap}
 .ac-merge-bar button{flex:1 1 auto;padding:9px 12px;font-size:12.5px;font-weight:700;border-radius:6px;cursor:pointer;font-family:inherit;border:1px solid #ddd;background:#fff;color:#333}
 .ac-merge-bar button.do-merge{background:#2e7d32;color:#fff;border-color:#2e7d32}
@@ -264,6 +289,9 @@ let threeRoomGroup,threeGridPivot,threeTilesGroup,threeHangersGroup,threeCeiling
 let project=[],activeRoomIndex=null,specMode='current';
 let mergedCutsSet={};
 let mergedResult=null;
+let roundSet={}; // запас по длине: {'2950':{to:3000,plus:0}} — только выбранные размеры
+function cloneRound(o){try{return JSON.parse(JSON.stringify(o||{}));}catch(e){return {};}}
+function roundDefault(sz){return Math.min(MAX_RAIL_LEN,Math.floor(sz/100)*100+100);}
 let calcRaf=null;
 
 function scheduleCalculate(){if(calcRaf)return;calcRaf=requestAnimationFrame(()=>{calcRaf=null;calculate();});}
@@ -413,7 +441,7 @@ function resetForNewRoom(){
   params.rotate90=false;
   updateRotate90UI();
   roomPolygon=null;
-  mergedCutsSet={};mergedResult=null;
+  mergedCutsSet={};mergedResult=null;roundSet={};
   activeRoomIndex=null;
   lastSavedSnapshot = null;
   calculate();
@@ -512,6 +540,11 @@ perStringerSegments.push({x:gx,origX:gx,segs:strSegList,hangers});}
 const stRem=[];let nStringerStocks=0;for(const p of allStringerPieces){let found=-1;for(let i=0;i<stRem.length;i++)if(stRem[i]>=p-0.5){found=i;break;}if(found>=0)stRem[found]-=p;else{stRem.push(CARRIER_STOCK-p);nStringerStocks++;}}
 const totalHangers=perStringerSegments.reduce((s,ss)=>s+ss.hangers.length,0);const perimeter=roomPolygon?polyPerimeter(roomPolygon):2*(L_in+W_in);const wallAnglePieces=Math.ceil(perimeter/3000);const angleFastenersRaw=wallAnglePieces*10;const angleFasteners=Math.ceil(angleFastenersRaw/200)*200;const capsCount=params.caps?perRailSegments.length*2:0;const areaM2=roomPolygon?polyArea(roomPolygon)/1e6:L_in*W_in/1e6;
 const colorData=getColorData(params.color);const colorLabel=getColorLabel(params.color);const railFill=colorData.swatch||('#'+colorData.hex.toString(16).padStart(6,'0'));
+const rawCuts={...cutsMap};const rawN4000=n4000,rawN3000=n3000;const roundApplied=[],roundStale=[];
+for(const k of Object.keys(roundSet)){const sz=Number(k),cfg=roundSet[k]||{};const have=sz===4000?rawN4000:sz===3000?rawN3000:(rawCuts[sz]||0);if(!have){roundStale.push(sz);continue;}let to=(sz===4000||sz===3000)?sz:Math.round(Number(cfg.to)||sz);to=Math.max(sz,Math.min(MAX_RAIL_LEN,to));const plus=Math.max(0,Math.round(Number(cfg.plus)||0));if(to===sz&&!plus)continue;
+if(sz===4000)n4000-=have;else if(sz===3000)n3000-=have;else{cutsMap[sz]-=have;if(cutsMap[sz]<=0)delete cutsMap[sz];}
+const q=have+plus;if(to===4000)n4000+=q;else if(to===3000)n3000+=q;else cutsMap[to]=(cutsMap[to]||0)+q;roundApplied.push({from:sz,to,have,plus});}
+const roundAddMp=roundApplied.reduce((a,x)=>a+((x.to-x.from)*x.have+x.to*x.plus)/1000,0);
 const cutSizes=Object.keys(cutsMap).map(Number).sort((a,b)=>b-a);const displayCuts={};for(const sz of cutSizes)displayCuts[sz]=(displayCuts[sz]||0)+cutsMap[sz];
 let mergeInfo=null;let mergeError=null;
 if(mergedResult&&mergedResult.ok){const target=mergedResult.target;const markedSizes=Object.keys(mergedCutsSet).map(Number).filter(sz=>mergedCutsSet[String(sz)]);for(const sz of markedSizes)delete displayCuts[sz];displayCuts[target]=(displayCuts[target]||0)+mergedResult.extraQty;mergeInfo={refSize:target,existingQty:mergedResult.existingQty,extraQty:mergedResult.extraQty,totalQty:mergedResult.totalQty,waste:mergedResult.waste,wastePct:mergedResult.wastePct,cuttingScheme:mergedResult.cuttingScheme,source:mergedResult.source};}else if(mergedResult&&!mergedResult.ok)mergeError=mergedResult.reason;
@@ -523,6 +556,7 @@ for(const sz of displayCutSizes){if(sz===4000||sz===3000)continue;const isMerged
 if(mergeInfo&&mergeInfo.refSize===4000&&n4000===0)railRows.push({size:4000,label:'Рейка Cubica '+railW+'/'+railH+' '+colorLabel+' 4000 мм (объединено)',value:mergeInfo.extraQty+' шт.',num:mergeInfo.extraQty,kind:'count',color:railFill,cutSize:4000,checkable:false,checked:false,mergedRow:true,source:'std',unit:'шт.'});
 if(mergeInfo&&mergeInfo.refSize===3000&&n3000===0)railRows.push({size:3000,label:'Рейка Cubica '+railW+'/'+railH+' '+colorLabel+' 3000 мм (объединено)',value:mergeInfo.extraQty+' шт.',num:mergeInfo.extraQty,kind:'count',color:railFill,cutSize:3000,checkable:false,checked:false,mergedRow:true,source:'std',unit:'шт.'});
 railRows.sort((a,b)=>b.size-a.size);
+for(const row of railRows){if(row.mergedRow)continue;const ap=roundApplied.filter(x=>x.to===row.size);if(ap.length)row.reserve=ap.map(x=>(x.to!==x.from?x.from+'→'+x.to:'')+(x.plus?(x.to!==x.from?' ':'')+'+'+x.plus+' шт':'')).join(', ');}
 const specRows=[{label:'Площадь',value:areaM2.toFixed(2)+' м²',num:areaM2,kind:'area'}];for(const row of railRows)specRows.push(row);
 if(nJoints>0)specRows.push({label:'Соединитель КР '+railW+'/'+railH+' '+colorLabel,value:nJoints+' шт.',num:nJoints,kind:'count',color:'#ffd54f',unit:'шт.'});
 const stringerLabel='Стрингер '+railW+'/'+gap+' 3000 мм'+(params.stringerPaint?' окрашенный':'');specRows.push({label:stringerLabel,value:nStringerStocks+' шт.',num:nStringerStocks,kind:'count',color:'#8a97a6',unit:'шт.'});
@@ -536,7 +570,7 @@ const overlapTxt=Math.ceil((2*pitch)/10)*10;warnings.push('📐 Рейки: '+nR
 if(rotationDeg!==0)warnings.push('📐 Поворот: '+rotationDeg+'°.');if(mergeError==='piece_too_long')warnings.push('⚠ Объединение невозможно: есть отмеченная рейка длиннее '+MAX_RAIL_LEN+' мм.');
 if(params.hangers)warnings.push('🔧 Подвесы: высота опускания '+params.hangerHeight.toFixed(2).replace('.',',')+' м.');
 if(params.rotate90)warnings.push('↻ Раскладка повёрнута на 90°.');
-currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,rawRotation:parseFloat(rotationInput.value)||0,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError};
+currentLayout={rotate90:params.rotate90,L,W,L_in,W_in,railW,railH,gap,pitch,nRailsLines,railEdgeOffset,rotationDeg,rawRotation:parseFloat(rotationInput.value)||0,n4000,n3000,cutsMap,cutSizes,nJoints,perRailSegments,stringerXsGrid,nStringers,perStringerSegments,nStringerStocks,totalHangers,wallAnglePieces,angleFasteners,perimeter,capsCount,areaM2,specRows,warnings,colorKey:params.color,colorHex:colorData.hex,colorSwatch:colorData.swatch,colorLabel:colorLabel,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,totalRailLength_m:totalRailLength_m,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult,mergeInfo:mergeInfo,mergeError:mergeError,rawCuts:rawCuts,rawN4000:rawN4000,rawN3000:rawN3000,roundApplied:roundApplied,roundStale:roundStale,roundAddMp:roundAddMp};
 
 if(activeRoomIndex !== null && project[activeRoomIndex] && currentLayout){
   project[activeRoomIndex].specRows = currentLayout.specRows.map(r => ({...r}));
@@ -562,20 +596,72 @@ function update3D(){if(!threeInitialized||!currentLayout)return;const{L_in,W_in,
 
 function renderCuttingScheme(scheme,targetLen){let html='<div class="ac-cutting">';html+='<div class="ac-cutting-title">Схема нарезки — рейки по '+targetLen+' мм</div>';for(let i=0;i<scheme.length;i++){const s=scheme[i];html+='<div class="ac-cutting-row">';html+='<span class="ac-cutting-meta">#'+(i+1)+':</span>';html+='<span class="ac-cutting-bar">';for(const item of s.items){const w=(item/targetLen)*100;html+='<span class="ac-cutting-piece" style="width:'+w+'%" title="'+item+' мм"></span>';}if(s.waste>0){const w=(s.waste/targetLen)*100;html+='<span class="ac-cutting-piece waste" style="width:'+w+'%" title="отход '+s.waste+' мм"></span>';}html+='</span>';const parts=s.items.join(' + ');html+='<span class="ac-cutting-meta">'+parts+(s.waste>0?' (отход '+s.waste+' мм)':'')+'</span>';html+='</div>';}html+='</div>';return html;}
 
-function renderSpec(){let source=specMode==='total'?computeTotals():(currentLayout?currentLayout.specRows:[]);if(!source||!source.length){resultsDiv.innerHTML='<p style="color:#999;font-size:12px;font-style:italic;text-align:center;padding:8px 0">Нет данных.</p>';return;}let html='<ul>';for(const row of source){let swatchStyle='';if(row.color){if(row.color.startsWith('data:'))swatchStyle='background-image:url('+row.color+');background-size:cover;background-position:center';else swatchStyle='background:'+row.color;}const c=swatchStyle?'<span class="cl" style="'+swatchStyle+'"></span>':'';let chkHtml='';if(row.kind==='cut'&&row.checkable){const checkedAttr=row.checked?' checked':'';chkHtml='<input type="checkbox" class="chk" data-cut="'+row.cutSize+'"'+checkedAttr+' title="Отметить для объединения">';}let liStyle='';if(row.mergedRow)liStyle=' style="background:#e8f5e9;border-radius:4px;padding-left:6px;padding-right:6px"';html+='<li'+liStyle+'>'+chkHtml+c+'<span class="lb">'+row.label+'</span><span class="vl">'+row.value+'</span></li>';}html+='</ul>';
+function renderSpec(){let source=specMode==='total'?computeTotals():(currentLayout?currentLayout.specRows:[]);if(!source||!source.length){resultsDiv.innerHTML='<p style="color:#999;font-size:12px;font-style:italic;text-align:center;padding:8px 0">Нет данных.</p>';return;}let html='<ul>';for(const row of source){let swatchStyle='';if(row.color){if(row.color.startsWith('data:'))swatchStyle='background-image:url('+row.color+');background-size:cover;background-position:center';else swatchStyle='background:'+row.color;}const c=swatchStyle?'<span class="cl" style="'+swatchStyle+'"></span>':'';let chkHtml='';if(row.kind==='cut'&&row.checkable){const checkedAttr=row.checked?' checked':'';chkHtml='<input type="checkbox" class="chk" data-cut="'+row.cutSize+'"'+checkedAttr+' title="Отметить для объединения">';}let liStyle='';if(row.mergedRow)liStyle=' style="background:#e8f5e9;border-radius:4px;padding-left:6px;padding-right:6px"';const rzTag=row.reserve?'<span class="rz-tag" title="Запас по длине: '+row.reserve+'">запас '+row.reserve+'</span>':'';html+='<li'+liStyle+'>'+chkHtml+c+'<span class="lb">'+row.label+rzTag+'</span><span class="vl">'+row.value+'</span></li>';}html+='</ul>';
 if(specMode==='current'&&currentLayout){const marked=Object.keys(currentLayout.mergedCutsSet||{}).filter(k=>currentLayout.mergedCutsSet[k]);const mergeActive=currentLayout.mergeInfo;html+='<div class="ac-merge-bar">';html+='<button type="button" class="do-merge"'+(marked.length===0?' disabled':'')+'>🧩 Объединить'+(marked.length?' ('+marked.length+')':'')+'</button>';html+='<button type="button" class="do-split"'+(mergeActive?'':' disabled')+'>✂️ Разъединить</button>';html+='</div>';if(marked.length>0){if(mergeActive){html+='<div class="ac-note ok">✓ Объединено в размер <b>'+mergeActive.refSize+' мм</b>: +'+mergeActive.extraQty+' шт дополнительно к '+mergeActive.existingQty+' существующим · <b>итого '+mergeActive.totalQty+' шт</b> · отход '+Math.round(mergeActive.waste)+' мм ('+mergeActive.wastePct.toFixed(2)+'%)</div>';html+=renderCuttingScheme(mergeActive.cuttingScheme,mergeActive.refSize);}else if(currentLayout.mergeError==='piece_too_long')html+='<div class="ac-note warn">⚠ Объединение невозможно: есть отмеченная рейка длиннее '+MAX_RAIL_LEN+' мм.</div>';else html+='<div class="ac-note warn">Галочки стоят на '+marked.length+' размере(ах). Нажмите «Объединить», чтобы посчитать.</div>';}}
+if(specMode==='current'&&currentLayout)html+=renderRoundPanel();
 if(specMode==='current'&&currentLayout&&currentLayout.warnings&&currentLayout.warnings.length){for(const w of currentLayout.warnings){const cls=(w.indexOf('📐')===0||w.indexOf('ℹ')===0||w.indexOf('✏️')===0||w.indexOf('🔄')===0||w.indexOf('🔧')===0)?'info':'warn';html+='<div class="ac-note '+cls+'">'+w+'</div>';}}
 resultsDiv.innerHTML=html;
 resultsDiv.querySelectorAll('input.chk[data-cut]').forEach(cb=>{cb.addEventListener('change',()=>{const sz=cb.getAttribute('data-cut');if(cb.checked)mergedCutsSet[sz]=true;else delete mergedCutsSet[sz];mergedResult=null;calculate();});});
 const btnMerge=resultsDiv.querySelector('button.do-merge');if(btnMerge)btnMerge.addEventListener('click',()=>{doMergeCuts();});
-const btnSplit=resultsDiv.querySelector('button.do-split');if(btnSplit)btnSplit.addEventListener('click',()=>{mergedResult=null;calculate();});}
+const btnSplit=resultsDiv.querySelector('button.do-split');if(btnSplit)btnSplit.addEventListener('click',()=>{mergedResult=null;calculate();});
+bindRoundPanel();}
+
+// ===== Запас по длине: округление только выбранных размеров =====
+function roundRowsData(){
+  const L=currentLayout;if(!L)return[];const out=[];
+  if(L.rawN4000>0)out.push({sz:4000,qty:L.rawN4000,whole:true});
+  if(L.rawN3000>0)out.push({sz:3000,qty:L.rawN3000,whole:true});
+  Object.keys(L.rawCuts||{}).map(Number).forEach(sz=>{if(sz!==4000&&sz!==3000&&L.rawCuts[sz]>0)out.push({sz,qty:L.rawCuts[sz],whole:false});});
+  return out.sort((a,b)=>b.sz-a.sz);
+}
+function fmtMp(v){return (Math.round(v*100)/100).toFixed(2).replace('.',',');}
+let roundPanelOpen=false;
+function renderRoundPanel(){
+  const L=currentLayout;const rows=roundRowsData();if(!rows.length)return'';
+  const nOn=rows.filter(x=>roundSet[x.sz]).length;const open=roundPanelOpen||nOn>0;
+  let h='<details class="ac-rz"'+(open?' open':'')+'><summary>Запас по длине'+(nOn?' · '+nOn+' разм.':'')+(L.roundAddMp>0?'<span class="ar">+'+fmtMp(L.roundAddMp)+' м.п.</span>':'')+'</summary><div class="ac-rz-body">';
+  h+='<p class="ac-rz-hint">Отметьте размеры, которые нужно взять с запасом. Округляется только отмеченное — остальные рейки остаются точными. Чертёж не меняется, меняется материал в спецификации, КП и счёте.</p>';
+  h+='<table><thead><tr><th></th><th>Размер</th><th>Шт</th><th>С запасом, мм</th><th>+ шт</th></tr></thead><tbody>';
+  for(const x of rows){
+    const cfg=roundSet[x.sz];const on=!!cfg;
+    const to=x.whole?x.sz:(cfg?Math.max(x.sz,Math.min(MAX_RAIL_LEN,Number(cfg.to)||x.sz)):roundDefault(x.sz));
+    const plus=cfg?Math.max(0,Number(cfg.plus)||0):0;
+    h+='<tr class="'+(on?'on':'')+'" data-sz="'+x.sz+'">';
+    h+='<td><input type="checkbox" class="rz-on"'+(on?' checked':'')+' title="'+(x.whole?'Целая рейка — можно добавить только штуки':'Взять этот размер с запасом')+'"></td>';
+    h+='<td class="sz">'+x.sz+' мм</td><td class="q">× '+x.qty+'</td>';
+    h+='<td>'+(x.whole?'<span class="whole">целая рейка</span>':'<span class="arw">→</span><input type="number" class="rz-to" step="50" min="'+x.sz+'" max="'+MAX_RAIL_LEN+'" value="'+to+'"'+(on?'':' disabled')+'>')+'</td>';
+    h+='<td><input type="number" class="rz-plus pl" step="1" min="0" value="'+plus+'"'+(on?'':' disabled')+'></td></tr>';
+  }
+  h+='</tbody></table>';
+  if(L.roundStale&&L.roundStale.length)h+='<div class="ac-note warn" style="margin-top:8px">Запас для '+L.roundStale.join(', ')+' мм не применён — таких реек больше нет в раскладке. <a href="#" class="rz-clean">Убрать</a></div>';
+  if(L.roundApplied&&L.roundApplied.length)h+='<div class="ac-rz-sum">'+L.roundApplied.map(a=>'<b>'+a.from+'</b> × '+a.have+(a.to!==a.from?' → <b>'+a.to+'</b>':'')+(a.plus?' +'+a.plus+' шт':'')).join(' · ')+' · всего +'+fmtMp(L.roundAddMp)+' м.п.</div>';
+  h+='<div class="ac-rz-btns"><button type="button" class="all rz-all">Округлить все обрезки</button><button type="button" class="rz-reset"'+(Object.keys(roundSet).length?'':' disabled')+'>Без запаса</button></div>';
+  h+='</div></details>';
+  return h;
+}
+function roundChanged(){mergedResult=null;calculate();}
+function bindRoundPanel(){
+  const box=resultsDiv.querySelector('details.ac-rz');if(!box)return;
+  box.addEventListener('toggle',()=>{roundPanelOpen=box.open;});
+  box.querySelectorAll('tr[data-sz]').forEach(tr=>{
+    const sz=Number(tr.dataset.sz),k=String(sz);const whole=(sz===4000||sz===3000);
+    const on=tr.querySelector('.rz-on'),to=tr.querySelector('.rz-to'),pl=tr.querySelector('.rz-plus');
+    on.addEventListener('change',()=>{roundPanelOpen=true;if(on.checked){roundSet[k]={to:whole?sz:(Number(to&&to.value)||roundDefault(sz)),plus:whole?Math.max(1,Number(pl.value)||0):(Number(pl.value)||0)};}else delete roundSet[k];delete mergedCutsSet[k];roundChanged();});
+    if(to)to.addEventListener('change',()=>{if(!roundSet[k])return;let v=Math.round(Number(to.value)||sz);if(v<sz){v=sz;showToast('Длина с запасом не может быть меньше '+sz+' мм','#c00000');}if(v>MAX_RAIL_LEN){v=MAX_RAIL_LEN;showToast('Максимум '+MAX_RAIL_LEN+' мм','#c00000');}roundSet[k].to=v;roundPanelOpen=true;roundChanged();});
+    if(pl)pl.addEventListener('change',()=>{if(!roundSet[k])return;roundSet[k].plus=Math.max(0,Math.round(Number(pl.value)||0));roundPanelOpen=true;roundChanged();});
+  });
+  const all=box.querySelector('.rz-all');if(all)all.addEventListener('click',()=>{roundRowsData().forEach(x=>{if(!x.whole&&!roundSet[x.sz]){roundSet[x.sz]={to:roundDefault(x.sz),plus:0};delete mergedCutsSet[String(x.sz)];}});roundPanelOpen=true;roundChanged();});
+  const rs=box.querySelector('.rz-reset');if(rs)rs.addEventListener('click',()=>{roundSet={};roundChanged();});
+  const cl=box.querySelector('.rz-clean');if(cl)cl.addEventListener('click',e=>{e.preventDefault();(currentLayout.roundStale||[]).forEach(sz=>delete roundSet[String(sz)]);calculate();});
+}
+
 function doMergeCuts(){if(!currentLayout)return;const cutsMap=currentLayout.cutsMap;const cutsWithQty=[];Object.keys(mergedCutsSet).forEach(k=>{if(mergedCutsSet[k]){const sz=Number(k);let qty=0;if(sz===3000)qty=currentLayout.n3000;else if(sz===4000)qty=currentLayout.n4000;else qty=cutsMap[sz]||0;if(qty>0)cutsWithQty.push({size:sz,qty:qty});}});if(!cutsWithQty.length){alert('Поставьте галочки хотя бы на один размер.');return;}const allowedRefs=collectAllowedRefs(cutsMap,mergedCutsSet,currentLayout.n4000,currentLayout.n3000);if(!allowedRefs.length){alert('Нет доступного эталона.');return;}const res=tryMergeCuts(cutsWithQty,allowedRefs);if(res&&res.ok){mergedResult=res;calculate();}else{mergedResult=res||{ok:false,reason:'unknown'};calculate();}}
 
 function computeTotals(){if(!project.length)return[];const m={};let at=0;for(const room of project){if(!room.specRows)continue;for(const row of room.specRows){if(row.kind==='area'){at+=row.num||0;continue;}if(!m[row.label])m[row.label]={label:row.label,num:0,kind:'count',color:row.color,unit:row.unit||'шт.'};m[row.label].num+=(row.num||0);}}const out=[{label:'Площадь',value:at.toFixed(2)+' м²',num:at,kind:'area'}];const ks=Object.keys(m),rk=[],ok=[];for(const k of ks){if(/^Рейка Cubica /.test(k))rk.push(k);else ok.push(k);}rk.sort();ok.sort();for(const k of rk.concat(ok)){const r=m[k];out.push({label:r.label,value:Math.round(r.num)+' шт.',num:r.num,kind:r.kind,color:r.color,unit:r.unit});}return out;}
 
-function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rawRotation,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
+function snapshotRoom(){return{L_in:currentLayout.L_in,W_in:currentLayout.W_in,railW:params.railW,railH:params.railH,gap:params.gap,color:params.color,caps:params.caps,angle:params.angle,hangers:params.hangers,hangerHeight:params.hangerHeight,stringerPaint:params.stringerPaint,rotationDeg:currentLayout.rawRotation,rotate90:params.rotate90,polygon:roomPolygon?roomPolygon.map(p=>[p[0],p[1]]):null,specRows:currentLayout.specRows.map(r=>({...r})),mergedCutsSet:{...mergedCutsSet},roundSet:cloneRound(roundSet),mergedResult:mergedResult?{...mergedResult}:null,mergeInfo:currentLayout.mergeInfo?{...currentLayout.mergeInfo,cuttingScheme:currentLayout.mergeInfo.cuttingScheme.map(s=>({items:s.items.slice(),used:s.used,waste:s.waste}))}:null};}
 function clearProject(){if(!project.length)return;if(!confirm('Удалить все помещения?'))return;project=[];activeRoomIndex=null;lastSavedSnapshot=null;renderProjectList();renderSpec();updateWorkLabel();}
-function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||30;railHInput.value=r.railH||30;gapInput.value=r.gap||20;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'ral9003');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();lastSavedSnapshot = snapshotKey(snapshotRoom());updateWorkLabel();}
+function activateRoom(index){const r=project[index];if(!r)return;activeRoomIndex=index;lengthInput.value=r.L_in;widthInput.value=r.W_in;railWInput.value=r.railW||30;railHInput.value=r.railH||30;gapInput.value=r.gap||20;rotationInput.value=r.rotationDeg||0;params.rotate90=!!r.rotate90;updateRotate90UI();updateSliderLabels();updateAdjustLabels();setActiveColor(r.color||'ral9003');capsChk.checked=!!r.caps;angleChk.checked=!!r.angle;hangersChk.checked=!!r.hangers;hangerHInput.value=(r.hangerHeight||0);syncHangerUI();stringerPaintChk.checked=!!r.stringerPaint;roomPolygon=r.polygon?r.polygon.map(p=>[p[0],p[1]]):null;mergedCutsSet=r.mergedCutsSet?{...r.mergedCutsSet}:{};roundSet=cloneRound(r.roundSet);mergedResult=r.mergedResult?{...r.mergedResult}:null;calculate();specMode='current';specToggleEl.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.specmode==='current'));renderProjectList();renderSpec();lastSavedSnapshot = snapshotKey(snapshotRoom());updateWorkLabel();}
 
 async function activateRoomGuarded(index){
   if(index === activeRoomIndex) return;
@@ -677,6 +763,7 @@ async function openKpPageViaWorker(){
         areaM2: room.areaM2 || 0,
         rows: roomRows,
         mergedCutsSet: room.mergedCutsSet ? {...room.mergedCutsSet} : {},
+        roundSet: cloneRound(room.roundSet),
         mergedResult: room.mergedResult ? {
           ok: !!room.mergedResult.ok,
           target: room.mergedResult.target,
@@ -888,7 +975,7 @@ resetBtn.addEventListener('click',()=>{
   hangerHInput.value=0;stringerPaintChk.checked=false;
   syncHangerUI();
   params.rotate90=false;updateRotate90UI();
-  mergedCutsSet={};mergedResult=null;
+  mergedCutsSet={};mergedResult=null;roundSet={};
   calculate();
   showToast('↺ Сброшено к базовым настройкам', '#1565c0');
 });
@@ -1213,6 +1300,7 @@ if(JID && window.CubicaJournal){
         polygon: r.polygon || null,
         specRows: [],
         mergedCutsSet: r.mergedCutsSet ? {...r.mergedCutsSet} : {},
+        roundSet: cloneRound(r.roundSet),
         mergedResult: r.mergedResult ? {...r.mergedResult} : null,
 
         // ★ ДОБАВЛЕНО ДЛЯ НАРЕЗКИ: восстанавливаем mergeInfo при загрузке
